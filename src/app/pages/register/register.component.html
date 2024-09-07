@@ -1,10 +1,10 @@
-<div class="header bg-gradient-danger py-7 py-lg-8">
+<div class="header bg-gradient-light py-7 py-lg-8">
   <div class="container">
     <div class="header-body text-center mb-7">
       <div class="row justify-content-center">
         <div class="col-lg-5 col-md-6">
           <h1 class="text-white">Welcome!</h1>
-          <p class="text-lead text-light">Use these awesome forms to login or create new account in your project for free.</p>
+          <p class="text-lead text-light">Use these awesome forms to login or create a new account in your project for free.</p>
         </div>
       </div>
     </div>
@@ -38,13 +38,21 @@
           <div class="text-center text-muted mb-4">
             <small>Or sign up with credentials</small>
           </div>
-          <form role="form">
+          <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
             <div class="form-group">
               <div class="input-group input-group-alternative mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                 </div>
-                <input class="form-control" placeholder="Name" type="text">
+                <input class="form-control" placeholder="ID Number" type="text" name="idNo" [(ngModel)]="user.idNo" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group input-group-alternative mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
+                </div>
+                <input class="form-control" placeholder="Full Name" type="text" name="name" [(ngModel)]="user.name" required>
               </div>
             </div>
             <div class="form-group">
@@ -52,7 +60,15 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                 </div>
-                <input class="form-control" placeholder="Email" type="email">
+                <input class="form-control" placeholder="Email" type="email" name="email" [(ngModel)]="user.email" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group input-group-alternative mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
+                </div>
+                <input class="form-control" placeholder="Phone Number" type="tel" name="phone" [(ngModel)]="user.phone" required pattern="[0-9]*">
               </div>
             </div>
             <div class="form-group">
@@ -60,22 +76,22 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                 </div>
-                <input class="form-control" placeholder="Password" type="password">
+                <input class="form-control" placeholder="Password" type="password" name="password" [(ngModel)]="user.password" required>
               </div>
             </div>
-            <div class="text-muted font-italic"><small>password strength: <span class="text-success font-weight-700">strong</span></small></div>
-            <div class="row my-4">
-              <div class="col-12">
-                <div class="custom-control custom-control-alternative custom-checkbox">
-                  <input class="custom-control-input" id="customCheckRegister" type="checkbox">
-                  <label class="custom-control-label" for="customCheckRegister">
-                    <span class="text-muted">I agree with the <a href="#!">Privacy Policy</a></span>
-                  </label>
+            <div class="form-group">
+              <div class="input-group input-group-alternative">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                 </div>
+                <input class="form-control" placeholder="Confirm Password" type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
               </div>
+            </div>
+            <div *ngIf="passwordMismatch" class="text-danger text-center mb-4">
+              <small>Passwords do not match</small>
             </div>
             <div class="text-center">
-              <button type="button" class="btn btn-primary mt-4">Create account</button>
+              <button type="submit" class="btn btn-primary mt-4">Create account</button>
             </div>
           </form>
         </div>

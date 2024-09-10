@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit {
   public salesChart;
   public clicked: boolean = true;
   public clicked1: boolean = false;
-  userRole: string | null = null;
+  public userRole: string | null = null;
 
   constructor(private authService:  AuthService) {
     this.userRole = this.authService.getUserRole();

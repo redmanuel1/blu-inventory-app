@@ -29,9 +29,9 @@ export class LoginComponent implements OnInit {
         console.log('User role:', role);
         // Redirect based on role
         if (role === 'custodian') {
-          this.router.navigate(['/dashboard']); // Adjust as needed
+          this.router.navigate(['admin/dashboard']); // Adjust as needed
         } else {
-          this.router.navigate(['/dashboard']); // Adjust as needed
+          this.router.navigate(['student/dashboard']); // Adjust as needed
         }
       } else {
         this.errorMessage = 'Login failed';

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 declare interface RouteInfo {
@@ -24,15 +24,20 @@ export const ROUTES: RouteInfo[] = [
 })
 export class SidebarComponent implements OnInit {
 
+  @Input() routes : RouteInfo[];
   public menuItems: any[];
   public isCollapsed = true;
 
   constructor(private router: Router) { }
 
   ngOnInit() {
-    this.menuItems = ROUTES.filter(menuItem => menuItem);
-    this.router.events.subscribe((event) => {
-      this.isCollapsed = true;
-   });
+    if (this.routes) {
+      this.menuItems = this.routes.filter(menuItem => menuItem);
+    } else {
+      this.menuItems = ROUTES.filter(menuItem => menuItem);
+      this.router.events.subscribe((event) => {
+        this.isCollapsed = true;
+    });
+    }
   }
 }

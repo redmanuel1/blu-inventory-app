@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
-// import { User } from './user.model'; // Import the User interface
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -46,5 +45,6 @@ export class AuthService {
   // Method to log out
   logout() {
     this.userSubject.next(null); // Clear user data
+    
   }
 }

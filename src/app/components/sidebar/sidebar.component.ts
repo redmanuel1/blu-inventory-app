@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { RouteInfo } from 'src/app/models/routes.model';
 
-declare interface RouteInfo {
-    path: string;
-    title: string;
-    icon: string;
-    class: string;
-}
+// declare interface RouteInfo {
+//     path: string;
+//     title: string;
+//     icon: string;
+//     class: string;
+// }
 export const ROUTES: RouteInfo[] = [
     { path: '/admin/dashboard', title: 'Dashboard',  icon: 'ni-tv-2 text-primary', class: '' },
     { path: '/admin/icons', title: 'Icons',  icon:'ni-planet text-blue', class: '' },
@@ -26,13 +27,17 @@ export class SidebarComponent implements OnInit {
 
   public menuItems: any[];
   public isCollapsed = true;
+  @Input() routes : RouteInfo[];
 
   constructor(private router: Router) { }
 
+  
   ngOnInit() {
-    this.menuItems = ROUTES.filter(menuItem => menuItem);
+    if (this.routes) {
+      this.menuItems = this.routes.filter(menuItem => menuItem);
+    }
     this.router.events.subscribe((event) => {
       this.isCollapsed = true;
-   });
+    });
   }
 }

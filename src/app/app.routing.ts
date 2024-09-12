@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { AuthGuard } from './guards/auth.guard';
+import { StudentLayoutComponent } from './layouts/student-layout/student-layout.component';
 
 const routes: Routes =[
   {
@@ -20,6 +21,17 @@ const routes: Routes =[
       {
         path: '',
         loadChildren: () => import('src/app/layouts/admin-layout/admin-layout.module').then(m => m.AdminLayoutModule)
+      }
+    ]
+  },
+  {
+    path: 'student',
+    component: StudentLayoutComponent,
+    canActivate: [AuthGuard], // Add role guard to check if the user is a student
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./layouts/student-layout/student-layout.module').then(m => m.StudentLayoutModule)
       }
     ]
   }, {

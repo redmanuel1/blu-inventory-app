@@ -13,31 +13,31 @@ export class AuthGuard implements CanActivate {
     const userRole = this.authService.getUserRole();
     const routePath = route.routeConfig?.path;
 
+    console.log('isLoggedIn:', isLoggedIn);
+    console.log('userRole:', userRole);
+    console.log('routePath:', routePath);
+
     if (isLoggedIn) {
-      // User is logged in
+      // Redirect logged-in users away from the login page
       if (routePath === 'auth/login') {
-        // Redirect logged-in users away from the login page
         this.router.navigate([`/${userRole}/dashboard`]);
-        return false; // Prevent further navigation
+        return false;
       }
-      
+
       // Allow access to routes based on user role
-      if (routePath === userRole || routePath === `${userRole}/dashboard` || routePath === '${userRole}/icons') {
+      if (routePath === userRole || routePath === `${userRole}/dashboard` || routePath === `${userRole}/icons`) {
         return true;
       }
 
       // Redirect to the respective dashboard if unauthorized
-      // this.router.navigate([`/${userRole}/dashboard`]);
-      return false; // Prevent access to the current route
+      this.router.navigate([`/${userRole}/dashboard`]);
+      return false;
     } else {
-      // User is not logged in
+      // Redirect to the login page if not logged in and trying to access protected routes
       if (routePath !== 'auth/login') {
-        // Redirect to the login page if not logged in and trying to access protected routes
         this.router.navigate(['/auth/login']);
-        return false; // Prevent access to the current route
+        return false;
       }
-      
-      // Allow access to the login page
       return true;
     }
   }

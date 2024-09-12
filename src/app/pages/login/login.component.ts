@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private navigationService: NavigationService
   ) {}
 
   ngOnInit() {}
@@ -28,17 +30,29 @@ export class LoginComponent implements OnInit {
         const role = this.authService.getUserRole();
         console.log('User role:', role);
         // Redirect based on role
-        if (role === 'custodian') {
-          this.router.navigate(['/dashboard']); // Adjust as needed
-        } else {
-          this.router.navigate(['/dashboard']); // Adjust as needed
-        }
+       this.navigationService.redirectBasedOnRole(role)
       } else {
         this.errorMessage = 'Login failed';
       }
     } catch (error) {
       console.error('Login error:', error);
       this.errorMessage = 'An error occurred during login';
+    }
+  }
+
+  private redirectBasedOnRole(role: string | null) {
+    switch (role) {
+      case 'admin':
+        this.router.navigate(['/admin/dashboard']);
+        break;
+      case 'student':
+        this.router.navigate(['/student/dashboard']);
+        break;
+      case 'custodian':
+        this.router.navigate(['/custodian/dashboard']);
+        break;
+      default:
+        this.router.navigate(['/auth/login']);
     }
   }
 }

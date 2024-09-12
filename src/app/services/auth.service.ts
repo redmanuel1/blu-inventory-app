@@ -1,8 +1,8 @@
-import { User } from './../models/user.model';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
-
+// import { User } from './user.model'; // Import the User interface
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +11,7 @@ export class AuthService {
   private userSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   public user$: Observable<User | null> = this.userSubject.asObservable();
 
-  constructor(private firestore: AngularFirestore) {
-    // Initialize user data from localStorage if available
-    const storedUser = localStorage.getItem('authUser');
-    if (storedUser) {
-      this.userSubject.next(JSON.parse(storedUser));
-    }
-  }
+  constructor(private firestore: AngularFirestore) {}
 
   // Method to login the user
   login(idNo: string, password: string): Promise<boolean> {
@@ -28,11 +22,8 @@ export class AuthService {
           if (!snapshot.empty) {
             const user = snapshot.docs[0].data() as User;
             if (user.password === password) {
-
-              // Store user in localStorage
-              localStorage.setItem('authUser', JSON.stringify(user));
-
               this.userSubject.next(user);
+              this.saveUserToLocalStorage(user);
               resolve(true); // Login successful
             } else {
               resolve(false); // Incorrect password
@@ -51,15 +42,22 @@ export class AuthService {
     const user = this.userSubject.value;
     return user ? user.role || null : null;
   }
-  
-  // Method to check if user is logged in
+
+  private saveUserToLocalStorage(user: User | null) {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }
+
   isLoggedIn(): boolean {
-    return this.userSubject.value !== null;
+    return !!localStorage.getItem('user');
   }
   
   // Method to log out
   logout() {
-    localStorage.removeItem('authUser'); // Clear user data from localStorage
     this.userSubject.next(null); // Clear user data
+    this.saveUserToLocalStorage(null); // Remove user from localStorage
   }
 }

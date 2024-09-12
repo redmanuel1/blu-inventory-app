@@ -1,59 +1,58 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore'; // Firestore service
-import { Router } from '@angular/router'; // For navigation
-
-interface User {
-  idNo: string;
-  password: string;
-  // Add other fields as needed
-}
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
+import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, OnDestroy {
-  idNo: string = ''; // ID number input field
-  password: string = ''; // Password input field
-  errorMessage: string = ''; // Error message field
+export class LoginComponent implements OnInit {
+  idNo: string = '';
+  password: string = '';
+  errorMessage: string = '';
 
   constructor(
-    private firestore: AngularFirestore, // Firestore service injection
-    private router: Router // Router service injection
+    private authService: AuthService,
+    private router: Router,
+    private navigationService: NavigationService
   ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  async login() {
+    try {
+      // Call the login method and wait for it to complete
+      const success = await this.authService.login(this.idNo, this.password);
+      if (success) {
+        // Retrieve the role after successful login
+        const role = this.authService.getUserRole();
+        console.log('User role:', role);
+        // Redirect based on role
+       this.navigationService.redirectBasedOnRole(role)
+      } else {
+        this.errorMessage = 'Login failed';
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      this.errorMessage = 'An error occurred during login';
+    }
   }
 
-  ngOnDestroy() {
-  }
-
-  login() {
-    // Fetch the user by idNo from Firestore
-    this.firestore.collection('Users', ref => ref.where('idNo', '==', this.idNo))
-      .get()
-      .subscribe({
-        next: (snapshot) => {
-          if (!snapshot.empty) {
-            const user = snapshot.docs[0].data() as User; 
-
-            if (user.password === this.password) {
-              this.errorMessage = ''; 
-              this.router.navigate(['/dashboard']); 
-            } else {
-              
-              this.errorMessage = 'Invalid password';
-            }
-          } else {
-            
-            this.errorMessage = 'User not found';
-          }
-        },
-        error: (error) => {
-          console.error("Error during login:", error);
-          this.errorMessage = 'Login failed';
-        }
-      });
+  private redirectBasedOnRole(role: string | null) {
+    switch (role) {
+      case 'admin':
+        this.router.navigate(['/admin/dashboard']);
+        break;
+      case 'student':
+        this.router.navigate(['/student/dashboard']);
+        break;
+      case 'custodian':
+        this.router.navigate(['/custodian/dashboard']);
+        break;
+      default:
+        this.router.navigate(['/auth/login']);
+    }
   }
 }

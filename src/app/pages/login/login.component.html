@@ -15,6 +15,7 @@
     </svg>
   </div>
 </div>
+
 <!-- Page content -->
 <div class="container mt--8 pb-5">
   <div class="row justify-content-center">
@@ -37,7 +38,7 @@
           <div class="text-center text-muted mb-4">
             <small>Or sign in with credentials</small>
           </div>
-          <form role="form">
+          <form role="form" (ngSubmit)="login()">
             <div class="form-group mb-3">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
@@ -48,7 +49,8 @@
                   placeholder="Email" 
                   type="email" 
                   [(ngModel)]="idNo" 
-                  name="email">
+                  name="email"
+                  required>
               </div>
             </div>
             <div class="form-group">
@@ -61,7 +63,8 @@
                   placeholder="Password" 
                   type="password" 
                   [(ngModel)]="password" 
-                  name="password">
+                  name="password"
+                  required>
               </div>
             </div>
             <div class="custom-control custom-control-alternative custom-checkbox">
@@ -71,7 +74,7 @@
               </label>
             </div>
             <div class="text-center">
-              <button type="button" class="btn btn-primary my-4" (click)="login()">Sign in</button>
+              <button type="submit" class="btn btn-primary my-4">Sign in</button>
             </div>
             <div *ngIf="errorMessage" class="text-danger text-center mt-3">
               {{ errorMessage }}
@@ -90,4 +93,3 @@
     </div>
   </div>
 </div>
-

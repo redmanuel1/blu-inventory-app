@@ -11,20 +11,16 @@ export class LoginGuard implements CanActivate {
     
   }
   
-  canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
-      // If the user is logged in, redirect them to their dashboard
-      const role = this.authService.getUserRole();
-      if (role === 'admin') {
-        this.router.navigate(['/admin/dashboard']);
-      } else if (role === 'student') {
-        this.router.navigate(['/student/dashboard']);
-      } else if (role === 'custodian') {
-        this.router.navigate(['/custodian/dashboard']);
-      }
-      return false; // Prevent navigation to the login page
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    const isLoggedIn = this.authService.isLoggedIn(); 
+    const role = this.authService.getUserRole()
+    
+    // Check if user is trying to access the login page and is already logged in
+    if (isLoggedIn && state.url === '/auth/login') {
+      this.router.navigate([`/${role}/dashboard`]);
+      return false;
     }
-    return true; // Allow navigation to the login page if not logged in
+    return true;
   }
   
 }

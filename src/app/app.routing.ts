@@ -7,10 +7,12 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { AuthGuard } from './guards/auth.guard';
 import { StudentLayoutComponent } from './layouts/student-layout/student-layout.component';
+import { LoginGuard } from './guards/login.guard';
 
 const routes: Routes =[
   {
     path: '',
+    canActivate: [LoginGuard],
     redirectTo: 'auth/login',
     pathMatch: 'full',
   }, {
@@ -37,7 +39,7 @@ const routes: Routes =[
   }, {
     path: 'auth',
     component: AuthLayoutComponent,
-    // canActivate: [AuthGuard],
+    canActivate: [LoginGuard],
     children: [
       {
         path: '',
@@ -46,7 +48,7 @@ const routes: Routes =[
     ]
   }, {
     path: '**',
-    redirectTo: 'auth/login'
+    redirectTo: '/dashboard'
   }
 ];
 

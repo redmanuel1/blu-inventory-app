@@ -39,8 +39,13 @@ export class AuthService {
   }
   
   getUserRole(): string | null {
-    const user = this.userSubject.value;
+    const user = this.userSubject.value || this.getUserFromLocalStorage();
     return user ? user.role || null : null;
+  }
+
+  private getUserFromLocalStorage(): User | null {
+    const userJson = localStorage.getItem('user');
+    return userJson ? JSON.parse(userJson) : null;
   }
 
   private saveUserToLocalStorage(user: User | null) {

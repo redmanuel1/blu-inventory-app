@@ -12,7 +12,6 @@ import { LoginGuard } from './guards/login.guard';
 const routes: Routes =[
   {
     path: '',
-    canActivate: [LoginGuard],
     redirectTo: 'auth/login',
     pathMatch: 'full',
   }, {

@@ -52,7 +52,15 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
                 </div>
-                <input class="form-control" placeholder="Full Name" type="text" name="name" [(ngModel)]="user.name" required>
+                <input class="form-control" placeholder="First Name" type="text" name="firstName" [(ngModel)]="user.firstName" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group input-group-alternative mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
+                </div>
+                <input class="form-control" placeholder="Last Name" type="text" name="lastName" [(ngModel)]="user.lastName" required>
               </div>
             </div>
             <div class="form-group">
@@ -87,9 +95,9 @@
                 <input class="form-control" placeholder="Confirm Password" type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
               </div>
             </div>
-            <div *ngIf="passwordMismatch" class="text-danger text-center mb-4">
+            <!-- <div *ngIf="passwordMismatch" class="text-danger text-center mb-4">
               <small>Passwords do not match</small>
-            </div>
+            </div> -->
             <div class="text-center">
               <button type="submit" class="btn btn-primary mt-4">Create account</button>
             </div>

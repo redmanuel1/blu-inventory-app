@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, Input } from '@angular/core';
 // import { ROUTES } from '../sidebar/sidebar.component';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { RouteInfo } from 'src/app/models/routes.model';
 
@@ -16,7 +16,8 @@ export class NavbarComponent implements OnInit {
   public focus;
   public listTitles: any[];
   public location: Location;
-  constructor(location: Location,  private element: ElementRef, private router: Router, private authService: AuthService) {
+  public urlParent: string = '';
+  constructor(location: Location,  private element: ElementRef, private router: Router, private authService: AuthService, private activatedRoute: ActivatedRoute) {
     this.location = location;
   }
 
@@ -26,6 +27,8 @@ export class NavbarComponent implements OnInit {
     // } else {
     //   this.listTitles = ROUTES.filter(listTitle => listTitle);
     // }
+    this.urlParent = this.activatedRoute.parent.toString();
+    console.log(this.urlParent);
     
   }
   getTitle(){

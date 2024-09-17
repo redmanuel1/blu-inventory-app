@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,8 @@ export class RegisterComponent implements OnInit {
   user = {
     idNo: '',
     password: '',
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: ''
   };
@@ -19,7 +21,7 @@ export class RegisterComponent implements OnInit {
   confirmPassword: string = '';
   passwordMismatch: boolean = false;
 
-  constructor(private firestoreService: FirestoreService) {
+  constructor(private firestoreService: FirestoreService, private toastr: ToastrService) {
    }
 
   ngOnInit() {
@@ -30,16 +32,20 @@ export class RegisterComponent implements OnInit {
       this.firestoreService.addUser(this.user)
         .then(() => {
           // Registration successful
+          this.toastr.success("User registered successfully");
           console.log('User registered successfully');
-          this.user = { idNo: '', password: '', name: '', email: '', phone: '' }; // Clear form
+          this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '' }; // Clear form
+          this.confirmPassword = '';
         })
         .catch((error) => {
           // Handle error
           console.error('Error registering user:', error);
           this.errorMessage = 'Registration failed';
+          this.toastr.error(this.errorMessage);
         });
     } else {
       this.errorMessage = 'Please fill in all fields';
+      this.toastr.error(this.errorMessage);
     }
   }
 
@@ -48,9 +54,11 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(form: NgForm){
+    console.log(form);
     if (this.user.password !== this.confirmPassword) {
       this.passwordMismatch = true;
       this.errorMessage = 'Passwords do not match';
+      this.toastr.error(this.errorMessage);
     } else {
       this.passwordMismatch = false;
       if (form.valid) {

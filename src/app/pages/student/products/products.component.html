@@ -1,2 +1,7 @@
-<p>products works!</p>
-<app-item></app-item>
+<p *ngIf="!products.length">No products available.</p>
+<div *ngIf="products.length" class="products-container">
+  <app-item *ngFor="let product of products" [product]="product"></app-item>
+</div>
+<div *ngIf="products.length" class="products-container">
+  <app-display-product *ngFor="let product of products" [product]="product"></app-display-product>
+</div>

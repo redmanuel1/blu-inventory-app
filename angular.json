@@ -44,7 +44,8 @@
           },
           "configurations": {
             "production": {
-              "optimization": {
+              "optimization":
+              {
                 "scripts": true,
                 "styles": {
                   "minify": false,
@@ -65,21 +66,30 @@
                 }
               ]
             },
+            // "development": {
+            //   "vendorChunk": true,
+            //   "extractLicenses": false,
+            //   "sourceMap": true,
+            //   "namedChunks": true,
+            //   "buildOptimizer": false,
+            //   "optimization": 
+            //   {
+            //     "scripts": true,
+            //     "styles": {
+            //       "minify": false,
+            //       "inlineCritical": true
+            //     },
+            //     "fonts": true
+            //   },
+            //   "outputHashing": "all"
+            // }
             "development": {
+              "buildOptimizer": false,
+              "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "buildOptimizer": false,
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": false,
-                  "inlineCritical": true
-                },
-                "fonts": true
-              },
-              "outputHashing": "all"
+              "namedChunks": true
             }
           }
         },

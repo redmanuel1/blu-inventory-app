@@ -18,6 +18,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore'; 
 import { ToastrModule } from 'ngx-toastr';
 import { StudentLayoutComponent } from './layouts/student-layout/student-layout.component';
+import { CustodianLayoutComponent } from './layouts/custodian-layout/custodian-layout.component';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { StudentLayoutComponent } from './layouts/student-layout/student-layout.
     AppComponent,
     AdminLayoutComponent,
     AuthLayoutComponent,
-    StudentLayoutComponent
+    StudentLayoutComponent,
+    CustodianLayoutComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

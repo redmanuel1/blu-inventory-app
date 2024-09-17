@@ -6,6 +6,7 @@ import { FooterComponent } from './footer/footer.component';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ItemComponent } from './cards/item/item.component';
+import { TableComponent } from './table/table.component';
 
 @NgModule({
   imports: [
@@ -17,13 +18,15 @@ import { ItemComponent } from './cards/item/item.component';
     FooterComponent,
     NavbarComponent,
     SidebarComponent,
-    ItemComponent
+    ItemComponent,
+    TableComponent
   ],
   exports: [
     FooterComponent,
     NavbarComponent,
     SidebarComponent,
-    ItemComponent
+    ItemComponent,
+    TableComponent
   ]
 })
 export class ComponentsModule { }

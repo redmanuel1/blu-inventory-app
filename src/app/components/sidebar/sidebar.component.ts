@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RouteInfo } from 'src/app/models/routes.model';
+import { RouteInfo } from 'src/app/models/util/routes.model';
 
 // declare interface RouteInfo {
 //     path: string;

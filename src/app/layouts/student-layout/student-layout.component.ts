@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouteInfo } from 'src/app/models/routes.model';
+import { RouteInfo } from 'src/app/models/util/routes.model';
 import { STUDENT_ROUTES } from '../routes';
 
 @Component({

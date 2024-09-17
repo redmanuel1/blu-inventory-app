@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminLayoutRoutes } from './admin-layout.routing';
-import { RouteInfo } from 'src/app/models/routes.model';
+import { RouteInfo } from 'src/app/models/util/routes.model';
 import { ADMIN_ROUTES } from '../routes';
 
 @Component({

@@ -60,5 +60,6 @@ export class ProductsComponent implements OnInit {
     this.router.navigate(['/student/products'], {
       queryParams: {} // Clear the query parameters
     });
+
   }
 }

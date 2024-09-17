@@ -16,5 +16,6 @@ export class ProductsComponent implements OnInit {
       this.products = data;
       console.log(this.products)
     });
+
   }
 }

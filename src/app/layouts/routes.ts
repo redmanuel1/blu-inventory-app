@@ -1,4 +1,4 @@
-import { RouteInfo } from "../models/routes.model";
+import { RouteInfo } from "../models/util/routes.model";
 
 export const ADMIN_ROUTES: RouteInfo[] = [
     { path: 'dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },

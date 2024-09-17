@@ -3,7 +3,7 @@ import { Component, OnInit, ElementRef, Input } from '@angular/core';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
-import { RouteInfo } from 'src/app/models/routes.model';
+import { RouteInfo } from 'src/app/models/util/routes.model';
 
 @Component({
   selector: 'app-navbar',

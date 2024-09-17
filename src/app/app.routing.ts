@@ -1,3 +1,4 @@
+import { CustodianLayoutModule } from './layouts/custodian-layout/custodian-layout.module';
 import { NgModule } from '@angular/core';
 import { CommonModule, } from '@angular/common';
 import { BrowserModule  } from '@angular/platform-browser';
@@ -8,6 +9,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { AuthGuard } from './guards/auth.guard';
 import { StudentLayoutComponent } from './layouts/student-layout/student-layout.component';
 import { LoginGuard } from './guards/login.guard';
+import { CustodianLayoutComponent } from './layouts/custodian-layout/custodian-layout.component';
 
 const routes: Routes =[
   {
@@ -35,7 +37,19 @@ const routes: Routes =[
         loadChildren: () => import('./layouts/student-layout/student-layout.module').then(m => m.StudentLayoutModule)
       }
     ]
-  }, {
+  }, 
+  {
+    path: 'custodian',
+    component: CustodianLayoutComponent,
+    canActivate: [AuthGuard], // Add role guard to check if the user is a student
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./layouts/custodian-layout/custodian-layout.module').then(m => m.CustodianLayoutModule)
+      }
+    ]
+  },
+  {
     path: 'auth',
     component: AuthLayoutComponent,
     canActivate: [LoginGuard],

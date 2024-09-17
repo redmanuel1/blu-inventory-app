@@ -21,13 +21,9 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    // if (this.routes) {
-    //   this.listTitles = this.routes.filter(listTitle => listTitle);
-    // } else {
-    //   this.listTitles = ROUTES.filter(listTitle => listTitle);
-    // }
+  
+    }
     
-  }
   getTitle(){
     const titlee = this.location.prepareExternalUrl(this.location.path()); //eg. /student/dashboard
     const titleArr = titlee.split("/");

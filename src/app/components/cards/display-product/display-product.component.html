@@ -1,0 +1,12 @@
+
+<div class="card card-style" style="width: 18rem; padding: 10px;" (click)="onSelect()">
+<div class="product">
+    <div class="img-container">
+        <img class="card-img-top" [src]="product.imageUrl || 'assets/img/theme/sketch.jpg'" alt="Product image" >
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{ product.name }}</h5>
+        <p class="card-text">{{product.price}}</p>
+      </div>
+  </div>
+</div>

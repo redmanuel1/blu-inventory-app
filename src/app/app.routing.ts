@@ -8,6 +8,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { AuthGuard } from './guards/auth.guard';
 import { StudentLayoutComponent } from './layouts/student-layout/student-layout.component';
 import { LoginGuard } from './guards/login.guard';
+import { ItemComponent } from './components/cards/item/item.component';
 
 const routes: Routes =[
   {
@@ -43,9 +44,12 @@ const routes: Routes =[
       {
         path: '',
         loadChildren: () => import('src/app/layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule)
-      }
+      },
+      { path: 'products/:code', component: ItemComponent },
     ]
-  }, {
+  },
+
+  {
     path: '**',
     redirectTo: '/dashboard'
   }

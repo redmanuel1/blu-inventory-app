@@ -1,4 +1,4 @@
-export interface CartItem {
+export interface Orders {
     productCode: string;
     name: string;
     size?: string;  
@@ -7,4 +7,6 @@ export interface CartItem {
     total: number; 
     variantName: string;
     idNo?: string;
+    date: Date;
+    status: string;
   }

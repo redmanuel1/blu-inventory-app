@@ -117,9 +117,27 @@
   }
 
   .card-style{
-    height: 500px;
-    max-height: 500px;
-    overflow-y: scroll;
+    display: flex;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
   }
 
+  
+  .card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .card-title{
+    font-size: x-large;
+  }
+
+  .box{
+    box-sizing: border-box;
+    border: 3px solid transparent;
+    background-clip:padding-box;
+  }
   

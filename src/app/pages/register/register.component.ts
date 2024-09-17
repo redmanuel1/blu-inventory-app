@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { User } from 'src/app/models/user.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,22 +11,16 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  user = {
-    idNo: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
-  };
+  user: User;
   errorMessage = '';
   confirmPassword: string = '';
   passwordMismatch: boolean = false;
 
-  constructor(private firestoreService: FirestoreService, private toastr: ToastrService) {
+  constructor(private firestoreService: FirestoreService, private toastr: ToastrService, private router: Router) {
    }
 
   ngOnInit() {
+    this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '', role:'student' };
   }
 
   register() {
@@ -34,8 +30,9 @@ export class RegisterComponent implements OnInit {
           // Registration successful
           this.toastr.success("User registered successfully");
           console.log('User registered successfully');
-          this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '' }; // Clear form
+          this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '', role:'student' }; // Clear form
           this.confirmPassword = '';
+          this.router.navigate(['/auth/login']);
         })
         .catch((error) => {
           // Handle error
@@ -53,8 +50,7 @@ export class RegisterComponent implements OnInit {
     return Object.values(this.user).every(field => field.trim() !== '');
   }
 
-  onSubmit(form: NgForm){
-    console.log(form);
+  onSubmit(form: NgForm){    
     if (this.user.password !== this.confirmPassword) {
       this.passwordMismatch = true;
       this.errorMessage = 'Passwords do not match';

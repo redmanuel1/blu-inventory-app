@@ -20,14 +20,15 @@ export class AuthService {
         .get()
         .subscribe({
           next: (snapshot) => {
-            debugger;
+            console.log("test");
             if (!snapshot.empty) {
               const user = snapshot.docs[0].data() as User;
               if (user.password === password) {
                 this.userSubject.next(user);
                 this.saveUserToLocalStorage(user);
-                debugger;
+                this.saveUserDocIdToLocalStorage(snapshot.docs[0].id);
                 this.user$ = this.userSubject.asObservable();
+                
                 resolve(true); // Login successful
               } else {
                 resolve(false); // Incorrect password
@@ -41,27 +42,6 @@ export class AuthService {
             reject(false); // Login failed
           }
         });
-
-
-        // .subscribe(snapshot => {
-        //   if (!snapshot.empty) {
-        //     const user = snapshot.docs[0].data() as User;
-        //     if (user.password === password) {
-        //       this.userSubject.next(user);
-        //       this.saveUserToLocalStorage(user);
-        //       debugger;
-        //       this.user$ = this.userSubject.asObservable();
-        //       resolve(true); // Login successful
-        //     } else {
-        //       resolve(false); // Incorrect password
-        //     }
-        //   } else {
-        //     resolve(false); // User not found
-        //   }
-        // }, error => {
-        //   console.error("Error during login:", error);
-        //   reject(false); // Login failed
-        // });
     });
   }
   
@@ -80,6 +60,14 @@ export class AuthService {
       localStorage.setItem('user', JSON.stringify(user));
     } else {
       localStorage.removeItem('user');
+    }
+  }
+
+  private saveUserDocIdToLocalStorage(userDocId: string) {
+    if(userDocId) {
+      localStorage.setItem('userDocId', userDocId);
+    } else {
+      localStorage.removeItem('userDocId');
     }
   }
 

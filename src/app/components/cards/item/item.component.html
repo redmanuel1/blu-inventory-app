@@ -1,93 +1,84 @@
-<div class="card card-style" style="width: 18rem; padding: 10px;">
-  <img class="card-img-top" [src]="product.imageUrl || 'assets/img/theme/sketch.jpg'" alt="Product image" style="width: 200px; height: 200px;">
-  
-  <!-- Display Product Name -->
-  <div>
-    <h5 class="card-title">{{ product.name }}</h5>
-  </div>
-
-  <!-- Variant Selection -->
-  <div class="d-flex flex-wrap mb-3">
-    <div
-      *ngFor="let variantItem of variantsWithSet"
-      class="variant-square btn-primary"
-      [ngClass]="{'selected': selectedVariant === variantItem}" 
-      (click)="selectVariant(variantItem)">
-      {{ variantItem.name }}
+<div class="card container" >
+  <div class="row" style="padding: 20px;">
+    <div class="col-md">
+      <img [src]="product.imageUrl || 'assets/img/icons/common/default_img.png'" alt="Product image" style="width: 100%; height: auto; object-fit: cover;">
     </div>
-  </div>
 
-  <!-- Display price and sizes for the selected variant -->
-  <div *ngIf="selectedVariant && selectedVariant.name !== 'Set'">
-    <!-- Display price of the selected variant -->
-    <p class="mt-2">Price: {{ selectedVariant.price | currency }}</p>
-
-    <!-- Loop through the sizes of the selected variant -->
-    <div class="d-flex flex-wrap">
-      <div 
-        *ngFor="let size of selectedVariant.sizes" 
-        class="size-square"
-        [ngClass]="{'out-of-stock': size.quantity === 0, 'selected-size': selectedSize === size, 'selected': selectedSize === size}"
-        (click)="selectSize(size)">
-        {{ size.name }}
+    <div class="col-md container-fluid">
+      <div class="row pt-2" >
+        <h5 class="card-title">{{ product.name }}</h5>
       </div>
-    </div>
 
-    <!-- Display available quantity for the selected size -->
-    <div *ngIf="selectedSize && selectedVariant.name !== 'Set'">
-      <p *ngIf="selectedSize.quantity === 0" class="text-danger">Out of stock</p>
-      <p *ngIf="selectedSize.quantity > 0" class="text-dark">Available: {{ selectedSize.quantity }}</p>
-    </div>
-
-    <!-- Quantity controls for non-set variants -->
-    <div class="quantity-container" *ngIf="selectedSize && selectedSize.quantity > 0 && selectedVariant.name !== 'Set'">
-      <button class="quantity-button btn btn-secondary" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
-      <input class="quantity-input" type="number" [value]="quantity" [max]="maxQuantity" readonly />
-      <button class="quantity-button btn btn-secondary" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">+</button>
-    </div>
-  </div>
-
-  <!-- Display price and quantity controls for products without size -->
-<div *ngIf="selectedVariant && !selectedVariant.sizes">
-  <!-- <p class="mt-2">Price: {{ selectedVariant.price | currency }}</p> -->
-  <!-- Quantity controls for products without size -->
-  <div class="quantity-container" *ngIf="selectedVariant">
-    <button class="quantity-button btn btn-secondary" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
-    <input class="quantity-input" type="number" [value]="quantity" [max]="maxQuantity" readonly />
-    <button class="quantity-button btn btn-secondary" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">+</button>
-  </div>
-</div>
-
-  <!-- Display price and sizes for the "Set" variant -->
-  <div *ngIf="selectedVariant && selectedVariant.name === 'Set'">
-    <p class="mt-2">Price: {{ totalSetPrice | currency }}</p>
-    <div class="d-flex flex-wrap">
-      <div
-        *ngFor="let size of availableSetSizes" 
-        class="size-square"
-        [ngClass]="{'out-of-stock': !size.available, 'selected-size': selectedSize === size, 'selected': selectedSize === size}"
-        (click)="selectSize(size)">
-        {{ size.name }}
+      <div class="row d-flex flex-wrap mb-3">
+        <div
+          *ngFor="let variant of variants"
+          class="btn btn-outline-info mb-2"
+          [ngClass]="{'active': selectedVariant === variant}" 
+          (click)="selectVariant(variant)">
+          {{ variant.name }}
+        </div>
       </div>
-    </div>
 
-    <!-- Display available quantity for the selected size within the set -->
-    <div *ngIf="selectedSize && selectedVariant.name === 'Set'">
-      <p *ngIf="selectedSize.quantity === 0" class="text-danger">Out of stock</p>
-      <p *ngIf="selectedSize.quantity > 0" class="text-dark">Available: {{ selectedSize.quantity }}</p>
-    </div>
+      <div class="row d-flex flex-wrap mb-3">
+        <h3 *ngIf="selectedVariant"><span>&#8369;</span> {{selectedVariant.price}}</h3>
+      </div>
 
-    <!-- Quantity controls for set variant -->
-    <div class="quantity-container" *ngIf="selectedSize && selectedSize.quantity > 0 && selectedVariant.name === 'Set'">
-      <button class="quantity-button btn btn-secondary" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
-      <input class="quantity-input" type="number" [value]="quantity" [max]="maxQuantity" readonly />
-      <button class="quantity-button  btn btn-secondary" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">+</button>
-    </div>
-  </div>
+      <!-- <div class="row d-flex flex-wrap">
+        <div *ngFor="let size of selectedVariant.sizes">
+          {{size.size}}
+        </div>
+      </div> -->
 
-  <!-- Purchase and Add to Cart Buttons -->
-  <div class="buy-buttons mt-3">
-    <button class="btn btn-primary" id="addToCart" (click)="addToCart()" >Add to Cart</button>
-    <button class="btn btn-primary" id="purchase" >Purchase</button>
+      <div class="d-flex justify-content-start mb-3 ml--3">
+        <ng-container *ngIf="selectedVariant">
+        <span 
+          *ngFor="let size of selectedVariant.sizes" 
+          class="badge badge-pill badge-info mr-2"
+          [ngClass]="{'out-of-stock': size.quantity === 0, 'active': selectedSetSize === size}"
+          (click)="selectSetSize(size)">
+          {{ size.size }}
+        </span>
+      </ng-container>
+      </div>
+
+      
+      <div class="row mb-2" *ngIf="selectedVariant && selectedSetSize">
+        <h3 *ngIf="selectedSetSize.quantity === 0" class="text-danger">Out of stock</h3>
+        <h3 *ngIf="selectedSetSize.quantity > 0" class="text-dark">Available: {{ selectedSetSize.quantity }}</h3>
+      </div>
+
+       <!-- Quantity controls for set variant -->
+       <div class=" row" *ngIf=" selectedVariant &&  selectedSetSize ">
+        <button class="btn btn-info" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+        <input class="form-control form-control-alternative quantity-input" type="number" [value]="quantity" [max]="maxQuantity" readonly />
+        <button class="btn btn-info" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">+</button>
+      </div>
+
+      
+
+      <div class="row" *ngIf="selectedVariant && !selectedSetSize">
+        <h3 *ngIf="selectedVariant.quantity === 0" class="text-danger">Out of stock</h3>
+        <h3 *ngIf="selectedVariant.quantity > 0" class="text-dark">Available: {{ selectedVariant.quantity }}</h3>
+      </div>
+
+       <!-- Quantity controls for set variant -->
+       <div class=" row" *ngIf="selectedVariant && !selectedSetSize ">
+        <button class="btn btn-info" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+        <input class="form-control form-control-alternative quantity-input" type="number" [value]="quantity" [max]="maxQuantity" readonly />
+        <button class="btn btn-info" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">+</button>
+      </div>
+      
+      <div class="row mt-5">
+        <button class="btn btn-info">Add to Cart</button>
+        <button class="btn btn-info">Purchase</button>
+      </div>
+
+
+
+     
+      
+
+      <!-- You can add additional logic for displaying details based on selectedVariant here -->
+    </div>
   </div>
 </div>

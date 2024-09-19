@@ -29,8 +29,8 @@ export class NavbarComponent implements OnInit {
     // }
     this.urlParent = this.activatedRoute.parent.toString();
     console.log(this.urlParent);
-    
   }
+  
   getTitle(){
     const titlee = this.location.prepareExternalUrl(this.location.path()); //eg. /student/dashboard
     const titleArr = titlee.split("/");

@@ -50,6 +50,11 @@ export class AuthService {
     return user ? user.role || null : null;
   }
 
+  getUserIdNo(): string | null {
+    const user = this.userSubject.value || this.getUserFromLocalStorage();
+    return user ? user.idNo || null : null;
+  }
+
   private getUserFromLocalStorage(): User | null {
     const userJson = localStorage.getItem('user');
     return userJson ? JSON.parse(userJson) : null;

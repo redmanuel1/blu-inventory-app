@@ -3,7 +3,8 @@ export interface Product {
   code: string,
   name: string,
   Variants: Variant[],
-  isSet: boolean
+  isSet: boolean,
+  price: number
 }
 
 export interface Variant {

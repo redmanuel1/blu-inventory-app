@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Product } from 'src/app/models/product.model';
 import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
@@ -7,15 +9,56 @@ import { ProductsService } from 'src/app/services/products.service';
   styleUrls: ['./products.component.scss']
 })
 export class ProductsComponent implements OnInit {
-  products: any[] = [];
+  products: Product[] = [];
+  selectedProduct: any = null; // Stores the selected product for detailed view
 
-  constructor(private productService: ProductsService) { }
+  constructor(
+    private productService: ProductsService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
+    this.loadProducts();
+
+   
+    this.route.queryParams.subscribe(params => {
+      const code = params['code'];
+      if (code) {
+        this.getProductByCode(code);
+
+      } else {
+        this.selectedProduct = null; 
+      }
+    });
+  }
+
+  loadProducts(): void {
     this.productService.getProducts().subscribe(data => {
       this.products = data;
-      console.log(this.products)
+      console.log(this.products);
     });
+  }
 
+
+  getProductByCode(code: string): void {
+    this.productService.getProductByCode(code).subscribe(product => {
+      this.selectedProduct = product;
+    });
+  }
+
+
+  selectProduct(product: any): void {
+    this.router.navigate(['/student/products'], {
+      queryParams: { code: product.code },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  // Method to go back to the product list
+  backToProducts(): void {
+    this.router.navigate(['/student/products'], {
+      queryParams: {} 
+    });
   }
 }

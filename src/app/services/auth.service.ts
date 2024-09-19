@@ -18,22 +18,29 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       this.firestore.collection('Users', ref => ref.where('idNo', '==', idNo))
         .get()
-        .subscribe(snapshot => {
-          if (!snapshot.empty) {
-            const user = snapshot.docs[0].data() as User;
-            if (user.password === password) {
-              this.userSubject.next(user);
-              this.saveUserToLocalStorage(user);
-              resolve(true); // Login successful
+        .subscribe({
+          next: (snapshot) => {
+            console.log("test");
+            if (!snapshot.empty) {
+              const user = snapshot.docs[0].data() as User;
+              if (user.password === password) {
+                this.userSubject.next(user);
+                this.saveUserToLocalStorage(user);
+                this.saveUserDocIdToLocalStorage(snapshot.docs[0].id);
+                this.user$ = this.userSubject.asObservable();
+                
+                resolve(true); // Login successful
+              } else {
+                resolve(false); // Incorrect password
+              }
             } else {
-              resolve(false); // Incorrect password
+              resolve(false); // User not found
             }
-          } else {
-            resolve(false); // User not found
+          },
+          error: (error) => {
+            console.error("Error during login:", error);
+            reject(false); // Login failed
           }
-        }, error => {
-          console.error("Error during login:", error);
-          reject(false); // Login failed
         });
     });
   }
@@ -58,6 +65,14 @@ export class AuthService {
       localStorage.setItem('user', JSON.stringify(user));
     } else {
       localStorage.removeItem('user');
+    }
+  }
+
+  private saveUserDocIdToLocalStorage(userDocId: string) {
+    if(userDocId) {
+      localStorage.setItem('userDocId', userDocId);
+    } else {
+      localStorage.removeItem('userDocId');
     }
   }
 

@@ -11,7 +11,8 @@ import { TableService } from 'src/app/services/util/table.service';
 })
 export class ProductsComponent {
 
-  dataColumns: TableColumn[];
+  sortOrder: string[] = ["imgURL", "code", "name", "isSet", "price"]
+  dataColumns: TableColumn[] = []
   products: Product[];
 
   constructor(private productService: ProductsService, private tableService: TableService) {
@@ -20,7 +21,7 @@ export class ProductsComponent {
   ngOnInit() {
     this.productService.getProducts().subscribe(data => {
       this.products = data;
-      this.dataColumns = this.tableService.generateDataColumns(this.products);
+      this.dataColumns = this.tableService.sortDataSet(this.sortOrder, this.tableService.generateDataColumns(this.products));
 
       console.log(data);
       console.log(this.dataColumns);

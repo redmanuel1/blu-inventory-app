@@ -7,6 +7,8 @@ import { TableColumn, ColumnType } from 'src/app/models/util/table.model';
   styleUrl: './table.component.scss'
 })
 export class TableComponent {
+  @Input() theme: string = "primary" // css purpose only
+  
   @Input() title: string = 'Table Title'
   @Input() dataColumns: TableColumn[]
   @Input() data: any[]

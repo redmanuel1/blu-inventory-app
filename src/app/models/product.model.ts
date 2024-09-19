@@ -2,7 +2,6 @@ export interface Product {
   imageUrl?: string, // not required
   code: string,
   name: string,
-  Variants: Variant[],
   isSet: boolean,
   price: number
 }

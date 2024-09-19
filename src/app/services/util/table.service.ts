@@ -67,4 +67,11 @@ export class TableService {
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+
+  sortDataSet(sortOrder: any[] ,dataSet) {
+    return dataSet.sort((a, b) => {
+      return sortOrder.indexOf(a.field) - sortOrder.indexOf(b.field);
+    }
+  );
+  }
 }

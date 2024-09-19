@@ -1,7 +1,10 @@
+import { Inventory, Variant, Size } from './../../../models/inventory.model';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Product } from 'src/app/models/product.model';
 import { CartItem } from 'src/app/models/shoppingcart.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { InventoryService } from 'src/app/services/inventory.service';
 import { ShoppingCartService } from 'src/app/services/shoppingcart.service';
 
 @Component({
@@ -10,113 +13,107 @@ import { ShoppingCartService } from 'src/app/services/shoppingcart.service';
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent implements OnInit {
-  @Input() product: any; 
-  selectedVariant: any = null; 
-  selectedSize: any = null;
-  selectedSetSize: any = null; 
-  variantsWithSet: any[] = []; 
-  availableSetSizes: any[] = [];
-  totalSetPrice: number = 0;
-  quantity: number = 1; 
-  maxQuantity: number = 0; 
-  productCode: string | null = null;
+  @Input() product: Product; 
+  inventory: Inventory;
+  variants: Variant[] = [];
+  sizesForSet: Size[] = [];
+  selectedVariant: Variant | null = null;
+  selectedSetSize: Size | null = null;
+  maxQuantity = 0;
+  quantity = 1;
 
   constructor(
-    private shoppingcartService: ShoppingCartService, 
-    private route: ActivatedRoute,
-    private authService: AuthService){
-  }
+    private inventoryService: InventoryService
+  ) {}
 
   ngOnInit(): void {
-    if (this.product && this.product.Variants) {
-      this.initializeVariants();
-      if (this.variantsWithSet.length > 0) {
-        this.selectVariant(this.variantsWithSet[0]);
-  
-        // If the first variant has sizes, auto-select the first size
-        if (this.selectedVariant && this.selectedVariant.sizes && this.selectedVariant.sizes.length > 0) {
-          this.selectSize(this.selectedVariant.sizes[0]);
+    this.inventoryService.getInventoryByProductCode(this.product.code).subscribe(data => {
+      if (data) {
+        this.inventory = data;
+        console.log(this.inventory);
+        this.getInventoryItems();
+        if (this.variants.length > 0) {
+          this.selectVariant(this.variants[0])
+          if (this.selectedVariant.sizes && this.selectedVariant.sizes.length > 0) {
+            this.selectSetSize(this.selectedVariant.sizes[0]);
+          }
         }
+      } else {
+        console.warn('No inventory found.');
+      }
+    });
+  }
+
+  getInventoryItems() {
+    if (this.inventory.variants) {
+      if (this.inventory.isSet) {
+        this.createSizesForSet(); 
+        this.variants = [
+          ...this.inventory.variants,
+          { 
+            code: 'SET', 
+            name: 'Set',
+            price: this.product.price,
+            sizes: this.sizesForSet 
+          } as Variant
+        ];
+      } else {
+        this.variants = [...this.inventory.variants];
       }
     }
   }
 
-  initializeVariants(): void {
-    this.variantsWithSet = [...this.product.Variants];
-
-    if (this.product.isSet) {
-      this.variantsWithSet.unshift({ name: 'Set' });
+  createSizesForSet() {
+    if (this.inventory.isSet && this.inventory.variants) {
+      const sizeMap: { [sizeName: string]: number } = {};
+  
+      this.inventory.variants.forEach(variant => {
+        variant.sizes?.forEach(size => {
+          const sizeName = size.size; 
+          const quantity = size.quantity === undefined || size.quantity === null ? 0 : size.quantity;
+  
+  
+          if (sizeMap[sizeName] === undefined) {
+            sizeMap[sizeName] = quantity;
+          } else {
+            sizeMap[sizeName] = Math.min(sizeMap[sizeName], quantity);
+          }
+        });
+      });
+  
+  
+      this.sizesForSet = Object.keys(sizeMap).map(sizeName => ({
+        size: sizeName, 
+        quantity: sizeMap[sizeName]
+      })) as Size[];
     }
   }
 
-  selectVariant(variant: any): void {
-    this.selectedVariant = variant;
-
-    if (variant.name === 'Set') {
-      this.calculateSetSizes();
-      this.calculateSetPrice();
-      this.selectedSize = null; 
-      this.selectedSetSize = null;
-      this.maxQuantity = 0;
-    } else if(variant.sizes && variant.sizes.length > 0) {
-      this.availableSetSizes = []; 
-      this.selectedSize = null; 
-      this.maxQuantity = 0; 
-      this.quantity = 1; 
-    } else{
-      this.maxQuantity = variant.quantity; 
-      this.quantity = 1;
-      this.selectedSize = null; 
-    }
-  }
-
-  
-  selectSize(size: any): void {
-    this.selectedSize = size;
-    this.maxQuantity = size.quantity; 
-    this.quantity = 1; 
-  }
-
-  
   selectSetSize(size: any): void {
     this.selectedSetSize = size;
     this.maxQuantity = size.quantity;
-    this.quantity = 1; 
+    if(this.maxQuantity==0){
+      this.quantity = 0
+    }else{
+      this.quantity = 1; 
+    }
+
+    
   }
-
   
-  calculateSetSizes(): void {
-    const sizeAvailability: { [key: string]: { name: string, available: boolean, quantity: number } } = {};
   
-
-    this.product.Variants.forEach(variant => {
-      variant.sizes.forEach(size => {
-        if (!sizeAvailability[size.name]) {
-      
-          sizeAvailability[size.name] = { name: size.name, available: size.quantity > 0, quantity: size.quantity };
-        }
-  
-
-        if (size.quantity === 0) {
-          sizeAvailability[size.name].available = false;
-        }
-  
-
-        sizeAvailability[size.name].quantity = Math.min(sizeAvailability[size.name].quantity, size.quantity);
-      });
-    });
-  
-
-    this.availableSetSizes = Object.values(sizeAvailability);
+  selectVariant(variant: Variant) {
+    this.selectedVariant = variant;
+    console.log("selectedVariant", this.selectedVariant)
+    if(!this.selectedSetSize){
+      this.maxQuantity = variant.quantity;
+      if(this.maxQuantity==0){
+        this.quantity = 0
+      }else{
+        this.quantity = 1; 
+      }
+    }
   }
-
-
-  calculateSetPrice(): void {
-    this.totalSetPrice = this.product.Variants.reduce((total: number, variant: any) => {
-      return total + (variant.price || 0);
-    }, 0);
-  }
-
 
   increaseQuantity(): void {
     if (this.quantity < this.maxQuantity) {
@@ -130,31 +127,4 @@ export class ItemComponent implements OnInit {
       this.quantity--;
     }
   }
-
-  addToCart(): void {
-    const selectedItemPrice = this.selectedVariant
-  ? (this.selectedVariant.name === 'Set' ? this.totalSetPrice : this.selectedVariant.price) 
-  : this.product.price;
-
-    const cartItem: CartItem = {
-      productCode: this.product.code,
-      name: this.product.name,
-      size: this.selectedSize ? this.selectedSize.name : "", 
-      quantity: this.quantity,
-      price: selectedItemPrice,
-      total: selectedItemPrice * this.quantity,
-      variantName: this.selectedVariant.name,
-      idNo: this.authService.getUserIdNo()
-    };
-
-
-    this.shoppingcartService.addToCart(cartItem)
-      .then(() => {
-        console.log('Product added to cart');
-      })
-      .catch((error) => {
-        console.error('Error adding product to cart:', error);
-      });
-  }
-
 }

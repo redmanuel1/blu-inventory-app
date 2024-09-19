@@ -11,8 +11,8 @@ export class ProductsService {
   constructor(private firestore: AngularFirestore) { }
 
   // Method to get all products
-  getProducts(): Observable<any[]> {
-    return this.firestore.collection('Products').valueChanges();
+  getProducts():  Observable<Product[]> {
+    return this.firestore.collection<Product>('Products').valueChanges();
   }
 
   // Method to get a specific product by ID
@@ -41,4 +41,5 @@ export class ProductsService {
   deleteProduct(productId: string): Promise<void> {
     return this.firestore.collection('Products').doc(productId).delete();
   }
+  
 }

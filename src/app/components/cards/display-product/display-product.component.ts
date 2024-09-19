@@ -12,7 +12,6 @@ export class DisplayProductComponent implements OnInit{
   @Input() product: any;
   @Output() select = new EventEmitter<any>();
 
-  // Emit the selected product when clicked
   onSelect() {
     this.select.emit(this.product);
   }

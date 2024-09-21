@@ -1,5 +1,6 @@
+import { ProductsService } from 'src/app/services/products.service';
 import { Inventory, Variant, Size } from './../../../models/inventory.model';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from 'src/app/models/product.model';
 import { CartItem } from 'src/app/models/shoppingcart.model';
@@ -13,7 +14,7 @@ import { ShoppingCartService } from 'src/app/services/shoppingcart.service';
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent implements OnInit {
-  @Input() product: Product; 
+  product: Product;
   inventory: Inventory;
   variants: Variant[] = [];
   sizesForSet: Size[] = [];
@@ -23,15 +24,37 @@ export class ItemComponent implements OnInit {
   quantity = 1;
 
   constructor(
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private route: ActivatedRoute,
+    private productService: ProductsService
   ) {}
 
   ngOnInit(): void {
-    this.inventoryService.getInventoryByProductCode(this.product.code).subscribe(data => {
+    this.getProductCodeFromRoute();
+  }
+
+  getProductCodeFromRoute(): void {
+    this.route.params.subscribe(params => {
+      const code = params['code'];
+      if (code) {
+        this.getProductByCode(code)
+        this.getInventoryItemByCode(code); // Fetch the product by code
+      }
+    });
+  }
+
+  getProductByCode(code: string): void {
+    this.productService.getProductByCode(code).subscribe(data => {
+      this.product = data;
+    });
+  }
+
+  getInventoryItemByCode(code: string){
+    this.inventoryService.getInventoryByProductCode(code).subscribe(data => {
       if (data) {
         this.inventory = data;
-        console.log(this.inventory);
         this.getInventoryItems();
+        console.log(this.inventory)
         if (this.variants.length > 0) {
           this.selectVariant(this.variants[0])
           if (this.selectedVariant.sizes && this.selectedVariant.sizes.length > 0) {
@@ -46,22 +69,32 @@ export class ItemComponent implements OnInit {
 
   getInventoryItems() {
     if (this.inventory.variants) {
-      if (this.inventory.isSet) {
-        this.createSizesForSet(); 
-        this.variants = [
-          ...this.inventory.variants,
-          { 
-            code: 'SET', 
-            name: 'Set',
-            price: this.product.price,
-            sizes: this.sizesForSet 
-          } as Variant
-        ];
-      } else {
-        this.variants = [...this.inventory.variants];
+      this.variants = [...this.inventory.variants];
+  
+      // Check if any variant has sizes
+      const hasSizes = this.variants.some(variant => variant.sizes && variant.sizes.length > 0);
+  
+      if (this.inventory.isSet && hasSizes) {
+        this.createSizesForSet();
+        this.variants.push({
+          code: 'SET',
+          name: 'Set',
+          price: this.product.price,
+          sizes: this.sizesForSet 
+        } as Variant);
+      } else if (this.inventory.isSet && !hasSizes) {
+        const minQuantity = Math.min(...this.variants.map(variant => variant.quantity || Infinity));
+        
+        this.variants.push({
+          code: 'SET',
+          name: 'Set',
+          price: this.product.price,
+          quantity: minQuantity === Infinity ? 0 : minQuantity 
+        } as Variant);
       }
     }
   }
+
 
   createSizesForSet() {
     if (this.inventory.isSet && this.inventory.variants) {
@@ -72,7 +105,6 @@ export class ItemComponent implements OnInit {
           const sizeName = size.size; 
           const quantity = size.quantity === undefined || size.quantity === null ? 0 : size.quantity;
   
-  
           if (sizeMap[sizeName] === undefined) {
             sizeMap[sizeName] = quantity;
           } else {
@@ -80,13 +112,13 @@ export class ItemComponent implements OnInit {
           }
         });
       });
-  
-  
+      
       this.sizesForSet = Object.keys(sizeMap).map(sizeName => ({
         size: sizeName, 
         quantity: sizeMap[sizeName]
       })) as Size[];
     }
+
   }
 
   selectSetSize(size: any): void {
@@ -97,8 +129,6 @@ export class ItemComponent implements OnInit {
     }else{
       this.quantity = 1; 
     }
-
-    
   }
   
   
@@ -112,6 +142,8 @@ export class ItemComponent implements OnInit {
       }else{
         this.quantity = 1; 
       }
+    }else{
+      this.selectSetSize(this.selectedVariant.sizes[0])
     }
   }
 
@@ -121,7 +153,6 @@ export class ItemComponent implements OnInit {
     }
   }
 
- 
   decreaseQuantity(): void {
     if (this.quantity > 1) {
       this.quantity--;

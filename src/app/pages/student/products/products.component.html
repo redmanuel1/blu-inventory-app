@@ -1,7 +1,7 @@
 <p *ngIf="!products.length">No products available.</p>
 
 <!-- Display the product list if no product is selected -->
-<div *ngIf="!selectedProduct && products.length" class="products-container">
+<div *ngIf="!selectedProduct && products.length" class="products-container mt--6 m-2">
   <app-display-product 
     *ngFor="let product of products" 
     [product]="product" 
@@ -9,8 +9,3 @@
   </app-display-product>
 </div>
 
-<!-- Show only the detailed product view when a product is selected -->
-<div *ngIf="selectedProduct" class="product-detail-container">
-  <!-- <button (click)="backToProducts()">Back to Products</button> -->
-  <app-item [product]="selectedProduct"></app-item>
-</div>

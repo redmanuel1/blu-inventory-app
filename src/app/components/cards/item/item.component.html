@@ -1,7 +1,7 @@
-<div class="card container" >
+<div *ngIf="product" class="card container mt--6" >
   <div class="row" style="padding: 20px;">
     <div class="col-md">
-      <img [src]="product.imageUrl || 'assets/img/icons/common/default_img.png'" alt="Product image" style="width: 100%; height: auto; object-fit: cover;">
+      <img [src]="product.imageUrl || 'assets/img/logo/b_logo.png'" class="bg-lighter" alt="Product image" style="width: 100%; height: auto; object-fit: cover;">
     </div>
 
     <div class="col-md container-fluid">

@@ -20,15 +20,6 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
-
-    // this.route.params.subscribe(params => {
-    //   const code = params['code'];
-    //   if (code) {
-    //     this.getProductByCode(code);
-    //   } else {
-    //     this.selectedProduct = null;
-    //   }
-    // });
   }
 
   loadProducts(): void {

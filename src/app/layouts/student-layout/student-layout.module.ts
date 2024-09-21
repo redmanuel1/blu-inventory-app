@@ -9,11 +9,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ClipboardModule } from 'ngx-clipboard';
 import { ProductsComponent } from 'src/app/pages/student/products/products.component';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { ShoppingcartComponent } from 'src/app/pages/student/shoppingcart/shoppingcart.component';
 
 
 @NgModule({
   declarations: [
-    ProductsComponent
+    ProductsComponent,
+    ShoppingcartComponent
   ],
   imports: [
     CommonModule,

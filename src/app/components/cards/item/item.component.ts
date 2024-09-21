@@ -26,7 +26,9 @@ export class ItemComponent implements OnInit {
   constructor(
     private inventoryService: InventoryService,
     private route: ActivatedRoute,
-    private productService: ProductsService
+    private productService: ProductsService,
+    private shoppingCartService: ShoppingCartService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -78,7 +80,7 @@ export class ItemComponent implements OnInit {
         this.createSizesForSet();
         this.variants.push({
           code: 'SET',
-          name: 'Set',
+          name: 'Set' ,
           price: this.product.price,
           sizes: this.sizesForSet 
         } as Variant);
@@ -112,7 +114,7 @@ export class ItemComponent implements OnInit {
           }
         });
       });
-      
+
       this.sizesForSet = Object.keys(sizeMap).map(sizeName => ({
         size: sizeName, 
         quantity: sizeMap[sizeName]
@@ -130,7 +132,6 @@ export class ItemComponent implements OnInit {
       this.quantity = 1; 
     }
   }
-  
   
   selectVariant(variant: Variant) {
     this.selectedVariant = variant;
@@ -158,4 +159,29 @@ export class ItemComponent implements OnInit {
       this.quantity--;
     }
   }
+
+  addToCart(): void {
+    if (this.selectedVariant && this.maxQuantity>0) {
+      const cartItem: CartItem = {
+        idNo: this.authService.getUserIdNo(), // Replace with actual user ID
+        orderDate: new Date().toISOString(), // Current date
+        productCode: this.product.code,
+        variantCode: this.selectedVariant.code,
+        price: this.selectedVariant.price,
+        quantity:  this.quantity,
+        totalPrice: this.selectedVariant.price * this.quantity,
+        imgURL: this.product.imageUrl || '',
+        size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
+        name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectVariant.name
+      };
+
+      this.shoppingCartService.addToCart(cartItem);
+      console.log('Item added to cart:', cartItem);
+    } else {
+      console.warn('Please select a variant and size before adding to cart.');
+    }
+  }
+
+  
 }
+

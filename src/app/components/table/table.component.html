@@ -10,7 +10,11 @@
                 <h3 class="mt-1">{{ title }}</h3>
               </div>      
               <div class="col-6 text-right">
-                <button type="button" class="btn btn-{{theme}} btn-sm"> + Add {{ title }}</button>
+                <!-- Show Save All button only when there are changes -->
+                @if(hasChanges) {
+                  <button type="button" class="btn btn-success btn-sm" (click)="saveAll()">Save All</button>
+                 }
+                <button type="button" class="btn btn-{{theme}} btn-sm" (click)="addRow()"> + Add {{ title }}</button>
               </div>        
               <!-- <div class="col-4 text-right">
                 <div class="input-group input-group-alternative">
@@ -28,22 +32,109 @@
                 <!-- header -->
                 <tr>
                   @for (col of dataColumns; track $index) {
-                    <th scope="col"> {{ col.Header || col.field }}</th>
+                    @if (col.type == ColumnType.image) {
+                      <th scope="col">&nbsp;</th>
+                    } @else {
+                      <th scope="col"> {{ col.Header || col.field }}</th>
+                    }
                   }
+                  <!-- actions -->
                   <th scope="col">&nbsp;</th>
                 </tr>
               </thead>
               <tbody>
+                <!-- Adding new Row -->
+                <!-- Loop through new rows for input fields -->
+                @for (newRow of newRecords; track $index) {
+                  <tr>
+                    @for (col of dataColumns; track $index) {
+                      <td>
+                        @if (col.type == ColumnType.image) {
+                          <!-- <input class="btn btn-{{theme}} btn-sm w-100" type="file" (change)="onImageChange($event)" /> -->
+                          <label class="btn btn-{{theme}} btn-sm w-100">
+                            <i class="ni ni-upload"></i> Upload Image <!-- Replace with the appropriate Nucleo icon class -->
+                            <input type="file" (change)="onImageChange($event)" accept="image/*" style="display: none;" />
+                          </label>
+                        } @else if (col.type == ColumnType.checkbox) {
+                          <app-toggle [(ngModel)]="newRow[col.field]"></app-toggle>
+                        } @else {
+                          <input class="form-control" [type]="col.type" [(ngModel)]="newRow[col.field]" placeholder="{{ col.header || col.field }}" />
+                        }
+                      </td>
+                    }
+                    <td>
+                      <!-- <button type="button" (click)="saveRow(newRow)" class="btn btn-success btn-sm">Save</button> -->
+                      <button type="button" (click)="removeNewRow(newRow)" class="btn btn-danger btn-sm btn-icon"><span class="btn-inner--icon"><i class="ni ni-fat-remove"></i></span></button>
+                    </td>
+                  </tr>
+                }
+
+                <!-- Showing Records -->
                 @for (item of data; track $index) {
                   <tr>
                     @for (col of dataColumns; track $index) {
-                      <!-- @if (col.type == ColumnType.string) { -->
-                        <td>{{ item[col.field] }}</td>
-                      <!-- } -->
+                      <td>
+                        @if (item.isEditing) {  <!-- Check if the row is in edit mode -->
+                          @if (col.type == ColumnType.image) {
+                            <input class="btn btn-{{theme}} btn-sm w-100" type="file" (change)="onImageChange($event)" />
+                          } @else if (col.type == ColumnType.checkbox) {
+                            <app-toggle [(ngModel)]="item[col.field]"></app-toggle>
+                          } @else {
+                            <input class="form-control" [type]="col.type" [(ngModel)]="item[col.field]" placeholder="{{ col.header || col.field }}" />
+                          }
+                        } @else {
+                          <!-- Display the existing value -->
+                          @if (col.type == ColumnType.image) {
+                            <div class="avatar-group">
+                              <a href="javascript:void(0)" class="avatar avatar-lg" data-toggle="tooltip" data-original-title="Ryan Tompson">
+                                <img alt="product-img placeholder" [src]="item.imgUrl || 'assets/img/logo/b_logo.png'" class="rounded-circle">
+                              </a>
+                            </div>
+                          } @else {
+                            {{ item[col.field] }} 
+                          }
+                        }
+                      </td>
                     }
-                    <!-- actions -->
+                    <!-- <td class="text-right">
+                      <button type="button" (click)="editRow(item)" *ngIf="!item.isEditing" class="btn btn-primary btn-sm">Edit</button>
+                      <button type="button" (click)="saveEdit(item)" *ngIf="item.isEditing" class="btn btn-success btn-sm">Save</button>
+                      <button type="button" (click)="removeRow(item)" class="btn btn-danger btn-sm">X</button>
+                    </td> -->
                     <td class="text-right">
-                  <div ngbDropdown  [placement]="($index === data.length - 1) ? 'top-right' : 'bottom-right'" class="dropdown">
+                      <div ngbDropdown [placement]="($index === data.length - 1) ? 'top-right' : 'bottom-right'" class="dropdown">
+                        <a class="btn btn-sm btn-icon-only text-light" ngbDropdownToggle>
+                          <i class="fas fa-ellipsis-v"></i>
+                        </a>
+                        <div ngbDropdownMenu class="dropdown-menu-right dropdown-menu-arrow">
+                          @if (!item.isEditing) {
+                            <a class="dropdown-item" (click)="editRow(item)">Edit</a>
+                          }
+                          <a class="dropdown-item" (click)="removeRow(item)">Delete</a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                }
+
+               <!-- Showing Records -->
+                <!-- @for (item of data; track $index) {
+                  <tr>
+                    @for (col of dataColumns; track $index) {
+                      @if (col.type == ColumnType.image) {
+                        <td>
+                          <div class="avatar-group">
+                            <a href="javascript:void(0)" class="avatar avatar-lg" data-toggle="tooltip" data-original-title="Ryan Tompson">
+                              <img alt="product-img placeholder" [src]="item.imgUrl || 'assets/img/logo/b_logo.png'" class="rounded-circle">
+                            </a>
+                          </div>
+                        </td>
+                      } @else {
+                        <td>{{ item[col.field] }}</td>
+                      }
+                    }
+                    <td class="text-right">
+                      <div ngbDropdown  [placement]="($index === data.length - 1) ? 'top-right' : 'bottom-right'" class="dropdown">
                         <a class="btn btn-sm btn-icon-only text-light" ngbDropdownToggle>
                           <i class="fas fa-ellipsis-v"></i>
                         </a>
@@ -55,55 +146,7 @@
                       </div>
                     </td>
                   </tr>
-                }
-                
-                <tr>
-                  <!-- <th scope="row">
-                    <div class="media align-items-center">
-                      <a href="javascript:void(0)" class="avatar rounded-circle mr-3">
-                        <img alt="Image placeholder" src="../assets/img/theme/sketch.jpg">
-                      </a>
-                      <div class="media-body">
-                        <span class="mb-0 text-sm">Black Dashboard</span>
-                      </div>
-                    </div>
-                  </th>
-                  <td>
-                    <span>&#8369;</span>3,150 USD
-                  </td>
-                  <td>
-                    <span class="badge badge-dot mr-4">
-                      <i class="bg-danger"></i> delayed
-                    </span>
-                  </td>
-                  <td>
-                    <div class="avatar-group">
-                      <a href="javascript:void(0)" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Ryan Tompson">
-                        <img alt="Image placeholder" src="../assets/img/theme/team-1-800x800.jpg" class="rounded-circle">
-                      </a>
-                      <a href="javascript:void(0)" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Romina Hadid">
-                        <img alt="Image placeholder" src="../assets/img/theme/team-2-800x800.jpg" class="rounded-circle">
-                      </a>
-                      <a href="javascript:void(0)" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Alexander Smith">
-                        <img alt="Image placeholder" src="../assets/img/theme/team-3-800x800.jpg" class="rounded-circle">
-                      </a>
-                      <a href="javascript:void(0)" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Jessica Doe">
-                        <img alt="Image placeholder" src="../assets/img/theme/team-4-800x800.jpg" class="rounded-circle">
-                      </a>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <span class="mr-2">72%</span>
-                      <div>
-                        <div class="progress">
-                          <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="width: 72%;"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                   -->
-                </tr>
+                } -->
               </tbody>
             </table>
           </div>

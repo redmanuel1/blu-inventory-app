@@ -1,5 +1,6 @@
 
 export interface CartItem {
+    cartID: number,
     idNo: string,
     orderDate: string,
     productCode: string,
@@ -10,5 +11,6 @@ export interface CartItem {
     size?: string,
     quantity: number,
     name: string,
-    selected?: boolean
+    selected?: boolean,
+    maxQuantity?: number
   }

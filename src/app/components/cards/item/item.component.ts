@@ -55,6 +55,7 @@ export class ItemComponent implements OnInit {
     this.inventoryService.getInventoryByProductCode(code).subscribe(data => {
       if (data) {
         this.inventory = data;
+        console.log(this.inventory)
         this.getInventoryItems();
         console.log(this.inventory)
         if (this.variants.length > 0) {
@@ -163,6 +164,7 @@ export class ItemComponent implements OnInit {
   addToCart(): void {
     if (this.selectedVariant && this.maxQuantity>0) {
       const cartItem: CartItem = {
+        cartID: this.generateUniqueCartID(),
         idNo: this.authService.getUserIdNo(), // Replace with actual user ID
         orderDate: new Date().toISOString(), // Current date
         productCode: this.product.code,
@@ -172,7 +174,7 @@ export class ItemComponent implements OnInit {
         totalPrice: this.selectedVariant.price * this.quantity,
         imgURL: this.product.imageUrl || '',
         size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
-        name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectVariant.name
+        name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name
       };
 
       this.shoppingCartService.addToCart(cartItem);
@@ -182,6 +184,9 @@ export class ItemComponent implements OnInit {
     }
   }
 
+  generateUniqueCartID(): number {
+    return Date.now() + Math.floor(Math.random() * 1000); // Unique ID based on timestamp and random number
+  }
   
 }
 

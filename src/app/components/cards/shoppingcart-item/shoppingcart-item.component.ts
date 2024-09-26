@@ -10,6 +10,7 @@ import { CartItem } from 'src/app/models/shoppingcart.model';
 export class ShoppingcartItemComponent implements OnInit {
   @Input() cartItem: CartItem;
   @Output() selectionChange = new EventEmitter<CartItem>();
+  @Output() remove = new EventEmitter<CartItem>();
 
   ngOnInit(): void {
   }
@@ -22,14 +23,24 @@ export class ShoppingcartItemComponent implements OnInit {
   decreaseQuantity(): void {
     if (this.cartItem.quantity > 1) {
       this.cartItem.quantity--;
+      this.updateTotalPrice();
     }
   }
 
   
   increaseQuantity(): void {
-    if (this.cartItem.quantity < 10) { 
+    if (this.cartItem.quantity < this.cartItem.maxQuantity) { 
       this.cartItem.quantity++;
+      this.updateTotalPrice();
     }
+  }
+
+  updateTotalPrice(): void {
+    this.cartItem.totalPrice = this.cartItem.quantity * this.cartItem.price;
+  }
+
+  removeItem(): void {
+    this.remove.emit(this.cartItem); 
   }
 
 }

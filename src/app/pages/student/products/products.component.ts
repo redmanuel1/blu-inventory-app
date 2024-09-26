@@ -20,17 +20,6 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
-
-   
-    this.route.queryParams.subscribe(params => {
-      const code = params['code'];
-      if (code) {
-        this.getProductByCode(code);
-
-      } else {
-        this.selectedProduct = null; 
-      }
-    });
   }
 
   loadProducts(): void {
@@ -49,10 +38,7 @@ export class ProductsComponent implements OnInit {
 
 
   selectProduct(product: any): void {
-    this.router.navigate(['/student/products'], {
-      queryParams: { code: product.code },
-      queryParamsHandling: 'merge'
-    });
+    this.router.navigate(['/student/products', product.code]);
   }
 
   // Method to go back to the product list

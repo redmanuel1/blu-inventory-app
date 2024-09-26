@@ -1,7 +1,7 @@
-<div class="card container" >
+<div *ngIf="product" class="card container mt--6" >
   <div class="row" style="padding: 20px;">
     <div class="col-md">
-      <img [src]="product.imageUrl || 'assets/img/icons/common/default_img.png'" alt="Product image" style="width: 100%; height: auto; object-fit: cover;">
+      <img [src]="product.imageUrl || 'assets/img/logo/b_logo.png'" class="bg-lighter" alt="Product image" style="width: 100%; height: auto; object-fit: cover;">
     </div>
 
     <div class="col-md container-fluid">
@@ -69,8 +69,8 @@
       </div>
       
       <div class="row mt-5">
-        <button class="btn btn-info">Add to Cart</button>
-        <button class="btn btn-info">Purchase</button>
+        <button class="btn btn-info" (click)="addToCart()">Add to Cart</button>
+        <button class="btn btn-info">Check Out</button>
       </div>
 
 

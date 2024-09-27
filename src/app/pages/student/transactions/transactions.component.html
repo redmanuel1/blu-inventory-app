@@ -1,0 +1,56 @@
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">
+      <a href="javascript:;">Transaction</a>
+    </li>
+  </ol>
+</nav>
+@if(orderArr.length > 0 && transactionArr.length > 0){
+
+<div class="container-fluid mt-4">
+  @for(order of orderArr; track order.idNo) {
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <div class="row ml-3 mb-3 date-row">
+            {{ order.orderDate.seconds * 1000 | date : "MMMM d, y" }}
+          </div>
+          <div class="row ml-3 order-row">
+            Order No
+            <u
+              class="ml-2"
+              [routerLink]="getTransactionIdByOrderNo(order.orderNo)"
+              [state]="setState()"
+            >
+              {{ order.orderNo }}</u
+            >
+            <!-- <u class="ml-2" (click)="selectOrder(order.idNo)">
+              {{ order.orderNo }}</u
+            > -->
+          </div>
+        </div>
+        <div
+          class="col status-col mr-2 d-flex align-items-center justify-content-end"
+        >
+          <div
+            [class.pending-status]="
+              getTransactionStatusByOrderNo(order.orderNo).toLowerCase() ==
+              'pending payment'
+            "
+            [class.confirmed-status]="
+              getTransactionStatusByOrderNo(order.orderNo).toLowerCase() ==
+              'payment confirmed'
+            "
+          >
+            {{ getTransactionStatusByOrderNo(order.orderNo) }}
+          </div>
+
+          <i class="ni ni-bold-right ml-3"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>
+}

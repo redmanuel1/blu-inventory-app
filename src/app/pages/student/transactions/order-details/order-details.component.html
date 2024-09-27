@@ -1,0 +1,83 @@
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" aria-current="page">
+      <a [routerLink]="['../../']">Transaction</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      <a href="javascript:;">Order Details</a>
+    </li>
+  </ol>
+</nav>
+
+<div class="mt-4">
+  @if(transaction !== undefined && order !== undefined && productArr !==
+  undefined) {
+  <div class="order-details font-bold">
+    <div class="card-info">
+      <div class="row">
+        <div class="col">
+          Order No:
+          <u class="ml-2">{{ order.orderNo }}</u>
+        </div>
+        <div class="col d-flex flex-row justify-content-end">
+          Total:
+          <div class="ml-2 total-price">₱ {{ order.totalPrice }}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div
+            class="row ml-1 status"
+            [class.pending-status]="
+              transaction.status.toLowerCase() === 'pending payment'
+            "
+            [class.confirmed-status]="
+              transaction.status.toLowerCase() == 'payment confirmed'
+            "
+          >
+            {{ transaction.status }}
+          </div>
+          @for(product of order.products; track order.idNo) {
+          <div class="row ml-1 mt-3 order-items">
+            {{ getProductDisplay(product.productCode) }} x{{ product.quantity }}
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>
+<div class="container-fluid mt-4">
+  @for(progress of orderProgress; track progress.title) {
+  <div class="card mb-2">
+    <div class="card-body">
+      <div class="row order-progress-header">
+        <div
+          class="col"
+          [class.font-bold]="progress.date !== null"
+          [class.font-light]="progress.date === null"
+        >
+          {{ progress.title }}
+        </div>
+        <div class="col d-flex flex-row justify-content-end align-items-center">
+          @if(progress.date !== null){
+          <div class="font-light">
+            {{ progress.date.seconds * 1000 | date : "MMMM d, y" }}
+          </div>
+          }
+          <span class="ml-2"><i class="ni ni-bold-up"></i></span>
+        </div>
+      </div>
+      <!-- Progress Contents -->
+      <div
+        class="row order-progress-contents d-flex align-items-center flex-row"
+      >
+        <div class="row">
+          <!-- <span><i class="ni ni-check-bold"></i></span> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

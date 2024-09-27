@@ -26,6 +26,10 @@ export class ProductsService {
     );
   }
 
+  getProductsByCode(productCode: string[]): Observable<any> {
+    return this.firestore.collection('Products', ref => ref.where('code', 'in', productCode)).valueChanges();
+  }
+
   // Method to add a product
   addProduct(product: any): Promise<void> {
     const id = this.firestore.createId();

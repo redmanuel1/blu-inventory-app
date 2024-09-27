@@ -11,13 +11,15 @@ import { ProductsComponent } from 'src/app/pages/student/products/products.compo
 import { ComponentsModule } from 'src/app/components/components.module';
 import { TransactionsComponent } from 'src/app/pages/student/transactions/transactions.component';
 import { OrderDetailsComponent } from 'src/app/pages/student/transactions/order-details/order-details.component';
+import { ShoppingcartComponent } from 'src/app/pages/student/shoppingcart/shoppingcart.component';
 
 
 @NgModule({
   declarations: [
     ProductsComponent,
     TransactionsComponent,
-    OrderDetailsComponent
+    OrderDetailsComponent,
+    ShoppingcartComponent
   ],
   imports: [
     CommonModule,

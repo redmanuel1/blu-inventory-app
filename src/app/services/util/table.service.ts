@@ -8,70 +8,29 @@ export class TableService {
 
   constructor() { }
 
-  generateDataColumns(data: any[]): TableColumn[] {
-    if (data.length === 0) return [];
+  // Method to create a TableColumn object for each field
+  createTableColumn(fieldName: string, fieldConfig): TableColumn {
+    const config = fieldConfig[fieldName] || { type: ColumnType.string };  // Default to string type if not found
 
-    const columns = this.extractColumns(data);
-    return columns;
+    return {
+      field: fieldName,
+      header: this.generateHeader(fieldName),    // Generate a header based on field name
+      type: config.type,                         // Column type from fieldConfig
+      hidden: config.hidden ?? false,            // Hidden from fieldConfig, default to false
+      editable: config.editable ?? false,        // Editable from fieldConfig, default to false
+      sortable: config.sortable ?? true,         // Sortable from fieldConfig, default to true
+      filterable: true                           // Filterable, you can make this dynamic if needed
+    };
   }
 
-  private extractColumns(data: any[]): TableColumn[] {
-    const columnsSet = new Set<string>();
-
-    data.forEach(item => {
-      this.collectFields(item, columnsSet);
-    });
-
-    return Array.from(columnsSet)
-    .filter(field => !field.includes('.'))  // Exclude fields with a dot
-    .map(field => ({
-      field,
-      header: this.capitalizeFirstLetter(field),
-      type: this.detectFieldType(data[0][field]),
-      sortable: true,
-      filterable: true
-    }));
-  }
-
-  private collectFields(obj: any, columnsSet: Set<string>, parentKey: string = ''): void {
-    if (typeof obj !== 'object' || obj === null) return;
-
-    Object.keys(obj).forEach(key => {
-      const fullKey = parentKey ? `${parentKey}.${key}` : key;
-      columnsSet.add(fullKey);
-
-      if (Array.isArray(obj[key])) {
-        obj[key].forEach(item => this.collectFields(item, columnsSet, fullKey));
-      } else if (typeof obj[key] === 'object') {
-        this.collectFields(obj[key], columnsSet, fullKey);
-      }
-    });
-  }
-
-  detectFieldType(value: any): ColumnType {
-    if (Array.isArray(value)) {
-      return ColumnType.custom;  // You might use 'custom' for arrays, or define another type
-    } else if (typeof value === 'object' && value !== null) {
-      return ColumnType.custom;  // You might use 'custom' for objects, or define another type
-    } else if (typeof value === 'boolean') {
-      return ColumnType.checkbox;
-    } else if (typeof value === 'number') {
-      return ColumnType.number;
-    } else if (value instanceof Date) {
-      return ColumnType.date;  // Assuming you handle date fields this way
-    } else {
-      return ColumnType.string; // Default to string
-    }
-  }
-  // Helper function to capitalize the first letter of the field name for display purposes
-  capitalizeFirstLetter(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  // Method to generate a header for the field (can be customized)
+  generateHeader(fieldName: string): string {
+    return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);  // Capitalize the first letter of the field
   }
 
   sortDataSet(sortOrder: any[] ,dataSet) {
     return dataSet.sort((a, b) => {
       return sortOrder.indexOf(a.field) - sortOrder.indexOf(b.field);
-    }
-  );
+    });
   }
 }

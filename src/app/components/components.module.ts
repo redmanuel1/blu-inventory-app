@@ -8,12 +8,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ItemComponent } from './cards/item/item.component';
 import { TableComponent } from './table/table.component';
 import { DisplayProductComponent } from './cards/display-product/display-product.component';
+import { ShoppingcartItemComponent } from './cards/shoppingcart-item/shoppingcart-item.component';
+import { FormsModule } from '@angular/forms';
+import { ToggleComponent } from './forms/toggle/toggle.component';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
-    NgbModule
+    NgbModule,
+    FormsModule 
   ],
   declarations: [
     FooterComponent,
@@ -21,7 +25,11 @@ import { DisplayProductComponent } from './cards/display-product/display-product
     SidebarComponent,
     ItemComponent,
     DisplayProductComponent,
-    TableComponent
+    TableComponent,
+    ShoppingcartItemComponent,
+
+    // Forms
+    ToggleComponent
   ],
   exports: [
     FooterComponent,
@@ -29,7 +37,11 @@ import { DisplayProductComponent } from './cards/display-product/display-product
     SidebarComponent,
     ItemComponent,
     DisplayProductComponent,
-    TableComponent
+    TableComponent,
+    ShoppingcartItemComponent,
+
+    // Forms
+    ToggleComponent
   ]
 })
 export class ComponentsModule { }

@@ -7,6 +7,7 @@ import { TableColumn, ColumnType } from 'src/app/models/util/table.model';
   styleUrl: './table.component.scss'
 })
 export class TableComponent {
+  @Input() useBasicTable: boolean = true;
   @Input() theme: string = "primary" // css purpose only
   
   @Input() title: string = 'Table Title'
@@ -15,6 +16,7 @@ export class TableComponent {
 
   @Output() saveRecords = new EventEmitter<any[]>();
   @Output() deleteRecord = new EventEmitter<any>();
+  @Output() imageSelected = new EventEmitter<{ record: any; file: File; imgPreviewURL: string }>();
   
   ColumnType = ColumnType
   showAddRow = false
@@ -59,6 +61,12 @@ export class TableComponent {
     this.hasChanges = true;
   }
 
+  // Method to remove a record
+  removeRow(item: any) {
+    this.deleteRecord.emit(item);
+    this.data = this.data.filter(i => i !== item); // Remove the item from data
+    // this.hasChanges = true; // Set the flag to true when an item is deleted
+  }
 
   // Method to save all new records
   saveAll() {
@@ -78,14 +86,16 @@ export class TableComponent {
     }
   }
 
-  // Method to remove a record
-  removeRow(item: any) {
-    this.deleteRecord.emit(item);
-    this.data = this.data.filter(i => i !== item); // Remove the item from data
-    // this.hasChanges = true; // Set the flag to true when an item is deleted
-  }
 
-  onImageChange(event: any) {
-    // Your image change handling logic
+  onImageChange(event: any, record: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const imgPreviewURL = URL.createObjectURL(file);
+      // Update the record with the new preview URL
+      record.imgPreviewURL = imgPreviewURL;
+      // Emit the selected file along with its preview URL if needed
+      this.imageSelected.emit({ record, file, imgPreviewURL });
+    }
   }
+  
 }

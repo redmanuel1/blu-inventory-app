@@ -1,6 +1,7 @@
 <app-table 
-    title="Products" 
+    title="Products"
     [dataColumns]="dataColumns"
     [data]="products"
->
+    (saveRecords)="saveProducts($event)" 
+    (deleteRecord)="deleteProduct($event)" >
 </app-table>

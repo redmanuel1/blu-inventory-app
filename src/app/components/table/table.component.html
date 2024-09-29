@@ -53,12 +53,23 @@
                           <!-- <input class="btn btn-{{theme}} btn-sm w-100" type="file" (change)="onImageChange($event)" /> -->
                           <label class="btn btn-{{theme}} btn-sm w-100">
                             <i class="ni ni-upload"></i> Upload Image <!-- Replace with the appropriate Nucleo icon class -->
-                            <input type="file" (change)="onImageChange($event)" accept="image/*" style="display: none;" />
+                            <input type="file" (change)="onImageChange($event)" accept="image/*"  name="{{ col.field }}" style="display: none;" />
                           </label>
                         } @else if (col.type == ColumnType.checkbox) {
-                          <app-toggle [(ngModel)]="newRow[col.field]"></app-toggle>
+                          <label class="custom-toggle">
+                            <input type="checkbox" [(ngModel)]="newRow[col.field]" name="{{ col.field }}">
+                            <span class="custom-toggle-slider rounded-circle"></span>
+                          </label>
                         } @else {
-                          <input class="form-control" [type]="col.type" [(ngModel)]="newRow[col.field]" placeholder="{{ col.header || col.field }}" />
+                          <div class="form-group">
+                            <input class="form-control"
+                              [type]="col.type" 
+                              [(ngModel)]="newRow[col.field]" 
+                              name="{{ col.field }}" 
+                              placeholder="{{ col.required ? '*': ''}} {{ col.header || col.field }}"
+                              [ngClass]="{'is-invalid': col.required && !newRow[col.field]}"
+                            />
+                          </div>
                         }
                       </td>
                     }

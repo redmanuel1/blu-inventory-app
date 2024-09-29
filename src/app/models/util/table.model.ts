@@ -18,6 +18,5 @@ export interface TableColumn {
   type?: ColumnType;
   hidden?: boolean;
   editable?: boolean; 
-  sortable?: boolean; // Defaults to true
-  filterable?: boolean; // Defaults to true
+  required?: boolean;
 }

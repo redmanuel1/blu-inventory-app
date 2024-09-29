@@ -1,9 +1,11 @@
 export interface Product {
+  id: string; // Ensure this is included
   imageUrl?: string, // not required
   code: string,
   name: string,
   isSet: boolean,
-  price: number
+  price: number,
+  isEditing?: boolean
 }
 
 export interface Variant {

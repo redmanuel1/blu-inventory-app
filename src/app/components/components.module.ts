@@ -10,7 +10,6 @@ import { TableComponent } from './table/table.component';
 import { DisplayProductComponent } from './cards/display-product/display-product.component';
 import { ShoppingcartItemComponent } from './cards/shoppingcart-item/shoppingcart-item.component';
 import { FormsModule } from '@angular/forms';
-import { ToggleComponent } from './forms/toggle/toggle.component';
 
 @NgModule({
   imports: [
@@ -26,10 +25,7 @@ import { ToggleComponent } from './forms/toggle/toggle.component';
     ItemComponent,
     DisplayProductComponent,
     TableComponent,
-    ShoppingcartItemComponent,
-
-    // Forms
-    ToggleComponent
+    ShoppingcartItemComponent
   ],
   exports: [
     FooterComponent,
@@ -38,10 +34,7 @@ import { ToggleComponent } from './forms/toggle/toggle.component';
     ItemComponent,
     DisplayProductComponent,
     TableComponent,
-    ShoppingcartItemComponent,
-
-    // Forms
-    ToggleComponent
+    ShoppingcartItemComponent
   ]
 })
 export class ComponentsModule { }

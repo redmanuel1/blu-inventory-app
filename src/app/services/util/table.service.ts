@@ -18,8 +18,7 @@ export class TableService {
       type: config.type,                         // Column type from fieldConfig
       hidden: config.hidden ?? false,            // Hidden from fieldConfig, default to false
       editable: config.editable ?? false,        // Editable from fieldConfig, default to false
-      sortable: config.sortable ?? true,         // Sortable from fieldConfig, default to true
-      filterable: true                           // Filterable, you can make this dynamic if needed
+      required: config.required ?? false         // Required, from fieldConfid, default to false
     };
   }
 

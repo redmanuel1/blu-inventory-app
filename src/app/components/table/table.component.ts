@@ -1,5 +1,4 @@
-import { ToggleComponent } from './../forms/toggle/toggle.component';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { TableColumn, ColumnType } from 'src/app/models/util/table.model';
 
 @Component({
@@ -14,6 +13,9 @@ export class TableComponent {
   @Input() dataColumns: TableColumn[]
   @Input() data: any[]
 
+  @Output() saveRecords = new EventEmitter<any[]>();
+  @Output() deleteRecord = new EventEmitter<any>();
+  
   ColumnType = ColumnType
   showAddRow = false
   hasChanges = false
@@ -21,6 +23,16 @@ export class TableComponent {
 
   ngOnInit() {
     console.log(this.data);
+  }
+
+  // Method to validate records
+  validateRecord(record: any): boolean {
+    for (const col of this.dataColumns) {
+      if (col.required && !record[col.field]) {
+        return false; // Return false if any required field is empty
+      }
+    }
+    return true; // All required fields are filled
   }
 
   // Method to add a new empty row
@@ -50,17 +62,27 @@ export class TableComponent {
 
   // Method to save all new records
   saveAll() {
-    // Implement your logic to save all newRecords, for example:
-    // this.data.push(...this.newRecords); // Save new records to your main data
-    // Clear newRecords after saving if needed
-    this.newRecords = []; // Clear the array after saving
-    this.hasChanges = false;
+    // Combine new records and modified existing records
+    const recordsToSave = [...this.newRecords, ...this.data.filter(item => item.isEditing)];
+    
+    // Validate records before saving
+    const allValid = recordsToSave.every(record => this.validateRecord(record));
+
+    if (allValid) {
+      console.log(recordsToSave); // Log the records to be saved
+      this.saveRecords.emit(recordsToSave); // Emit new records to be saved in the parent component
+      this.newRecords = []; // Clear the array after saving
+      this.hasChanges = false; // Reset the changes flag
+    } else {
+      alert('Please fill all required fields.'); // Show a feedback alert if validation fails
+    }
   }
 
   // Method to remove a record
   removeRow(item: any) {
+    this.deleteRecord.emit(item);
     this.data = this.data.filter(i => i !== item); // Remove the item from data
-    this.hasChanges = true; // Set the flag to true when an item is deleted
+    // this.hasChanges = true; // Set the flag to true when an item is deleted
   }
 
   onImageChange(event: any) {

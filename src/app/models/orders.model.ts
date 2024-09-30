@@ -1,12 +1,16 @@
 export interface Orders {
-    productCode: string;
-    name: string;
-    size?: string;  
-    quantity: number;
-    price: number;
-    total: number; 
-    variantName: string;
-    idNo?: string;
-    date: Date;
-    status: string;
+    idNo: string,
+    orderDate: string;
+    orderNo: string;
+    totalPrice: number;
+    products:OrderedProducts[]
+  }
+
+  export interface OrderedProducts{
+    price: number,
+    productCode: string,
+    quantity: number,
+    size: string,
+    variantCode: string,
+    itemSubtotal: number
   }

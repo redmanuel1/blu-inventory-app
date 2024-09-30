@@ -10,12 +10,14 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { ProductsComponent } from 'src/app/pages/student/products/products.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ShoppingcartComponent } from 'src/app/pages/student/shoppingcart/shoppingcart.component';
+import { CheckoutComponent } from 'src/app/pages/student/checkout/checkout.component';
 
 
 @NgModule({
   declarations: [
     ProductsComponent,
-    ShoppingcartComponent
+    ShoppingcartComponent,
+    CheckoutComponent
   ],
   imports: [
     CommonModule,

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output,EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { CartItem } from 'src/app/models/shoppingcart.model';
 import { ShoppingCartService } from 'src/app/services/shoppingcart.service';
 
@@ -11,9 +12,11 @@ export class ShoppingcartComponent implements OnInit {
 
   shoppingCartItems:CartItem[] = []
   selectedItems: CartItem[] = [];
+  @Output() checkout = new EventEmitter<CartItem[]>()
 
   constructor(
-    private shoppingCartService: ShoppingCartService
+    private shoppingCartService: ShoppingCartService,
+    private router: Router
   ){
 
   }
@@ -69,5 +72,15 @@ export class ShoppingcartComponent implements OnInit {
     });
   }
 
+  proceedToCheckout(): void {
+    if (this.selectedItems.length > 0) {
+      sessionStorage.setItem('selectedItems', JSON.stringify(this.selectedItems));
+    
+    // Navigate to checkout
+     this.router.navigate(['/student/checkout']);
+    } else {
+      console.log('No items selected for checkout');
+    }
+  }
 
 }

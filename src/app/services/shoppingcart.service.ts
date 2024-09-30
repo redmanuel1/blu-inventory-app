@@ -8,6 +8,7 @@ import { Inventory } from '../models/inventory.model';
   providedIn: 'root'
 })
 export class ShoppingCartService {
+  private selectedItems: CartItem[] = []; 
 
   constructor(private firestore: AngularFirestore) { }
 
@@ -147,5 +148,20 @@ export class ShoppingCartService {
         })
     );
 }
+
+  // Setter to store the selected items
+  setSelectedItems(items: CartItem[]): void {
+    this.selectedItems = items;
+  }
+
+  getSelectedItems(): CartItem[] {
+    return this.selectedItems;
+  }
+
+  // Optionally, you can clear the selected items after checkout
+  clearSelectedItems(): void {
+    this.selectedItems = [];
+  }
+
 
 }

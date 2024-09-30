@@ -27,4 +27,10 @@ export class TransactionService {
   getTransactionById(transactionId: string): Observable<Transaction> {
     return this.transactionCollection.doc(transactionId).valueChanges();
   }
+
+  saveFileDocumentUrl(transactionId: string, updateFields: Transaction): Promise<any> {
+    return this.transactionCollection.doc(transactionId).update(updateFields)
+    .then(() => console.log('Transaction updated'))
+    .catch((error) => console.error('Error updating transaction:', error));
+  }
 }

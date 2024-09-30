@@ -1,4 +1,4 @@
 export interface OrderProgress {
     title: string;
-    date: Date;
+    date: string;
 }

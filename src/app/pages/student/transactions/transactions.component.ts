@@ -39,24 +39,29 @@ export class TransactionsComponent implements OnInit {
       }
     })
   }
-
-  private getTransactionByOrderNo(orderNo: string): void {
-    if(this.currentTransaction !== undefined) {
-      if(orderNo != this.currentTransaction.orderNo) {
-        this.currentTransaction = this.transactionArr.find(transaction => transaction.orderNo == orderNo)
-      }
-    } else {
-      this.currentTransaction = this.transactionArr[0];
-    }    
+  isOrderHasTransaction(orderNo: string): boolean {
+    this.getTransactionByOrderNo(orderNo);
+    return this.currentTransaction !== undefined ? true : false;
   }
 
-  getTransactionStatusByOrderNo(orderNo: string): string {
-    this.getTransactionByOrderNo(orderNo);
+  private getTransactionByOrderNo(orderNo: string): void {
+    this.currentTransaction = this.transactionArr.find(transaction => transaction.orderNo == orderNo)
+    // if(this.currentTransaction !== undefined) {
+    //   if(orderNo != this.currentTransaction.orderNo) {
+    //     this.currentTransaction = this.transactionArr.find(transaction => transaction.orderNo == orderNo)
+    //   }
+    // } else {
+    //   this.currentTransaction = this.transactionArr[0];
+    // }    
+  }
+
+  getTransactionStatusByOrderNo(): string {
+    // this.getTransactionByOrderNo(orderNo);
     return this.currentTransaction.status
   }
 
-  getTransactionIdByOrderNo(orderNo:string): string {
-    this.getTransactionByOrderNo(orderNo);
+  getTransactionIdByOrderNo(): string {
+    // this.getTransactionByOrderNo(orderNo);
     return `${this.currentTransaction.id}/order-details`;
   }
   setState() {

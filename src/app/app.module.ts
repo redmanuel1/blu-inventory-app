@@ -32,7 +32,7 @@ import { CustodianLayoutComponent } from './layouts/custodian-layout/custodian-l
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule, 
-    AngularFirestoreModule ,
+    AngularFirestoreModule,
     ToastrModule.forRoot() 
   ],
   declarations: [

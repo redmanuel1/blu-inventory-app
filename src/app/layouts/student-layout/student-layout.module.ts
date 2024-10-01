@@ -12,6 +12,7 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { TransactionsComponent } from 'src/app/pages/student/transactions/transactions.component';
 import { OrderDetailsComponent } from 'src/app/pages/student/transactions/order-details/order-details.component';
 import { ShoppingcartComponent } from 'src/app/pages/student/shoppingcart/shoppingcart.component';
+import { CheckoutComponent } from 'src/app/pages/student/checkout/checkout.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { ShoppingcartComponent } from 'src/app/pages/student/shoppingcart/shoppi
     ProductsComponent,
     TransactionsComponent,
     OrderDetailsComponent,
-    ShoppingcartComponent
+    ShoppingcartComponent,
+    CheckoutComponent
   ],
   imports: [
     CommonModule,

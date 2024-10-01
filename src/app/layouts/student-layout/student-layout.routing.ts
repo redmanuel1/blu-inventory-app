@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ItemComponent } from 'src/app/components/cards/item/item.component';
 import { DashboardComponent } from 'src/app/pages/dashboard/dashboard.component';
+import { CheckoutComponent } from 'src/app/pages/student/checkout/checkout.component';
 import { ProductsComponent } from 'src/app/pages/student/products/products.component';
 import { OrderDetailsComponent } from 'src/app/pages/student/transactions/order-details/order-details.component';
 import { TransactionsComponent } from 'src/app/pages/student/transactions/transactions.component';
@@ -17,5 +18,6 @@ export const StudentLayoutRoutes: Routes = [
   { path: 'transactions/:transactionId/order-details', component: OrderDetailsComponent},
   { path: 'products',   component: ProductsComponent },
   { path: 'shoppingcart',   component: ShoppingcartComponent },
-
+  { path: 'checkout',   component: CheckoutComponent },
+  { path: 'products/:code/checkout',   component: CheckoutComponent },
 ];

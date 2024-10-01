@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TableColumn, ColumnType } from 'src/app/models/util/table.model';
 
 @Component({
@@ -7,8 +8,19 @@ import { TableColumn, ColumnType } from 'src/app/models/util/table.model';
   styleUrl: './table.component.scss'
 })
 export class TableComponent {
+
+  constructor(private sanitizer: DomSanitizer) {}
+
+  //add and row action buttons
   @Input() useBasicTable: boolean = true;
   @Input() theme: string = "primary" // css purpose only
+
+  // bottom action button
+  @Input() showBottomActionButton: boolean = false;
+  @Input() bottomActionButtonTitle: string;
+  @Output() bottomActionButtonClick = new EventEmitter<void>();
+  @Input() bottomActionHTML: string = "";
+  sanitizedBottomActionDescription: SafeHtml;
   
   @Input() title: string = 'Table Title'
   @Input() dataColumns: TableColumn[]
@@ -25,6 +37,7 @@ export class TableComponent {
 
   ngOnInit() {
     console.log(this.data);
+    this.sanitizedBottomActionDescription = this.sanitizer.bypassSecurityTrustHtml(this.bottomActionHTML);
   }
 
   // Method to validate records
@@ -96,6 +109,10 @@ export class TableComponent {
       // Emit the selected file along with its preview URL if needed
       this.imageSelected.emit({ record, file, imgPreviewURL });
     }
+  }
+
+  onBottomActionButtonClick(): void {
+    this.bottomActionButtonClick.emit(); // Emit the event
   }
   
 }

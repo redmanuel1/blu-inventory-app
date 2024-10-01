@@ -1,10 +1,10 @@
 export interface Transaction {
-  id: string;
+  id?: string;
   confirmedDate: string;
   orderNo: string;
   status: string;
   type: string,
-  documents: TransactionDocument;
+  documents?: TransactionDocument;
   // Add other properties as needed
 }
 

@@ -1,7 +1,7 @@
 import { ProductsService } from 'src/app/services/products.service';
 import { Inventory, Variant, Size } from './../../../models/inventory.model';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from 'src/app/models/product.model';
 import { CartItem } from 'src/app/models/shoppingcart.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -22,13 +22,15 @@ export class ItemComponent implements OnInit {
   selectedSetSize: Size | null = null;
   maxQuantity = 0;
   quantity = 1;
+  selectedItem: CartItem[] = [];
 
   constructor(
     private inventoryService: InventoryService,
     private route: ActivatedRoute,
     private productService: ProductsService,
     private shoppingCartService: ShoppingCartService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -185,8 +187,32 @@ export class ItemComponent implements OnInit {
   }
 
   generateUniqueCartID(): number {
-    return Date.now() + Math.floor(Math.random() * 1000); // Unique ID based on timestamp and random number
+    return Date.now() + Math.floor(Math.random() * 1000); 
   }
+  
+  proceedToCheckOut(){
+      if (this.product) {
+        if (this.selectedVariant && this.maxQuantity>0) {
+          const cartItem: CartItem = {
+            // cartID: this.generateUniqueCartID(),
+            idNo: this.authService.getUserIdNo(), // Replace with actual user ID
+            orderDate: new Date().toISOString(), // Current date
+            productCode: this.product.code,
+            variantCode: this.selectedVariant.code,
+            price: this.selectedVariant.price,
+            quantity:  this.quantity,
+            totalPrice: this.selectedVariant.price * this.quantity,
+            imgURL: this.product.imageUrl || '',
+            size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
+            name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name
+          };
+          this.selectedItem.push(cartItem)
+          sessionStorage.setItem('selectedItems', JSON.stringify(this.selectedItem));
+        }
+          
+        this.router.navigate([`/student/products/${this.product.code}/checkout`]);
+      }
+  }  
   
 }
 

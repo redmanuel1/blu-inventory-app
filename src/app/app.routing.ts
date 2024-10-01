@@ -11,6 +11,7 @@ import { StudentLayoutComponent } from './layouts/student-layout/student-layout.
 import { LoginGuard } from './guards/login.guard';
 import { ItemComponent } from './components/cards/item/item.component';
 import { CustodianLayoutComponent } from './layouts/custodian-layout/custodian-layout.component';
+import { CheckoutComponent } from './pages/student/checkout/checkout.component';
 
 const routes: Routes =[
   {
@@ -60,6 +61,8 @@ const routes: Routes =[
         loadChildren: () => import('src/app/layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule)
       },
       { path: 'products/:code', component: ItemComponent },
+      { path: 'checkout', component: CheckoutComponent },
+      { path: 'products/:code/checkout', component: CheckoutComponent },
     ]
   },
 

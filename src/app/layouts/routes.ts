@@ -11,11 +11,8 @@ export const ADMIN_ROUTES: RouteInfo[] = [
 export const STUDENT_ROUTES: RouteInfo[] = [
     { path: 'products', title: 'Products', icon: 'ni-bullet-list-67 text-red', class: '' },
     { path: 'transactions', title: 'Transactions', icon: 'ni-single-copy-04 text-blue', class: '' },
-    { path: 'icons', title: 'Icons', icon: 'ni-planet text-blue', class: '' },
-    { path: 'maps', title: 'Maps', icon: 'ni-pin-3 text-orange', class: '' },
-    { path: 'dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
     { path: 'shoppingcart', title: 'Shopping Cart', icon: 'ni-cart text-blue', class: '' },
-    { path: 'user-profile', title: 'User Profile', icon: 'ni-single-02 text-yellow', class: '' },
+    { path: 'user-profile', title: 'User Profile', icon: 'ni-single-02 text-yellow', class: '' }
 ];
 
 export const CUSTODIAN_ROUTES: RouteInfo[] = [

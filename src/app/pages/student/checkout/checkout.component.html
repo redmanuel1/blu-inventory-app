@@ -1,0 +1,14 @@
+<app-table
+    [title]="'Orders'"
+    [dataColumns]="dataColumns" 
+    [data]="checkOut"  
+    [theme]="'primary'"
+    useBasicTable = true
+    showBottomActionButton = true
+    bottomActionButtonTitle = "Place Order"
+    (bottomActionButtonClick) = "onPlaceOrder()"
+    [bottomActionHTML] = "htmlDescription"
+></app-table>
+<!-- <div *ngIf="orderPlaced" class="alert alert-success" role="alert">
+  <strong>Success!</strong> Your order has been placed successfully!
+</div> -->

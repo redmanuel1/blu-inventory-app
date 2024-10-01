@@ -20,7 +20,6 @@ import { CheckoutComponent } from 'src/app/pages/student/checkout/checkout.compo
     ProductsComponent,
     TransactionsComponent,
     OrderDetailsComponent,
-    ShoppingcartComponent
     ShoppingcartComponent,
     CheckoutComponent
   ],

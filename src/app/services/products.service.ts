@@ -35,6 +35,10 @@ export class ProductsService {
     );
   }
 
+  getProductsByCode(productCode: string[]): Observable<any> {
+    return this.firestore.collection('Products', ref => ref.where('code', 'in', productCode)).valueChanges();
+  }
+
    // Method to add multiple products
   addProducts(products: any[]): Promise<void> {
     const batch = this.firestore.firestore.batch();

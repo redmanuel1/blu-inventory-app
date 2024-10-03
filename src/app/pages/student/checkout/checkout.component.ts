@@ -1,5 +1,5 @@
 import { Order, OrderProduct } from 'src/app/models/order.model';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CartItem } from 'src/app/models/shoppingcart.model';
 import { ColumnType, TableColumn } from 'src/app/models/util/table.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -7,6 +7,8 @@ import { FirestoreService } from 'src/app/services/firestore.service';
 import { ShoppingCartService } from 'src/app/services/shoppingcart.service';
 import { TableService } from 'src/app/services/util/table.service';
 import { Transaction, TransactionDocument } from 'src/app/models/transaction.model';
+import { PromptDialogComponent } from 'src/app/components/modal/prompt-dialog/prompt-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-checkout',
@@ -29,14 +31,14 @@ export class CheckoutComponent implements OnInit{
   };
 
   htmlDescription: string = "";
-
-
+  @ViewChild(PromptDialogComponent) promptDialog!: PromptDialogComponent;
 
 constructor(
     private tableService: TableService,
     private firestoreService: FirestoreService, 
     private authService: AuthService,
-    private shoppingcartService: ShoppingCartService) {
+    private shoppingcartService: ShoppingCartService,
+    private router: Router) {
 
   firestoreService.collectionName = "Orders";
 
@@ -76,7 +78,7 @@ constructor(
   
     const orderedProducts = this.mapOrderedProducts();  // Separate function for mapping products
     const newOrder = this.createOrderObject(idNo, dateTime, uniqueOrderNo, orderedProducts);  // Separate function for new order
-    const transactionData = this.createTransactionObject(idNo, dateTime, uniqueOrderNo);  // Separate function for transaction data
+    const transactionData = this.createTransactionObject(dateTime, uniqueOrderNo);  // Separate function for transaction data
   
     this.placeOrder(newOrder, transactionData);
   }
@@ -111,20 +113,20 @@ constructor(
   }
   
   // Separate function to create the transaction data object
-  private createTransactionObject(idNo: string, confirmedDate: string, orderNo: string): Transaction {
+  private createTransactionObject(confirmedDate: string, orderNo: string): Transaction {
     return {
       confirmedDate: confirmedDate,
       orderNo: orderNo,
       status: "Pending Payment",
-      type: "order",
-      documents: {} as TransactionDocument // Setting empty document object
+      type: "order"
     };
   }
   
-  // Function to handle placing the order and saving to Firestore
+  
   private placeOrder(newOrder: Order, transactionData: Transaction): void {
     this.firestoreService.addRecords([newOrder])
       .then(() => {
+        this.openDialog();
         if (this.checkOut[0].cartID) {
           const removePromises = this.checkOut.map(item => this.shoppingcartService.removeFromCart(item.cartID));
           return Promise.all(removePromises);
@@ -132,15 +134,13 @@ constructor(
       })
       .then(() => {
         console.log('All items removed from the cart successfully.');
-  
-        // Switch to Transactions collection and save the transaction
+        
         this.firestoreService.collectionName = "Transactions";
         return this.firestoreService.addRecords([transactionData]);
       })
       .then(() => {
         console.log('Transaction added successfully.');
-  
-        // Switch back to Orders collection
+
         this.firestoreService.collectionName = "Orders";
         this.orderPlaced = true;
       })
@@ -148,68 +148,21 @@ constructor(
         console.error('Error during placing order or removing items from cart:', error);
       });
   }
-  
 
-  // onPlaceOrder(): void {
-  //   const idNo = this.authService.getUserIdNo(); // Retrieve the user's ID
-  //   const timestamp = Date.now().toString(); // Get current timestamp as a string
-  //   const uniqueOrderNo = `ON${idNo}${timestamp}`;
-  //   const dateTime =  new Date().toISOString();
-  
-  //   // Map the checkOut array to OrderedProducts array
-  //   const orderedProducts: OrderProduct[] = this.checkOut.map(item => ({
-  //     productCode: item.productCode,
-  //     quantity: item.quantity,
-  //     price: item.price,
-  //     size: item.size,
-  //     variantCode: item.variantCode,
-  //     itemSubtotal: item.totalPrice // Renamed to itemSubtotal
-  //   }));
-  
-  //   // Create the new order object with all details
-  //   const newOrder: Order = {
-  //     idNo: idNo,
-  //     orderDate: dateTime, // Save the order date as ISO string
-  //     orderNo: uniqueOrderNo,
-  //     totalPrice: this.getTotalPrice(), // Function to calculate the total price
-  //     products: orderedProducts // List of ordered products
-  //   };
-  
-  //   // Add the order to the "Orders" collection
-  //   this.firestoreService.addRecords([newOrder])
-  //     .then(() => {
-  //       if (this.checkOut[0].cartID) {
-  //         const removePromises = this.checkOut.map(item => this.shoppingcartService.removeFromCart(item.cartID));
-  //         return Promise.all(removePromises);
-  //       }
-  //     })
-  //     .then(() => {
-  //       console.log('All items removed from the cart successfully.');
-  //       const transactionData: Transaction = {
-  //         confirmedDate: dateTime,
-  //         id: idNo,
-  //         orderNo: uniqueOrderNo,
-  //         status: "Pending Payment",
-  //         type: "order",
-  //         documents: {} as TransactionDocument // Setting empty document object
-  //       };
-  
-  //       // Change the collection to "Transactions" and save the transaction
-  //       this.firestoreService.collectionName = "Transactions";
-  //       return this.firestoreService.addRecords([transactionData]);
-  //     })
-  //     .then(() => {
-  //       console.log('Transaction added successfully.');
-  
-  //       // After adding the transaction, switch back to "Orders" collection
-  //       this.firestoreService.collectionName = "Orders";
-  //       this.orderPlaced = true;
-  //     })
-  //     .catch(error => {
-  //       console.error('Error during placing order or removing items from cart:', error);
-  //     });
-  // }
+  openDialog() { 
+    this.promptDialog.title = 'Success';
+    this.promptDialog.message = "Order placed successfully! You can return to products page or view your order transaction.";
+    this.promptDialog.confirmButtonLabel = "View Orders";
+    this.promptDialog.cancelButtonLabel = "View Products";
+    this.promptDialog.open();  
+  }
 
+  proceedToProductsPage(){
+    this.router.navigate(['/student/products/']);
+  }
 
+  proceedToTransactionsPage(){
+    this.router.navigate(['/student/transactions/']);
+  }
   
 }

@@ -10,6 +10,8 @@ import { TableComponent } from './table/table.component';
 import { DisplayProductComponent } from './cards/display-product/display-product.component';
 import { ShoppingcartItemComponent } from './cards/shoppingcart-item/shoppingcart-item.component';
 import { FormsModule } from '@angular/forms';
+import { PromptDialogComponent } from './modal/prompt-dialog/prompt-dialog.component';
+import { ToastComponent } from './modal/toast/toast.component';
 
 @NgModule({
   imports: [
@@ -25,7 +27,9 @@ import { FormsModule } from '@angular/forms';
     ItemComponent,
     DisplayProductComponent,
     TableComponent,
-    ShoppingcartItemComponent
+    ShoppingcartItemComponent,
+    PromptDialogComponent,
+    ToastComponent
   ],
   exports: [
     FooterComponent,
@@ -34,7 +38,9 @@ import { FormsModule } from '@angular/forms';
     ItemComponent,
     DisplayProductComponent,
     TableComponent,
-    ShoppingcartItemComponent
+    ShoppingcartItemComponent,
+    PromptDialogComponent,
+    ToastComponent
   ]
 })
 export class ComponentsModule { }

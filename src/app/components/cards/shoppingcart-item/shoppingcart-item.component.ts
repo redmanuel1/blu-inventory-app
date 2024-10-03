@@ -43,4 +43,13 @@ export class ShoppingcartItemComponent implements OnInit {
     this.remove.emit(this.cartItem); 
   }
 
+  toggleCheckbox(event: MouseEvent): void {
+    // Prevent toggling if clicking directly on the checkbox
+    const target = event.target as HTMLElement;
+    if (target.tagName !== 'INPUT') {
+      this.cartItem.selected = !this.cartItem.selected;
+    }
+    this.selectionChange.emit(this.cartItem); 
+  }
+
 }

@@ -1,19 +1,21 @@
 import { ProductsService } from 'src/app/services/products.service';
 import { Inventory, Variant, Size } from './../../../models/inventory.model';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from 'src/app/models/product.model';
 import { CartItem } from 'src/app/models/shoppingcart.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { InventoryService } from 'src/app/services/inventory.service';
 import { ShoppingCartService } from 'src/app/services/shoppingcart.service';
+import { ToastService } from '../../modal/toast/toast.service';
+import { ToastComponent } from '../../modal/toast/toast.component';
 
 @Component({
   selector: 'app-item',
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.scss']
 })
-export class ItemComponent implements OnInit {
+export class ItemComponent implements OnInit, AfterViewInit {
   product: Product;
   inventory: Inventory;
   variants: Variant[] = [];
@@ -23,6 +25,7 @@ export class ItemComponent implements OnInit {
   maxQuantity = 0;
   quantity = 1;
   selectedItem: CartItem[] = [];
+  @ViewChild(ToastComponent) toastComponent!: ToastComponent;
 
   constructor(
     private inventoryService: InventoryService,
@@ -30,11 +33,16 @@ export class ItemComponent implements OnInit {
     private productService: ProductsService,
     private shoppingCartService: ShoppingCartService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
     this.getProductCodeFromRoute();
+  }
+
+  ngAfterViewInit() {
+    this.toastService.registerToast(this.toastComponent);
   }
 
   getProductCodeFromRoute(): void {
@@ -180,9 +188,16 @@ export class ItemComponent implements OnInit {
       };
 
       this.shoppingCartService.addToCart(cartItem);
-      console.log('Item added to cart:', cartItem);
+      const message = cartItem.size 
+                      ? `${cartItem.name} size ${cartItem.size} successfully added to cart!` 
+                      : `${cartItem.name} successfully added to cart!`;
+      this.toastService.showToast(message, 'success');
+      
     } else {
-      console.warn('Please select a variant and size before adding to cart.');
+      const message = this.selectedSetSize
+                    ? `${this.selectedVariant.name} size ${this.selectedSetSize.size} is not available!` 
+                    : `${this.selectedVariant.name} is not available!`;
+      this.toastService.showToast(message, 'error');
     }
   }
 
@@ -191,8 +206,7 @@ export class ItemComponent implements OnInit {
   }
   
   proceedToCheckOut(){
-      if (this.product) {
-        if (this.selectedVariant && this.maxQuantity>0) {
+      if (this.product && this.selectedVariant && this.maxQuantity>0) {
           const cartItem: CartItem = {
             // cartID: this.generateUniqueCartID(),
             idNo: this.authService.getUserIdNo(), // Replace with actual user ID
@@ -208,9 +222,10 @@ export class ItemComponent implements OnInit {
           };
           this.selectedItem.push(cartItem)
           sessionStorage.setItem('selectedItems', JSON.stringify(this.selectedItem));
-        }
-          
+ 
         this.router.navigate([`/student/products/${this.product.code}/checkout`]);
+      }else{
+        this.toastService.showToast("Selected product is not available at the moment", 'error');
       }
   }  
   

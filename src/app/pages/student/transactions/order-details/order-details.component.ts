@@ -9,6 +9,7 @@ import { OrderService } from 'src/app/services/order.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { TransactionService } from 'src/app/services/transaction.service';
 import { FileUploadService } from 'src/app/services/file-upload.service';
+import * as _ from "lodash";
 
 @Component({
   selector: 'app-order-details',
@@ -50,7 +51,8 @@ export class OrderDetailsComponent  implements OnInit{
     this.transactionService.getTransactionById(this.transactionId).subscribe((result) => {
       this.transaction = result;
       console.log(this.transaction);
-      if(this.transaction.documents !== undefined) {
+      debugger;
+      if(!_.isEmpty(this.transaction.documents)) {
         this.hasDocument = true;
         this.uploadURL = this.transaction.documents.url;
       }
@@ -131,7 +133,7 @@ export class OrderDetailsComponent  implements OnInit{
   setOrderProgress():void {
     this.orderProgress = [];
     this.orderProgress.push({title: "1. Order Placed", date: this.order.orderDate})
-    this.orderProgress.push({title: "2. Upload Payment Details", date: this.transaction.documents !== undefined ? this.transaction.documents.uploadDate: null})
+    this.orderProgress.push({title: "2. Upload Payment Details", date: !_.isEmpty(this.transaction.documents) ? this.transaction.documents.uploadDate: null})
     this.orderProgress.push({title: "3. Awaiting for Payment Confirmation", date: null})
     this.orderProgress.push({title: "4. Item for Pickup", date: null})
     this.orderProgress.push({title: "5. Transaction Complete", date: null})

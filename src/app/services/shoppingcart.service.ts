@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ViewChild } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/compat/firestore';
 import { CartItem } from '../models/shoppingcart.model'; 
 import { catchError, map, Observable, of } from 'rxjs';
 import { Inventory } from '../models/inventory.model';
+import { PromptDialogComponent } from '../components/modal/prompt-dialog/prompt-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,7 @@ export class ShoppingCartService {
         console.error('Error removing item from cart:', error);
         throw error; // Rethrow the error if needed
     });
+    
 }
 
 
@@ -162,6 +164,5 @@ export class ShoppingCartService {
   clearSelectedItems(): void {
     this.selectedItems = [];
   }
-
 
 }

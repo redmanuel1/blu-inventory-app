@@ -1,3 +1,4 @@
+<app-toast></app-toast>
 <div *ngIf="product" class="card container mt--6" >
   <div class="row" style="padding: 20px;">
     <div class="col-md">
@@ -69,8 +70,8 @@
       </div>
       
       <div class="row mt-5">
-        <button class="btn btn-info" (click)="addToCart()">Add to Cart</button>
-        <button class="btn btn-info"(click)="proceedToCheckOut()">Check Out</button>
+        <button class="btn btn-info" (click)="addToCart()" [disabled]="maxQuantity <= 0">Add to Cart</button>
+        <button class="btn btn-info"(click)="proceedToCheckOut()" [disabled]="maxQuantity <= 0">Check Out</button>
       </div>
 
 

@@ -16,7 +16,7 @@ export class NavigationService {
         this.router.navigate(['/admin/dashboard']);
         break;
       case 'student':
-        this.router.navigate(['/student/dashboard']);
+        this.router.navigate(['/student/products']);
         break;
       case 'custodian':
         this.router.navigate(['/custodian/dashboard']);

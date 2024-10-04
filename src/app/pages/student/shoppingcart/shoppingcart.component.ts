@@ -2,6 +2,7 @@ import { Component, OnInit, Output,EventEmitter, ViewChild } from '@angular/core
 import { Router } from '@angular/router';
 import { PromptDialogComponent } from 'src/app/components/modal/prompt-dialog/prompt-dialog.component';
 import { CartItem } from 'src/app/models/shoppingcart.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { ShoppingCartService } from 'src/app/services/shoppingcart.service';
 
 @Component({
@@ -20,7 +21,8 @@ export class ShoppingcartComponent implements OnInit {
 
   constructor(
     private shoppingCartService: ShoppingCartService,
-    private router: Router
+    private router: Router,
+    private authservice: AuthService
   ){
 
   }
@@ -30,7 +32,7 @@ export class ShoppingcartComponent implements OnInit {
   }
 
   getShoppingCartItems(): void{
-    this.shoppingCartService.getCartItems().subscribe((items: CartItem[]) => {
+    this.shoppingCartService.getCartItems(this.authservice.getUserIdNo()).subscribe((items: CartItem[]) => {
     this.shoppingCartItems = items;
     this.getQuantitiesForCartItems();
     });

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'src/app/models/user.model';
 import { Router } from '@angular/router';
+import { ToastComponent } from 'src/app/components/modal/toast/toast.component';
+import { ToastService } from 'src/app/components/modal/toast/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -11,56 +13,78 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  user: User;
+  user: User = {
+    idNo: '', 
+    password: '', 
+    firstName: '', 
+    lastName: '', 
+    email: '', 
+    phone: '', 
+    role: 'student'
+  };
+  
   errorMessage = '';
   confirmPassword: string = '';
   passwordMismatch: boolean = false;
 
-  constructor(private firestoreService: FirestoreService, private toastr: ToastrService, private router: Router) {
-   }
+  @ViewChild(ToastComponent) toastComponent!: ToastComponent;
+
+  constructor(
+    private firestoreService: FirestoreService, 
+    private toastr: ToastrService, 
+    private router: Router,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit() {
-    this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '', role:'student' };
+    this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '', role: 'student' };
+  }
+
+  ngAfterViewInit() {
+    this.toastService.registerToast(this.toastComponent);
   }
 
   register() {
-    if (this.validateForm()) {
-      this.firestoreService.addUser(this.user)
-        .then(() => {
-          // Registration successful
-          this.toastr.success("User registered successfully");
-          console.log('User registered successfully');
-          this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '', role:'student' }; // Clear form
-          this.confirmPassword = '';
-          this.router.navigate(['/auth/login']);
-        })
-        .catch((error) => {
-          // Handle error
-          console.error('Error registering user:', error);
-          this.errorMessage = 'Registration failed';
-          this.toastr.error(this.errorMessage);
-        });
-    } else {
-      this.errorMessage = 'Please fill in all fields';
-      this.toastr.error(this.errorMessage);
-    }
+    this.firestoreService.addUser(this.user)
+      .then(() => {
+        this.toastService.showToast("User registered successfully", 'success');
+        console.log('User registered successfully');
+        this.resetForm(); // Clear form
+        this.router.navigate(['/auth/login']);
+      })
+      .catch((error) => {
+        console.error('Error registering user:', error);
+        this.errorMessage = 'Registration failed';
+        this.toastService.showToast("Registration failed", 'error');
+      });
   }
 
   validateForm(): boolean {
-    return Object.values(this.user).every(field => field.trim() !== '');
-  }
-
-  onSubmit(form: NgForm){    
+    if (!Object.values(this.user).every(field => field.trim() !== '')) {
+      this.errorMessage = 'Please fill in all fields';
+      this.toastr.error(this.errorMessage);
+      return false;
+    }
+    
     if (this.user.password !== this.confirmPassword) {
       this.passwordMismatch = true;
       this.errorMessage = 'Passwords do not match';
       this.toastr.error(this.errorMessage);
-    } else {
-      this.passwordMismatch = false;
-      if (form.valid) {
-        this.register()
-      }
+      return false;
+    }
+    
+    this.passwordMismatch = false;
+    return true;
+  }
+
+  onSubmit(form: NgForm) {
+    if (this.validateForm() && form.valid) {
+      this.register();
     }
   }
 
+  resetForm() {
+    this.user = { idNo: '', password: '', firstName: '', lastName: '', email: '', phone: '', role: 'student' };
+    this.confirmPassword = '';
+  }
 }

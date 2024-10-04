@@ -27,8 +27,8 @@ export class ShoppingCartService {
   }
 
   // Method to retrieve the cart items
-  getCartItems(): Observable<CartItem[]> {
-    return this.firestore.collection<CartItem>('ShoppingCart').valueChanges();
+  getCartItems(idNo: string): Observable<CartItem[]> {
+    return this.firestore.collection<CartItem>('ShoppingCart', ref => ref.where('idNo', '==', idNo)).valueChanges();
   }
 
   // Method to remove an item from the cart by its document ID

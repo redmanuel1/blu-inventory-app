@@ -76,6 +76,33 @@ export class AuthService {
     }
   }
 
+  getUserInitials() {
+    const userData = this.getUserFromLocalStorage();
+    
+    if (userData) {
+      const firstInitial = userData.firstName.charAt(0).toUpperCase(); // Get first letter of firstName
+      const lastInitial = userData.lastName.charAt(0).toUpperCase(); // Get first letter of lastName
+      return `${firstInitial}${lastInitial}`; // Return initials
+    } else {
+      console.log('No user data found in local storage.');
+      return ''; // Return empty string if no user data
+    }
+  }
+
+  getUserFullName() {
+    const userData = this.getUserFromLocalStorage();
+    
+    if (userData) {
+      const firstInitial = userData.firstName;
+      const lastInitial = userData.lastName;
+      return `${firstInitial} ${lastInitial}`; 
+    } else {
+      console.log('No user data found in local storage.');
+      return ''; // Return empty string if no user data
+    }
+  }
+  
+
   isLoggedIn(): boolean {
     return !!localStorage.getItem('user');
   }

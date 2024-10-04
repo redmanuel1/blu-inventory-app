@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouteInfo } from 'src/app/models/util/routes.model';
+import { AuthService } from 'src/app/services/auth.service';
 
 // declare interface RouteInfo {
 //     path: string;
@@ -28,11 +29,16 @@ export class SidebarComponent implements OnInit {
   public menuItems: any[];
   public isCollapsed = true;
   @Input() routes : RouteInfo[];
+  userInitials: string='';
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
   
   ngOnInit() {
+    this.userInitials = this.authService.getUserInitials();
     if (this.routes) {
       this.menuItems = this.routes.filter(menuItem => menuItem);
     }

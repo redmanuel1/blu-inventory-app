@@ -50,9 +50,9 @@
 </div>
 <div class="container-fluid mt-4">
   @for(progress of orderProgress; track progress.title; let index = $index) {
-  <div class="card mb-2" (click)="toggle(index)">
+  <div class="card mb-2">
     <div class="card-body">
-      <div class="row order-progress-header">
+      <div class="row order-progress-header" (click)="toggle(index)">
         <div
           class="col"
           [class.font-bold]="progress.date !== null"
@@ -123,11 +123,15 @@
                   id="formFile"
                   (change)="onFileUpload($event)"
                   accept="image/*"
+                  multiple
                 />
               </div>
             </div>
             <div class="row justify-content-center">
-              <img [src]="uploadURL" class="img-thumbnail" />
+              @if(uploadURLs.length > 0) { @for(uploadUrl of uploadURLs; track
+              uploadUrl) {
+              <img [src]="uploadUrl" class="img-thumbnail" />
+              } }
             </div>
           </div>
         </div>
@@ -152,6 +156,7 @@
             type="file"
             (change)="onFileUpload($event)"
             accept="image/*"
+            multiple
           />
         </div>
         } }

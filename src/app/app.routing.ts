@@ -60,9 +60,6 @@ const routes: Routes =[
         path: '',
         loadChildren: () => import('src/app/layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule)
       },
-      { path: 'products/:code', component: ItemComponent },
-      { path: 'checkout', component: CheckoutComponent },
-      { path: 'products/:code/checkout', component: CheckoutComponent },
     ]
   },
 

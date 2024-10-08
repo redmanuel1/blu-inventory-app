@@ -15,26 +15,29 @@ export class UserProfileComponent implements OnInit {
   isChangePassword: boolean = false;
   confirmPassword: string = '';
   errorMessage: string = ''
-  constructor(private firestoreService: FirestoreService, private toastr: ToastrService, private authService: AuthService) { }
+  constructor(private firestoreService: FirestoreService, private toastr: ToastrService, private authService: AuthService) {
+    firestoreService.collectionName = 'Users'
+   }
 
   ngOnInit() {
-    this.authService.user$.subscribe(user => this.user = user);
-    // for testing
-    this.user = JSON.parse(localStorage.getItem('user'));
-    console.log(this.user);
+    this.firestoreService.getRecordByidNo(this.authService.getUserIdNo()).subscribe(users => {
+      if (users.length > 0) {
+        this.user = users[0];
+      } else {
+        console.log('No user found with the given ID');
+      }
+    });
   }
 
   saveProfile() {
     if (this.validateForm()) {
-      this.firestoreService.updateUser(this.user)
+      this.firestoreService.updateRecords([this.user])
         .then(() => {
-          // Registration successful
           this.toastr.success("User profile updated");
           console.log('User profile updated');
           this.confirmPassword = '';
         })
         .catch((error) => {
-          // Handle error
           console.error('Error updating user:', error);
           this.errorMessage = 'Update failed failed';
           this.toastr.error(this.errorMessage);
@@ -49,7 +52,7 @@ export class UserProfileComponent implements OnInit {
     return Object.values(this.user).every(field => field.trim() !== '');
   }
 
-  //#region Events
+
   onChangePassword(){
     this.isChangePassword = !this.isChangePassword;
     this.user.password = '';

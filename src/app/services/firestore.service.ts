@@ -125,10 +125,19 @@ export class FirestoreService {
   }
 
   // Method to get a user by idNo
-  getUserByIdNo(idNo: string): Observable<any> {
+  getRecordByidNo(idNo: string): Observable<any> {
     return this.firestore
-      .collection("Users", (ref) => ref.where("idNo", "==", idNo))
-      .valueChanges();
+      .collection(this.collectionName, (ref) => ref.where("idNo", "==", idNo))
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as any; // Get document data
+            const id = a.payload.doc.id; // Get document ID
+            return { id, ...data }; // Combine document ID with data
+          })
+        )
+      );
   }
 
   getUserDocId(): string {

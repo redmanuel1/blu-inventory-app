@@ -1,33 +1,63 @@
-import { Component, OnInit } from '@angular/core';
-import { Order } from 'src/app/models/order.model';
-import { Transaction } from 'src/app/models/transaction.model';
-import { FirestoreService } from 'src/app/services/firestore.service';
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { NgxSpinnerService } from "ngx-spinner";
+import { ToastComponent } from "src/app/components/modal/toast/toast.component";
+import { ToastService } from "src/app/components/modal/toast/toast.service";
+import { Order } from "src/app/models/order.model";
+import { Transaction } from "src/app/models/transaction.model";
+import { FirestoreService } from "src/app/services/firestore.service";
 
 @Component({
-  selector: 'app-transactions',
-  templateUrl: './transactions.component.html',
-  styleUrl: './transactions.component.scss'
+  selector: "app-transactions",
+  templateUrl: "./transactions.component.html",
+  styleUrl: "./transactions.component.scss",
 })
-export class TransactionsComponent implements OnInit {
+export class TransactionsComponent implements OnInit, AfterViewInit {
   orderArr: Order[] = [];
   transactionArr: Transaction[] = [];
   currentTransaction: Transaction;
+  @ViewChild(ToastComponent) toastComponent!: ToastComponent;
   constructor(
     private firestoreService: FirestoreService,
-  ) {
-  }
+    private spinner: NgxSpinnerService,
+    private toastService: ToastService
+  ) {}
   ngOnInit(): void {
+    this.spinner.show();
     this.loadInitialData();
+  }
+  ngAfterViewInit() {
+    this.toastService.registerToast(this.toastComponent);
   }
 
   private loadInitialData(): void {
-    this.firestoreService.collectionName = 'Transactions';
-    this.firestoreService.getRecords().subscribe(data => {
-      this.transactionArr = data;
-      this.firestoreService.collectionName = 'Orders';
-      this.firestoreService.getRecords().subscribe(data => {
-        this.orderArr = data;
-      })
+    this.firestoreService.collectionName = "Transactions";
+    // this.firestoreService.getRecords().subscribe((data) => {
+    //   this.transactionArr = data;
+    //   this.firestoreService.collectionName = "Orders";
+    //   this.firestoreService.getRecordsSortedByOrderDate().subscribe((data) => {
+    //     this.orderArr = data;
+    //     this.spinner.hide();
+    //   });
+    // });
+    this.firestoreService.getRecords().subscribe({
+      next: (data) => {
+        this.transactionArr = data;
+        this.firestoreService.collectionName = "Orders";
+        this.firestoreService.getRecordsSortedByOrderDate().subscribe({
+          next: (data) => {
+            this.orderArr = data;
+            this.spinner.hide();
+          },
+          error: (error) => {
+            this.toastService.showToast("An error occured", "error");
+            this.spinner.hide();
+          },
+        });
+      },
+      error: (error) => {
+        this.toastService.showToast("An error occured", "error");
+        this.spinner.hide();
+      },
     });
   }
   isOrderHasTransaction(orderNo: string): boolean {
@@ -36,11 +66,13 @@ export class TransactionsComponent implements OnInit {
   }
 
   private getTransactionByOrderNo(orderNo: string): void {
-    this.currentTransaction = this.transactionArr.find(transaction => transaction.orderNo == orderNo)
+    this.currentTransaction = this.transactionArr.find(
+      (transaction) => transaction.orderNo == orderNo
+    );
   }
 
   getTransactionStatusByOrderNo(): string {
-    return this.currentTransaction.status
+    return this.currentTransaction.status;
   }
 
   getTransactionIdByOrderNo(): string {

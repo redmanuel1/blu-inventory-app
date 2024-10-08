@@ -13,6 +13,7 @@ import { FirestoreService } from "src/app/services/firestore.service";
 import { ToastService } from "src/app/components/modal/toast/toast.service";
 import { ToastComponent } from "src/app/components/modal/toast/toast.component";
 import { finalize } from "rxjs";
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: "app-order-details",
@@ -25,7 +26,8 @@ export class OrderDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private firestoreService: FirestoreService,
     private fileUploadService: FileUploadService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private spinner: NgxSpinnerService
   ) {}
   order: Order;
   transaction: Transaction;
@@ -42,6 +44,7 @@ export class OrderDetailsComponent implements OnInit {
   @ViewChild(ToastComponent) toastComponent!: ToastComponent;
 
   ngOnInit(): void {
+    this.spinner.show();
     // Retrieve the transaction ID from the route parameters
     this.route.paramMap.subscribe((params) => {
       this.transactionId = params.get("transactionId");
@@ -87,6 +90,7 @@ export class OrderDetailsComponent implements OnInit {
       .subscribe((result) => {
         this.productArr = result;
         this.setOrderProgress();
+        this.spinner.hide();
       });
   }
   getProductDisplay(productCode: string): string {
@@ -122,7 +126,7 @@ export class OrderDetailsComponent implements OnInit {
     }
   }
   handleFiles(files: File[]): void {
-    debugger;
+    this.spinner.show();
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
     this.uploadURLs = [];
     let isAllFilesImage: boolean = true;
@@ -147,6 +151,7 @@ export class OrderDetailsComponent implements OnInit {
           }
           // Update the transaction document
           this.transaction.documents = transactionDocumentArr;
+          this.transaction.status = "Pending Payment";
           this.firestoreService.collectionName = "Transactions";
           this.firestoreService
             .updateRecords([this.transaction])
@@ -157,6 +162,7 @@ export class OrderDetailsComponent implements OnInit {
                 "Files successfully uploaded",
                 "success"
               );
+              this.spinner.hide();
             })
             .catch((err) => {
               console.log("Error saving metadata:", err);
@@ -164,15 +170,18 @@ export class OrderDetailsComponent implements OnInit {
                 "There was an error upon saving your files",
                 "error"
               );
+              this.spinner.hide();
             });
         },
         error: (err) => {
           this.toastService.showToast("Error saving files", "error");
+          this.spinner.hide();
         },
       });
     } else {
       this.selectedFiles = null;
       this.toastService.showToast("Only image files are allowed!", "error");
+      this.spinner.hide();
     }
   }
 

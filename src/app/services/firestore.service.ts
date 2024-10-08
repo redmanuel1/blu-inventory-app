@@ -28,6 +28,24 @@ export class FirestoreService {
       );
   }
 
+  getRecordsSortedByOrderDate(): Observable<any[]> {
+    // return this.firestore.collection<Product>('Products').valueChanges();
+    return this.firestore
+      .collection<any>(this.collectionName, (ref) =>
+        ref.orderBy("orderDate", "desc")
+      )
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data();
+            const id = a.payload.doc.id; // Get the document ID
+            return { id, ...data }; // Return the complete object
+          })
+        )
+      );
+  }
+
   getRecordById(productId: string): Observable<any> {
     return this.firestore
       .collection(this.collectionName)

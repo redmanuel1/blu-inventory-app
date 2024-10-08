@@ -1,4 +1,4 @@
-<nav aria-label="breadcrumb" role="navigation">
+<!-- <nav aria-label="breadcrumb" role="navigation">
   <ol class="breadcrumb">
     <li class="breadcrumb-item" aria-current="page">
       <a [routerLink]="['../../']">Transaction</a>
@@ -7,9 +7,10 @@
       <a href="javascript:;">Order Details</a>
     </li>
   </ol>
-</nav>
-
-<div class="mt-4">
+</nav> -->
+<ngx-spinner size="large" type="ball-scale-multiple" [fullScreen]="true">
+</ngx-spinner>
+<div class="order-details-main-header sticky-top mt--6">
   @if(transaction !== undefined && order !== undefined && productArr !==
   undefined) {
   <div class="order-details font-bold">
@@ -39,7 +40,9 @@
           </div>
           @for(product of order.products; track order.idNo) {
           <div class="row ml-1 mt-3 order-items">
-            {{ getProductDisplay(product.productCode) }} x{{ product.quantity }}
+            {{ product.productName }} - {{ product.variantName }} x{{
+              product.quantity
+            }}
           </div>
           }
         </div>
@@ -99,19 +102,7 @@
       <div
         class="row order-progress-contents d-flex align-items-center flex-column"
       >
-        @if(isOpen[1]&&index===1) {
-        <!-- <div>
-          <label for="formFileLg" class="form-label"
-            >Large file input example</label
-          >
-          <input
-            class="form-control form-control-lg"
-            id="formFileLg"
-            type="file"
-          />
-        </div>
-        <div *ngIf="uploadURL">Uploaded Image URL: {{ uploadURL }}</div> -->
-        @if(hasDocument){
+        @if(isOpen[1]&&index===1) { @if(hasDocument){
         <div class="row mt-2">
           <div class="col">
             <div class="row mb-3 justify-content-center">
@@ -127,10 +118,10 @@
                 />
               </div>
             </div>
-            <div class="row justify-content-center">
+            <div class="row justify-content-center p-4">
               @if(uploadURLs.length > 0) { @for(uploadUrl of uploadURLs; track
               uploadUrl) {
-              <img [src]="uploadUrl" class="img-thumbnail" />
+              <img [src]="uploadUrl" class="img-thumbnail m-2" />
               } }
             </div>
           </div>

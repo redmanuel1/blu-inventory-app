@@ -101,6 +101,7 @@ export class TableComponent {
 
 
   onImageChange(event: any, record: any) {
+    debugger;
     const file = event.target.files[0];
     if (file) {
       const imgPreviewURL = URL.createObjectURL(file);

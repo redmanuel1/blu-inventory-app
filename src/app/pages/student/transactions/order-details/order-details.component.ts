@@ -1,29 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { Order } from 'src/app/models/order.model';
-import { Product } from 'src/app/models/product.model';
-import { Transaction, TransactionDocument } from 'src/app/models/transaction.model';
-import { OrderProgress } from 'src/app/models/order-progress.model';
-import { OrderService } from 'src/app/services/order.service';
-import { ProductsService } from 'src/app/services/products.service';
-import { TransactionService } from 'src/app/services/transaction.service';
-import { FileUploadService } from 'src/app/services/file-upload.service';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Order } from "src/app/models/order.model";
+import { Product } from "src/app/models/product.model";
+import {
+  Transaction,
+  TransactionDocument,
+} from "src/app/models/transaction.model";
+import { OrderProgress } from "src/app/models/order-progress.model";
+import { FileUploadService } from "src/app/services/file-upload.service";
+import * as _ from "lodash";
+import { FirestoreService } from "src/app/services/firestore.service";
+import { ToastService } from "src/app/components/modal/toast/toast.service";
+import { ToastComponent } from "src/app/components/modal/toast/toast.component";
+import { finalize } from "rxjs";
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
-  selector: 'app-order-details',
-  templateUrl: './order-details.component.html',
-  styleUrl: './order-details.component.scss'
+  selector: "app-order-details",
+  templateUrl: "./order-details.component.html",
+  styleUrl: "./order-details.component.scss",
 })
-export class OrderDetailsComponent  implements OnInit{
+export class OrderDetailsComponent implements OnInit {
   transactionId: string | null = null;
   constructor(
-    private route: ActivatedRoute, 
-    private router: Router, 
-    private orderService: OrderService, 
-    private transactionService: TransactionService,
-    private productService: ProductsService,
-    private fileUploadService: FileUploadService
+    private route: ActivatedRoute,
+    private firestoreService: FirestoreService,
+    private fileUploadService: FileUploadService,
+    private toastService: ToastService,
+    private spinner: NgxSpinnerService
   ) {}
   order: Order;
   transaction: Transaction;
@@ -31,53 +35,73 @@ export class OrderDetailsComponent  implements OnInit{
   productArr: Product[];
   orderProgress: OrderProgress[] = [];
   // image
-  selectedFile: File | null = null;
+  selectedFiles: File[] = [];
   isDragOver: boolean = false;
-  uploadURL: string = '';
+  uploadURLs: string[] = [];
   hasDocument: boolean = false;
   //selected index
-  selectedIndex:number = null;
+  selectedIndex: number = null;
+  @ViewChild(ToastComponent) toastComponent!: ToastComponent;
 
   ngOnInit(): void {
+    this.spinner.show();
     // Retrieve the transaction ID from the route parameters
-    this.route.paramMap.subscribe(params => {
-      this.transactionId = params.get('transactionId');
-      console.log('Transaction ID:', this.transactionId);
+    this.route.paramMap.subscribe((params) => {
+      this.transactionId = params.get("transactionId");
+      console.log("Transaction ID:", this.transactionId);
     });
-  this.loadTransaction();
+    this.loadTransaction();
+  }
+  ngAfterViewInit() {
+    this.toastService.registerToast(this.toastComponent);
   }
   private loadTransaction(): void {
-    this.transactionService.getTransactionById(this.transactionId).subscribe((result) => {
-      this.transaction = result;
-      console.log(this.transaction);
-      if(this.transaction.documents !== undefined) {
-        this.hasDocument = true;
-        this.uploadURL = this.transaction.documents.url;
-      }
-      this.loadOrder();
-    })
+    this.firestoreService.collectionName = "Transactions";
+    this.firestoreService
+      .getRecordById(this.transactionId)
+      .subscribe((result) => {
+        this.transaction = result;
+        if (!_.isEmpty(this.transaction.documents)) {
+          this.hasDocument = true;
+          this.uploadURLs = [];
+          for (let fileUrl of this.transaction.documents) {
+            this.uploadURLs.push(fileUrl.url);
+          }
+        }
+        this.loadOrder();
+      });
   }
   private loadOrder(): void {
-    this.orderService.getOrderByOrderNo(this.transaction.orderNo).subscribe((result) => {
-      this.order = result;
-      console.log(this.order)
-      this.loadProduct();
-    })
+    this.firestoreService.collectionName = "Orders";
+    this.firestoreService
+      .getRecordByOrderNo(this.transaction.orderNo)
+      .subscribe((result) => {
+        this.order = result;
+        this.loadProduct();
+      });
   }
-  private loadProduct():void {
-    this.productCodeArr = this.order.products.map(product => String(product.productCode))
-    this.productService.getProductsByCode(this.productCodeArr).subscribe((result) => {
-      this.productArr = result;
-      this.setOrderProgress();
-    })
+  private loadProduct(): void {
+    this.firestoreService.collectionName = "Products";
+    this.productCodeArr = this.order.products.map((product) =>
+      String(product.productCode)
+    );
+    this.firestoreService
+      .getRecordByCodeArr(this.productCodeArr)
+      .subscribe((result) => {
+        this.productArr = result;
+        this.setOrderProgress();
+        this.spinner.hide();
+      });
   }
-  getProductDisplay(productCode: string):string {
-    return this.productArr.filter((product) => product.code === productCode)[0].name
+  getProductDisplay(productCode: string): string {
+    return this.productArr.filter((product) => product.code === productCode)[0]
+      .name;
   }
-  onFileUpload(event:Event): void{
+  //#region Upload
+  onFileUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.handleFile(input.files[0]);
+      this.handleFiles(Array.from(input.files));
     }
   }
   // Handle drag-over event
@@ -98,49 +122,110 @@ export class OrderDetailsComponent  implements OnInit{
     this.isDragOver = false;
     if (event.dataTransfer && event.dataTransfer.files.length > 0) {
       const file = event.dataTransfer.files[0];
-      this.handleFile(file);  // Process the dropped file
+      this.handleFiles(Array.from(event.dataTransfer.files)); // Process the dropped file
     }
   }
-  handleFile(file: File): void {
-    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
-
-    if (validImageTypes.includes(file.type)) {
-      this.selectedFile = file;
-      // this.fileError = null;
-      this.fileUploadService.uploadFile(this.selectedFile).subscribe(url => {
-        this.uploadURL = url;
-
-        // Save the file metadata to Firestore
-        const metadata: TransactionDocument = {
-          name: this.selectedFile.name,
-          uploadDate: new Date(Date.now()).toISOString(),
-          url: url
-        }
-        this.transaction.documents = metadata
-        this.transactionService.saveFileDocumentUrl(this.transactionId,this.transaction)
-          .then(() => {console.log('File metadata saved successfully')
-            this.hasDocument = true;
-          })
-          .catch(err => console.error('Error saving metadata:', err));
+  handleFiles(files: File[]): void {
+    this.spinner.show();
+    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+    this.uploadURLs = [];
+    let isAllFilesImage: boolean = true;
+    for (let file of files) {
+      if (validImageTypes.includes(file.type) == false) {
+        isAllFilesImage = false;
+        break;
+      }
+    }
+    if (isAllFilesImage) {
+      this.onDeleteImages();
+      this.fileUploadService.uploadFiles(files).subscribe({
+        next: (urls: any[]) => {
+          const transactionDocumentArr: TransactionDocument[] = [];
+          for (let url of urls) {
+            // Save the file metadata to Firestore
+            const metadata: TransactionDocument = {
+              uploadDate: new Date(Date.now()).toISOString(),
+              url: url,
+            };
+            transactionDocumentArr.push(metadata);
+          }
+          // Update the transaction document
+          this.transaction.documents = transactionDocumentArr;
+          this.transaction.status = "Pending Payment";
+          this.firestoreService.collectionName = "Transactions";
+          this.firestoreService
+            .updateRecords([this.transaction])
+            .then(() => {
+              console.log("File metadata saved successfully");
+              this.hasDocument = true;
+              this.toastService.showToast(
+                "Files successfully uploaded",
+                "success"
+              );
+              this.spinner.hide();
+            })
+            .catch((err) => {
+              console.log("Error saving metadata:", err);
+              this.toastService.showToast(
+                "There was an error upon saving your files",
+                "error"
+              );
+              this.spinner.hide();
+            });
+        },
+        error: (err) => {
+          this.toastService.showToast("Error saving files", "error");
+          this.spinner.hide();
+        },
       });
     } else {
-      this.selectedFile = null;
-      // this.fileError = 'Only image files are allowed!';
+      this.selectedFiles = null;
+      this.toastService.showToast("Only image files are allowed!", "error");
+      this.spinner.hide();
     }
   }
-  setOrderProgress():void {
-    this.orderProgress = [];
-    this.orderProgress.push({title: "1. Order Placed", date: this.order.orderDate})
-    this.orderProgress.push({title: "2. Upload Payment Details", date: this.transaction.documents !== undefined ? this.transaction.documents.uploadDate: null})
-    this.orderProgress.push({title: "3. Awaiting for Payment Confirmation", date: null})
-    this.orderProgress.push({title: "4. Item for Pickup", date: null})
-    this.orderProgress.push({title: "5. Transaction Complete", date: null})
+
+  onDeleteImages() {
+    debugger;
+    if (this.transaction.documents) {
+      const deleteFiles = this.transaction.documents;
+      const deleteFileUrls: string[] = [];
+      for (let file of deleteFiles) {
+        deleteFileUrls.push(file.url);
+      }
+      this.fileUploadService.deleteFiles(deleteFileUrls).subscribe({
+        next: () => {},
+        error: (err) => {
+          this.toastService.showToast("Error deleting the files", "error");
+        },
+      });
+    }
   }
-  setSelectedIndex(index: number){
-    if(this.selectedIndex == index){
-      this.selectedIndex = null
+  //#endregion
+  setOrderProgress(): void {
+    this.orderProgress = [];
+    this.orderProgress.push({
+      title: "1. Order Placed",
+      date: this.order.orderDate,
+    });
+    this.orderProgress.push({
+      title: "2. Upload Payment Details",
+      date: !_.isEmpty(this.transaction.documents)
+        ? this.transaction.documents[0].uploadDate
+        : null,
+    });
+    this.orderProgress.push({
+      title: "3. Awaiting for Payment Confirmation",
+      date: null,
+    });
+    this.orderProgress.push({ title: "4. Item for Pickup", date: null });
+    this.orderProgress.push({ title: "5. Transaction Complete", date: null });
+  }
+  setSelectedIndex(index: number) {
+    if (this.selectedIndex == index) {
+      this.selectedIndex = null;
     } else {
-      this.selectedIndex = index
+      this.selectedIndex = index;
     }
   }
   toggle(step: number): void {
@@ -148,6 +233,6 @@ export class OrderDetailsComponent  implements OnInit{
   }
   isOpen: { [key: number]: boolean } = {
     1: false,
-    2: false
+    2: false,
   };
 }

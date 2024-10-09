@@ -1,13 +1,15 @@
-<nav aria-label="breadcrumb" role="navigation">
+<!-- <nav aria-label="breadcrumb" role="navigation">
   <ol class="breadcrumb">
     <li class="breadcrumb-item active" aria-current="page">
       <a href="javascript:;">Transaction</a>
     </li>
   </ol>
-</nav>
+</nav> -->
+<ngx-spinner size="large" type="ball-scale-multiple" [fullScreen]="true">
+</ngx-spinner>
 @if(orderArr.length > 0 && transactionArr.length > 0){
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt--6">
   @for(order of orderArr; track order.idNo) {
   @if(isOrderHasTransaction(order.orderNo)) {
   <div class="card mb-3" [routerLink]="getTransactionIdByOrderNo()">

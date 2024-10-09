@@ -35,7 +35,8 @@
               "src/assets/scss/argon.scss",
               "src/assets/vendor/nucleo/css/nucleo.css",
               "src/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
               
             ],
             "scripts": [
@@ -67,23 +68,6 @@
                 }
               ]
             },
-            // "development": {
-            //   "vendorChunk": true,
-            //   "extractLicenses": false,
-            //   "sourceMap": true,
-            //   "namedChunks": true,
-            //   "buildOptimizer": false,
-            //   "optimization": 
-            //   {
-            //     "scripts": true,
-            //     "styles": {
-            //       "minify": false,
-            //       "inlineCritical": true
-            //     },
-            //     "fonts": true
-            //   },
-            //   "outputHashing": "all"
-            // }
             "development": {
               "buildOptimizer": false,
               "optimization": false,

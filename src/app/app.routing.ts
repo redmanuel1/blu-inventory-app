@@ -12,6 +12,7 @@ import { LoginGuard } from './guards/login.guard';
 import { ItemComponent } from './components/cards/item/item.component';
 import { CustodianLayoutComponent } from './layouts/custodian-layout/custodian-layout.component';
 import { CheckoutComponent } from './pages/student/checkout/checkout.component';
+import { AccountantLayoutComponent } from './layouts/accountant-layout/accountant-layout.component';
 
 const routes: Routes =[
   {
@@ -51,6 +52,17 @@ const routes: Routes =[
       }
     ]
   },
+  {
+    path: 'accountant',
+    component: AccountantLayoutComponent,
+    canActivate: [AuthGuard], // Add role guard to check if the user is a student
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./layouts/accountant-layout/accountant-layout.module').then(m => m.AccountantLayoutModule)
+      }
+    ]
+  }, 
   {
     path: 'auth',
     component: AuthLayoutComponent,

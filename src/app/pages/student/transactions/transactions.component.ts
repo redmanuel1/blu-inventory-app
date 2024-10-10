@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, forkJoin } from 'rxjs';
 import { Order } from 'src/app/models/order.model';
 import { Transaction } from 'src/app/models/transaction.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { OrderService } from 'src/app/services/order.service';
 import { TransactionService } from 'src/app/services/transaction.service';
 
@@ -18,7 +19,8 @@ export class TransactionsComponent implements OnInit {
   constructor(private orderService: OrderService,
     private transactionService: TransactionService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
   ngOnInit(): void {
     this.loadInitialData();
@@ -62,6 +64,9 @@ export class TransactionsComponent implements OnInit {
 
   getTransactionIdByOrderNo(): string {
     // this.getTransactionByOrderNo(orderNo);
+    if(this.authService.getUserRole()==='accountant'){
+      return `${this.currentTransaction.id}/order-confirmation`
+    }
     return `${this.currentTransaction.id}/order-details`;
   }
   setState() {

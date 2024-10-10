@@ -21,6 +21,9 @@ export class NavigationService {
       case 'custodian':
         this.router.navigate(['/custodian/dashboard']);
         break;
+      case 'accountant':
+          this.router.navigate(['/accountant/transactions']);
+          break;
       default:
         this.router.navigate(['/auth/login']);
     }

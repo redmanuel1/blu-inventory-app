@@ -12,5 +12,6 @@ export interface CartItem {
     quantity: number,
     name: string,
     selected?: boolean,
-    maxQuantity?: number
+    maxQuantity?: number,
+    productName? : string
   }

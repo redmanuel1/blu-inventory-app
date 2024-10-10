@@ -18,7 +18,7 @@ import { ToastComponent } from './modal/toast/toast.component';
     CommonModule,
     RouterModule,
     NgbModule,
-    FormsModule 
+    FormsModule,
   ],
   declarations: [
     FooterComponent,

@@ -86,7 +86,7 @@ constructor(
   // Generate a unique order number based on user ID and timestamp
   private generateUniqueOrderNo(idNo: string): string {
     const timestamp = Date.now().toString();
-    return `ON${idNo}${timestamp}`;
+    return `${idNo}${timestamp}`;
   }
   
   // Separate function to map ordered products from cart
@@ -97,7 +97,9 @@ constructor(
       price: item.price,
       size: item.size,
       variantCode: item.variantCode,
-      itemSubtotal: item.totalPrice // Renamed to itemSubtotal
+      itemSubtotal: item.totalPrice,
+      variantName: item.name,
+      productName: item.productName
     }));
   }
   

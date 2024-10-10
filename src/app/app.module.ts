@@ -19,6 +19,7 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { ToastrModule } from 'ngx-toastr';
 import { StudentLayoutComponent } from './layouts/student-layout/student-layout.component';
 import { CustodianLayoutComponent } from './layouts/custodian-layout/custodian-layout.component';
+import { AccountantLayoutComponent } from './layouts/accountant-layout/accountant-layout.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { CustodianLayoutComponent } from './layouts/custodian-layout/custodian-l
     AdminLayoutComponent,
     AuthLayoutComponent,
     StudentLayoutComponent,
-    CustodianLayoutComponent
+    CustodianLayoutComponent,
+    AccountantLayoutComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

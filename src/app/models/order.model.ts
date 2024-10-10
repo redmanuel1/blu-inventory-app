@@ -10,5 +10,7 @@ export interface OrderProduct {
   productCode: string,
   quantity: number,
   size: string,
-  variantCode: string
+  variantCode: string,
+  variantName: string,
+  productName: string
 }

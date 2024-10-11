@@ -151,7 +151,7 @@ export class OrderDetailsComponent implements OnInit {
           }
           // Update the transaction document
           this.transaction.documents = transactionDocumentArr;
-          this.transaction.status = "Pending Payment";
+          this.transaction.status = "Awaiting Confirmation";
           this.firestoreService.collectionName = "Transactions";
           this.firestoreService
             .updateRecords([this.transaction])

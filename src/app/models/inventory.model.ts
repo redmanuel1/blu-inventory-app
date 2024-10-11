@@ -6,7 +6,6 @@ export interface Inventory {
   variants?: Variant[];
   isSet: boolean;
   dateUpdated: Timestamp;
-  sizes?: Size[];
 }
 
 export interface Variant {

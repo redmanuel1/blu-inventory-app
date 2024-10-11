@@ -8,8 +8,7 @@ export enum ColumnType {
   range = 'range',
   checkbox = 'checkbox',
   dropDown = 'dropdown',
-  image = 'image', 
-  link = 'link'
+  image = 'image'
 }
 
 export interface TableColumn {

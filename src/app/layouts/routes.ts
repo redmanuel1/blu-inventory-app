@@ -20,6 +20,7 @@ export const CUSTODIAN_ROUTES: RouteInfo[] = [
     { path: 'orders', title: 'Orders', icon: 'ni-basket text-yellow', class: '' },
     { path: 'transactions', title: 'Transactions', icon: 'ni-single-copy-04 text-blue', class: '' },
     { path: 'products', title: 'Products', icon: 'ni-app text-red', class: '' },
+    { path: 'inventory', title: 'Inventory', icon: 'ni-books text-info', class: '' },
 ];
 
 export const ACCOUNTANT_ROUTES: RouteInfo[] = [

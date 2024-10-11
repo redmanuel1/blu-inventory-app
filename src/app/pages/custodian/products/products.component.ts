@@ -44,28 +44,6 @@ export class ProductsComponent {
 
   }
 
-  // saveProducts(records: any[]) {
-  //    // Assuming records can contain both new and updated items
-  //   const updates = records.filter(record => record.isEditing); // or however you want to differentiate
-
-  //   if (updates.length) {
-  //     this.productService.updateProducts(updates).then(() => {
-  //       console.log('Updated products saved!');
-  //       // this.loadProducts(); // Reload products if needed to reflect changes
-  //     }).catch(error => {
-  //       console.error('Error updating products:', error);
-  //     });
-  //   }
-
-  //   const newRecords = records.filter(record => !record.isEditing); // Extract new records
-  //   if (newRecords.length) {
-  //     this.productService.addProducts(newRecords).then(() => {
-  //       console.log('New products saved!');
-  //     }).catch(error => {
-  //       console.error('Error saving new products:', error);
-  //     });
-  //   }
-  // }
   saveProducts(records: any[]) {
     const uploadPromises = records.map(record => {
       if (this.selectedFiles.some(file => file.record === record)) {

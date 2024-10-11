@@ -95,7 +95,8 @@
                   <tr>
                     @for (col of dataColumns; track $index) {
                       <td>
-                        @if (item.isEditing) {  <!-- Check if the row is in edit mode -->
+                        <!-- Check if the row is in edit mode -->
+                        @if (item.isEditing) {  
                           @if (col.type == ColumnType.image) {
                             <label class="btn btn-{{theme}} btn-sm w-100">
                               <i class="ni ni-upload"></i> Upload Image <!-- Replace with the appropriate Nucleo icon class -->
@@ -117,14 +118,18 @@
                           } @else {
                             <input class="form-control" [type]="col.type" [(ngModel)]="item[col.field]" placeholder="{{ col.header || col.field }}" />
                           }
+                        <!-- Display the existing value -->
                         } @else {
-                          <!-- Display the existing value -->
                           @if (col.type == ColumnType.image) {
                             <div class="avatar-group">
                               <a href="javascript:void(0)" class="avatar avatar-lg" data-toggle="tooltip" data-original-title="Ryan Tompson">
                                 <img alt="product-img placeholder" [src]="item.imgURL || 'assets/img/logo/b_logo.png'" class="rounded-circle">
                               </a>
                             </div>
+                          } @else if (col.type == ColumnType.number){
+                            <div class="text-right">{{ item[col.field] }} </div>
+                          } @else if (col.type == ColumnType.date){
+                            {{ item[col.field] | date: 'MM/dd/YYYY hh:mm a' }}
                           } @else {
                             {{ item[col.field] }} 
                           }

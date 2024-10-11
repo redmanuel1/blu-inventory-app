@@ -6,6 +6,7 @@ export interface Transaction {
   type: string;
   documents?: TransactionDocument[];
   comments?: TransactionComment[];
+  statusUpdates?: StatusUpdates[];
 }
 
 export interface TransactionDocument {
@@ -16,5 +17,11 @@ export interface TransactionDocument {
 export interface TransactionComment{
   comment: string;
   commentDate: string;
+  user: string;
+}
+
+export interface StatusUpdates{
+  status: string;
+  dateUpdated: string;
   user: string;
 }

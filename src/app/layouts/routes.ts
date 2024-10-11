@@ -21,3 +21,8 @@ export const CUSTODIAN_ROUTES: RouteInfo[] = [
     { path: 'transactions', title: 'Transactions', icon: 'ni-single-copy-04 text-blue', class: '' },
     { path: 'products', title: 'Products', icon: 'ni-app text-red', class: '' },
 ];
+
+export const ACCOUNTANT_ROUTES: RouteInfo[] = [
+    { path: 'transactions', title: 'Transactions', icon: 'ni-single-copy-04 text-blue', class: '' },
+    { path: 'user-profile', title: 'User Profile', icon: 'ni-single-02 text-yellow', class: '' }
+];

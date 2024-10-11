@@ -19,7 +19,8 @@ import { AngularFirestoreModule } from "@angular/fire/compat/firestore";
 import { ToastrModule } from "ngx-toastr";
 import { StudentLayoutComponent } from "./layouts/student-layout/student-layout.component";
 import { CustodianLayoutComponent } from "./layouts/custodian-layout/custodian-layout.component";
-import { NgxSpinnerModule } from "ngx-spinner";
+import { NgxSpinnerModule } from "ngx-spinner";import { AccountantLayoutComponent } from './layouts/accountant-layout/accountant-layout.component';
+
 
 @NgModule({
   imports: [
@@ -43,6 +44,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
     AuthLayoutComponent,
     StudentLayoutComponent,
     CustodianLayoutComponent,
+    AccountantLayoutComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

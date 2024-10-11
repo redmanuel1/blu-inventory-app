@@ -184,7 +184,8 @@ export class ItemComponent implements OnInit, AfterViewInit {
         totalPrice: this.selectedVariant.price * this.quantity,
         imgURL: this.product.imageUrl || '',
         size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
-        name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name
+        name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name,
+        productName: this.product.name
       };
 
       this.shoppingCartService.addToCart(cartItem);
@@ -218,7 +219,8 @@ export class ItemComponent implements OnInit, AfterViewInit {
             totalPrice: this.selectedVariant.price * this.quantity,
             imgURL: this.product.imageUrl || '',
             size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
-            name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name
+            name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name,
+            productName: this.product.name
           };
           this.selectedItem.push(cartItem)
           sessionStorage.setItem('selectedItems', JSON.stringify(this.selectedItem));

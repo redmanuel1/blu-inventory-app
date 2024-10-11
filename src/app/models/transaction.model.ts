@@ -5,10 +5,16 @@ export interface Transaction {
   status: string;
   type: string;
   documents?: TransactionDocument[];
-  // Add other properties as needed
+  comments?: TransactionComment[];
 }
 
 export interface TransactionDocument {
   url: string;
   uploadDate: string;
+}
+
+export interface TransactionComment{
+  comment: string;
+  commentDate: string;
+  user: string;
 }

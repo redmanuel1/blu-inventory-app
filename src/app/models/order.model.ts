@@ -6,9 +6,11 @@ export interface Order {
   totalPrice: number;
 }
 export interface OrderProduct {
-  price: number;
-  productCode: string;
-  quantity: number;
-  size: string;
-  variantCode: string;
+  price: number,
+  productCode: string,
+  quantity: number,
+  size: string,
+  variantCode: string,
+  variantName: string,
+  productName: string
 }

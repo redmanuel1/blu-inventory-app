@@ -8,7 +8,7 @@ import { TablesComponent } from '../../pages/tables/tables.component';
 import { ManageUsersComponent } from 'src/app/pages/manage-users/manage-users.component';
 
 export const AdminLayoutRoutes: Routes = [
-    { path: 'dashboard',      component: DashboardComponent },
+    // { path: 'dashboard',      component: DashboardComponent },
     { path: 'user-profile',   component: UserProfileComponent },
     { path: 'manage-users',         component: ManageUsersComponent },
     // { path: 'icons',          component: IconsComponent },

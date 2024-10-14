@@ -1,7 +1,7 @@
 import { RouteInfo } from "../models/util/routes.model";
 
 export const ADMIN_ROUTES: RouteInfo[] = [
-    { path: 'dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
+    // { path: 'dashboard', title: 'Dashboard', icon: 'ni-tv-2 text-primary', class: '' },
     
     { path: 'manage-users', title: 'Manage Users', icon: 'ni-single-copy-04 text-blue', class: '' },
     { path: 'user-profile', title: 'User Profile', icon: 'ni-single-02 text-yellow', class: '' },

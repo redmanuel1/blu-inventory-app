@@ -28,10 +28,11 @@ jobs:
         env:
           HOSTINGER_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
           HOSTINGER_PASSWORD: ${{ secrets.HOSTINGER_PASSWORD }}
-          HOSTINGER_DOMAIN: ${{ secrets.HOSTINGER_DOMAIN }}
+          HOSTINGER_DOMAIN: blusupplies.online
         run: |
           echo "Deploying to Hostinger"
-          apt-get install -y lftp
+          sudo apt-get update
+          sudo apt-get install -y lftp
           lftp -u "$HOSTINGER_USERNAME","$HOSTINGER_PASSWORD" sftp://$HOSTINGER_DOMAIN << EOF
           mirror -R dist/ public_html/
           bye

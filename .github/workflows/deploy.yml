@@ -1,0 +1,38 @@
+name: Deploy Angular App to Hostinger
+
+on:
+  push:
+    branches:
+      - main  # Change this if your default branch is different
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Specify your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Angular app
+        run: npm run build -- --prod
+
+      - name: Deploy to Hostinger
+        env:
+          HOSTINGER_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
+          HOSTINGER_PASSWORD: ${{ secrets.HOSTINGER_PASSWORD }}
+          HOSTINGER_DOMAIN: ${{ secrets.HOSTINGER_DOMAIN }}
+        run: |
+          echo "Deploying to Hostinger"
+          apt-get install -y lftp
+          lftp -u "$HOSTINGER_USERNAME","$HOSTINGER_PASSWORD" sftp://$HOSTINGER_DOMAIN << EOF
+          mirror -R dist/ public_html/
+          bye
+          EOF

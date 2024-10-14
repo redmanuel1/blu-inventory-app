@@ -32,9 +32,10 @@ jobs:
 
       - name: Deploy to Hostinger
         env:
-          HOSTINGER_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
-          HOSTINGER_PASSWORD: ${{ secrets.HOSTINGER_PASSWORD }}
-          HOSTINGER_DOMAIN: blusupplies.online
+          HOSTINGER_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}  # Use your Hostinger username
+          HOSTINGER_PASSWORD: ${{ secrets.HOSTINGER_PASSWORD }}  # Use your Hostinger password
+          HOSTINGER_IP: 154.41.240.193  # Use your Hostinger IP address
+          HOSTINGER_PORT: 65002  # Use your specified SSH port
         run: |
           echo "Deploying to Hostinger"
-          sshpass -p "$HOSTINGER_PASSWORD" scp -r ./dist/* "$HOSTINGER_USERNAME@$HOSTINGER_DOMAIN:/path/to/public_html/"
+          sshpass -p "$HOSTINGER_PASSWORD" scp -P "$HOSTINGER_PORT" -r ./dist/* "$HOSTINGER_USERNAME@$HOSTINGER_IP:/path/to/public_html/"

@@ -3,7 +3,7 @@ name: Deploy Angular App to Hostinger
 on:
   push:
     branches:
-      - main  # Change this if your default branch is different
+      - master  # Change this if your default branch is different
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Specify your Node.js version
+          node-version: '20.11.0'  # Specify your Node.js version
 
       - name: Install dependencies
         run: npm install

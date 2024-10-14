@@ -29,6 +29,11 @@ jobs:
           echo "Installing sshpass"
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y sshpass
+      
+      - name: Add Host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 65002 154.41.240.193 >> ~/.ssh/known_hosts
 
       - name: Deploy to Hostinger
         env:

@@ -29,12 +29,10 @@
         <div class="col">
           <div
             class="row ml-1 status"
-            [class.pending-status]="
-              transaction.status.toLowerCase() === 'pending payment'
-            "
-            [class.confirmed-status]="
-              transaction.status.toLowerCase() == 'payment confirmed'
-            "
+            [class.pending-status]="transaction.status.toLowerCase() === 'pending payment'"
+            [class.invalid-payment-status]="transaction.status.toLowerCase() === 'invalid payment'"
+            [class.awaiting-confirmation-status]="transaction.status.toLowerCase() === 'awaiting confirmation'"
+            [class.confirmed-status]="transaction.status.toLowerCase() === 'ready for pick up'"
           >
             {{ transaction.status }}
           </div>
@@ -151,6 +149,39 @@
           />
         </div>
         } }
+      </div>
+       <!-- third -->
+       <div
+       class="row order-progress-contents d-flex align-items-center flex-column">
+       @if(isOpen[2]&&index===2) {
+        @if(transaction.comments?.length>0){
+          <div class="container mt-1">
+              <h4>Comments</h4>
+              
+              @for(comment of transaction.comments.slice().reverse(); track comment.user){
+                  <div class="row ml-2 mb-3">
+                  <div class="card col col-auto bg-gradient-lighter p-3">
+                      <div>
+                          <span class="text-primary font-weight-900">{{ comment.user }} </span> 
+                          <span style="font-size: x-small; font-style: italic;" class="ml-1" >{{ comment.commentDate | date: 'MMMM d, y, h:mm a' }}</span>
+                      </div>
+                      <div class="mt-1">
+                          <span class="text-dark" style="font-size: small;">{{comment.comment}}</span>
+                      </div>
+                  </div>
+              </div>
+              }
+          </div>
+       }
+      }
+      </div>
+
+      <!-- fourth -->
+      <div
+      class="row order-progress-contents d-flex align-items-left flex-column">
+      @if(isOpen[3]&&index===3 && transaction.confirmedDate) {
+        <div class="text-left p-3">Please proceed to the custodian's office. Your order is now ready for pick up.</div>
+      }
       </div>
     </div>
   </div>

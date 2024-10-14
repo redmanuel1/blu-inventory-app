@@ -24,6 +24,12 @@ jobs:
       - name: Build Angular app
         run: npm run build -- --configuration production
 
+      - name: Install sshpass
+        run: |
+          echo "Installing sshpass"
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y sshpass
+
       - name: Deploy to Hostinger
         env:
           HOSTINGER_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}
@@ -31,9 +37,4 @@ jobs:
           HOSTINGER_DOMAIN: blusupplies.online
         run: |
           echo "Deploying to Hostinger"
-          sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y lftp
-          lftp -u "$HOSTINGER_USERNAME","$HOSTINGER_PASSWORD" sftp://$HOSTINGER_DOMAIN << EOF
-          mirror -R dist/ public_html/
-          bye
-          EOF
+          sshpass -p "$HOSTINGER_PASSWORD" scp -r ./dist/* "$HOSTINGER_USERNAME@$HOSTINGER_DOMAIN:/path/to/public_html/"

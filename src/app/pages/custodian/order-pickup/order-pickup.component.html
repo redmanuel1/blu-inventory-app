@@ -17,7 +17,8 @@
                     [class.pending-status]="transaction.status.toLowerCase() === 'pending payment'"
                     [class.invalid-payment-status]="transaction.status.toLowerCase() === 'invalid payment'"
                     [class.awaiting-confirmation-status]="transaction.status.toLowerCase() === 'awaiting confirmation'"
-                    [class.confirmed-status]="transaction.status.toLowerCase() === 'ready for pick up'">
+                    [class.confirmed-status]="transaction.status.toLowerCase() === 'ready for pick up'"
+                    [class.completed-status]="transaction.status.toLowerCase() === 'completed'">
                         {{ transaction.status }}
                     </p>
                 </div>
@@ -94,8 +95,8 @@
             }
     
             <div class="text-right p-3"> 
-                <button class="btn btn-danger" (click)="declinePayment()">Decline</button>
-                <button class="btn btn-success mr-2" (click)="confirmPayment()">Confirm</button>
+                <!-- <button class="btn btn-danger" (click)="declinePayment()">Decline</button> -->
+                <button class="btn btn-success mr-2" (click)="confirmPickUp()">Confirm Pick Up</button>
             </div>
         </div>
     </div>

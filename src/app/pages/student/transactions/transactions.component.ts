@@ -80,9 +80,12 @@ export class TransactionsComponent implements OnInit, AfterViewInit {
   getTransactionIdByOrderNo(): string {
     if(this.authService.getUserRole()==='accountant'){
       return `${this.currentTransaction.id}/order-confirmation`
+    }else if(this.authService.getUserRole() ==='custodian'){
+      return `${this.currentTransaction.id}/order-pickup`;
     }
+      
     return `${this.currentTransaction.id}/order-details`;
-  }
+    }
   setState() {
     return { student: this.currentTransaction };
   }

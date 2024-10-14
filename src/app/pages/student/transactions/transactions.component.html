@@ -36,8 +36,22 @@
             "
             [class.confirmed-status]="
               getTransactionStatusByOrderNo().toLowerCase() ==
-              'payment confirmed'
+              'ready for pick up'
             "
+            [class.awaiting-confirmation-status]="
+              getTransactionStatusByOrderNo().toLowerCase() ==
+              'awaiting confirmation'
+            "
+
+            [class.invalid-payment-status]="
+              getTransactionStatusByOrderNo().toLowerCase() ==
+              'invalid payment'
+            "
+            [class.completed-status]="
+              getTransactionStatusByOrderNo().toLowerCase() ==
+              'completed'
+            "
+           
           >
             {{ getTransactionStatusByOrderNo() }}
           </div>

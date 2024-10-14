@@ -2,7 +2,7 @@
 <div class="card card-style  shadow-lg--hover" style="width: 18rem; padding: 10px;" (click)="onSelect()">
 <div class="product">
     <div class="">
-        <img class="card-img-top bg-lighter" [src]="product.imageUrl || 'assets/img/logo/b_logo.png'" alt="Product image" >
+        <img class="card-img-top bg-lighter" [src]="product.imgURL || 'assets/img/logo/b_logo.png'" style="min-height: 200px;" alt="Product image" >
     </div>
     <div class="card-body flex-column d-flex h-100">
         <h3 class="card-title">{{ product.name }}</h3>

@@ -36,8 +36,8 @@ jobs:
           ssh-keyscan -p 65002 154.41.240.193 >> ~/.ssh/known_hosts
 
       - name: Find dist folder
-        id: dist_folder
-        run: echo "dist_folder=$(ls -d dist/*)" >> $GITHUB_ENV
+        run: echo "dist_folder=$(ls -d dist/*/)" >> $GITHUB_ENV
+
 
       - name: Deploy to Hostinger
         env:
@@ -47,4 +47,4 @@ jobs:
           HOSTINGER_PORT: 65002  # Use your specified SSH port
         run: |
           echo "Deploying to Hostinger"
-          sshpass -p "$HOSTINGER_PASSWORD" scp -P "$HOSTINGER_PORT" -r "$dist_folder/*" "$HOSTINGER_USERNAME@$HOSTINGER_IP:/home/u642177545/public_html/"
+          sshpass -p "$HOSTINGER_PASSWORD" scp -P "$HOSTINGER_PORT" -r "${{ env.dist_folder }}*" "$HOSTINGER_USERNAME@$HOSTINGER_IP:/home/u642177545/public_html/"

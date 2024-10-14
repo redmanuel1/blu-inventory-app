@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "Deploying to Hostinger"
           sudo apt-get update
-          sudo apt-get install -y lftp
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y lftp
           lftp -u "$HOSTINGER_USERNAME","$HOSTINGER_PASSWORD" sftp://$HOSTINGER_DOMAIN << EOF
           mirror -R dist/ public_html/
           bye

@@ -47,6 +47,11 @@
               getTransactionStatusByOrderNo().toLowerCase() ==
               'invalid payment'
             "
+            [class.completed-status]="
+              getTransactionStatusByOrderNo().toLowerCase() ==
+              'completed'
+            "
+           
           >
             {{ getTransactionStatusByOrderNo() }}
           </div>

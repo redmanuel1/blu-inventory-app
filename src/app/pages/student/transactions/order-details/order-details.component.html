@@ -183,6 +183,13 @@
         <div class="text-left p-3">Please proceed to the custodian's office. Your order is now ready for pick up.</div>
       }
       </div>
+       <!-- fifth -->
+      <div
+      class="row order-progress-contents d-flex align-items-left flex-column">
+      @if(isOpen[4]&&index===4 && transaction.dateCompleted) {
+        <div class="text-left p-3">Transaction complete. Your order has been picked up last {{transaction.dateCompleted | date: 'MMMM d, y, h:mm a'}}</div>
+      }
+      </div>
     </div>
   </div>
   }

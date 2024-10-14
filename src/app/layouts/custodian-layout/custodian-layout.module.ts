@@ -9,12 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TableComponent } from 'src/app/components/table/table.component';
+import { OrderPickupComponent } from 'src/app/pages/custodian/order-pickup/order-pickup.component';
 
 
 
 @NgModule({
   declarations: [
-    ProductsComponent
+    ProductsComponent,
+    OrderPickupComponent
   ],
   imports: [
     CommonModule,

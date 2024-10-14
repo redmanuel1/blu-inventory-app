@@ -19,7 +19,7 @@ export class NavigationService {
         this.router.navigate(['/student/products']);
         break;
       case 'custodian':
-        this.router.navigate(['/custodian/dashboard']);
+        this.router.navigate(['/custodian/orders']);
         break;
       case 'accountant':
           this.router.navigate(['/accountant/transactions']);

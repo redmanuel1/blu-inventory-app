@@ -219,7 +219,7 @@ export class OrderDetailsComponent implements OnInit {
       date: this.transaction.statusUpdates?.[this.transaction.statusUpdates.length - 1]?.dateUpdated ?? null,
     });
     this.orderProgress.push({ title: "4. Item for Pickup", date: this.transaction.confirmedDate ?? null });
-    this.orderProgress.push({ title: "5. Transaction Complete", date: null });
+    this.orderProgress.push({ title: "5. Transaction Complete", date: this.transaction.dateCompleted ?? null });
   }
   setSelectedIndex(index: number) {
     if (this.selectedIndex == index) {

@@ -7,6 +7,7 @@ export interface Transaction {
   documents?: TransactionDocument[];
   comments?: TransactionComment[];
   statusUpdates?: StatusUpdates[];
+  dateCompleted?: string
 }
 
 export interface TransactionDocument {

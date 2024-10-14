@@ -15,6 +15,7 @@ export interface Variant {
   price?: number;
   quantity: number;
   sizes?: Size[];
+  imgURL?: string
 }
 
 export interface Size {

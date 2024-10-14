@@ -92,6 +92,7 @@ constructor(
   // Separate function to map ordered products from cart
   private mapOrderedProducts(): OrderProduct[] {
     return this.checkOut.map(item => ({
+      imgURL: item.imgURL,
       productCode: item.productCode,
       quantity: item.quantity,
       price: item.price,

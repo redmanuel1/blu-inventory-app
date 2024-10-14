@@ -182,7 +182,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
         price: this.selectedVariant.price,
         quantity:  this.quantity,
         totalPrice: this.selectedVariant.price * this.quantity,
-        imgURL: this.product.imageUrl || '',
+        imgURL: this.selectedVariant.imgURL || '',
         size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
         name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name,
         productName: this.product.name
@@ -217,7 +217,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
             price: this.selectedVariant.price,
             quantity:  this.quantity,
             totalPrice: this.selectedVariant.price * this.quantity,
-            imgURL: this.product.imageUrl || '',
+            imgURL: this.selectedVariant.imgURL || '',
             size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
             name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name,
             productName: this.product.name

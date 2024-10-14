@@ -46,4 +46,4 @@ jobs:
           HOSTINGER_PORT: 65002  # Use your specified SSH port
         run: |
           echo "Deploying to Hostinger"
-          sshpass -p "$HOSTINGER_PASSWORD" scp -v -P "$HOSTINGER_PORT" -r ./dist/* "$HOSTINGER_USERNAME@$HOSTINGER_IP:/home/u642177545/public_html/"
+          sshpass -p "$HOSTINGER_PASSWORD" scp -v -P "$HOSTINGER_PORT" -r ./dist/* "$HOSTINGER_USERNAME@$HOSTINGER_IP:/home/u642177545/domains/blusupplies.online/public_html/"

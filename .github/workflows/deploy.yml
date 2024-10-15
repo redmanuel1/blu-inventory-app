@@ -3,7 +3,7 @@ name: Deploy Angular App to Hostinger
 on:
   push:
     branches:
-      - master  # Change this if your default branch is different
+      - production  # Change this if your default branch is different
 
 jobs:
   build:

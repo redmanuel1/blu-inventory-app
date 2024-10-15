@@ -7,6 +7,7 @@ export interface User {
   email: string;
   phone: string;
   id?: string;
+  isActive: boolean;
   notifications?: UserNotification[];
   // Add other properties as needed
 }

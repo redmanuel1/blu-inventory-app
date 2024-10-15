@@ -15,7 +15,7 @@ export class AuthService {
   constructor(private firestore: AngularFirestore) {}
 
   // Method to login the user
-  login(idNo: string, password: string): Promise<boolean> {
+  login(idNo: string, password: string): Promise<string> {
     return new Promise((resolve, reject) => {
       this.firestore
         .collection("Users", (ref) => ref.where("idNo", "==", idNo))
@@ -25,18 +25,19 @@ export class AuthService {
             console.log("test");
             if (!snapshot.empty) {
               const user = snapshot.docs[0].data() as User;
-              if (user.password === password) {
+              if (user.password === password && user.isActive) {
                 this.userSubject.next(user);
                 this.saveUserToLocalStorage(user);
                 this.saveUserDocIdToLocalStorage(snapshot.docs[0].id);
                 this.user$ = this.userSubject.asObservable();
-
-                resolve(true); // Login successful
+                resolve("Success"); // Login successful
+              } else if (user.password === password && !user.isActive) {
+                resolve("User Deactivated"); // Login successful
               } else {
-                resolve(false); // Incorrect password
+                resolve("Incorrect Password"); // Incorrect password
               }
             } else {
-              resolve(false); // User not found
+              resolve("User Not Found"); // User not found
             }
           },
           error: (error) => {

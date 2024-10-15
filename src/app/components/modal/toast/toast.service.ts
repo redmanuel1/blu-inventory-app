@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
-import { ToastComponent } from './toast.component';
+import { Injectable } from "@angular/core";
+import { ToastComponent } from "./toast.component";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ToastService {
-
-  constructor() { }
+  constructor() {}
 
   private toastComponent: ToastComponent | undefined;
 
@@ -14,7 +13,12 @@ export class ToastService {
     this.toastComponent = toast;
   }
 
-  public showToast(message: string, type: 'success' | 'error' | 'info', duration: number = 3000): void {
+  public showToast(
+    message: string,
+    type: "success" | "error" | "info",
+    duration: number = 3000
+  ): void {
+    debugger;
     if (this.toastComponent) {
       this.toastComponent.display(message, type, duration);
     }

@@ -1,0 +1,17 @@
+@for(notificaiton of currentUser.notifications; track notificaiton; let
+index=$index;) {
+<div (click)="markAsRead(index)">
+  <div class="notification" [class.unread]="notification.status === 'unread'">
+    <h4>{{ notification.title }}</h4>
+    <p>{{ notification.message }}</p>
+    <span>{{ notification.timestamp | date }}</span>
+  </div>
+</div>
+}
+<!-- <div *ngFor="let notification of users.notification  | async" (click)="markAsRead(notification.id)">
+  <div class="notification" [class.unread]="notification.status === 'unread'">
+    <h4>{{ notification.title }}</h4>
+    <p>{{ notification.message }}</p>
+    <span>{{ notification.timestamp | date }}</span>
+  </div>
+</div> -->

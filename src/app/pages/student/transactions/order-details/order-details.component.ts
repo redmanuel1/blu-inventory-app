@@ -12,8 +12,9 @@ import * as _ from "lodash";
 import { FirestoreService } from "src/app/services/firestore.service";
 import { ToastService } from "src/app/components/modal/toast/toast.service";
 import { ToastComponent } from "src/app/components/modal/toast/toast.component";
-import { finalize } from "rxjs";
 import { NgxSpinnerService } from "ngx-spinner";
+import { User } from "src/app/models/user.model";
+import { NotificationService } from "src/app/services/notification.service";
 
 @Component({
   selector: "app-order-details",
@@ -27,12 +28,14 @@ export class OrderDetailsComponent implements OnInit {
     private firestoreService: FirestoreService,
     private fileUploadService: FileUploadService,
     private toastService: ToastService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private notificationService: NotificationService
   ) {}
   order: Order;
   transaction: Transaction;
   productCodeArr: string[];
   productArr: Product[];
+  accountantUserArr: User[];
   orderProgress: OrderProgress[] = [];
   // image
   selectedFiles: File[] = [];
@@ -51,6 +54,7 @@ export class OrderDetailsComponent implements OnInit {
       console.log("Transaction ID:", this.transactionId);
     });
     this.loadTransaction();
+    this.loadAccountantUsers();
   }
   ngAfterViewInit() {
     this.toastService.registerToast(this.toastComponent);
@@ -91,6 +95,28 @@ export class OrderDetailsComponent implements OnInit {
         this.productArr = result;
         this.setOrderProgress();
         this.spinner.hide();
+      });
+  }
+  private loadAccountantUsers(): void {
+    this.firestoreService.collectionName = "Users";
+    this.firestoreService
+      .getRecordsByField("role", "accountant")
+      .subscribe((result: User[]) => {
+        this.accountantUserArr = [];
+        if (result) {
+          this.accountantUserArr = result;
+        }
+      });
+  }
+  private async addNotificationToAccountants(): Promise<void> {
+    await this.notificationService
+      .addNotification(
+        this.accountantUserArr,
+        "studentpayment",
+        this.transactionId
+      )
+      .catch((err) => {
+        console.log(err);
       });
   }
   getProductDisplay(productCode: string): string {
@@ -162,6 +188,7 @@ export class OrderDetailsComponent implements OnInit {
                 "Files successfully uploaded",
                 "success"
               );
+              this.addNotificationToAccountants();
               this.spinner.hide();
             })
             .catch((err) => {
@@ -186,7 +213,6 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   onDeleteImages() {
-    debugger;
     if (this.transaction.documents) {
       const deleteFiles = this.transaction.documents;
       const deleteFileUrls: string[] = [];

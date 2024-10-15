@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { map, Observable } from "rxjs";
 import { User } from "../models/user.model";
+import { WhereFilterOp, CollectionReference, Query } from "firebase/firestore";
 
 @Injectable({
   providedIn: "root",
@@ -26,6 +27,41 @@ export class FirestoreService {
           })
         )
       );
+  }
+
+  getRecordsByField(fieldName: string, fieldValue: any): Observable<any> {
+    return this.firestore
+      .collection(this.collectionName, (ref) =>
+        ref.where(fieldName, "==", fieldValue)
+      )
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data: Object = a.payload.doc.data();
+            const id = a.payload.doc.id; // Get the document ID
+            return { id, ...data }; // Return the complete object
+          })
+        )
+      );
+  }
+  getRecordByFields(
+    conditions: { field: string; operator: WhereFilterOp; value: any }[]
+  ) {
+    return this.firestore
+      .collection(this.collectionName, (ref) => {
+        let query: any = ref;
+
+        conditions.forEach((condition) => {
+          query = query.where(
+            condition.field,
+            condition.operator,
+            condition.value
+          );
+        });
+        return query;
+      })
+      .snapshotChanges();
   }
 
   getRecordsSortedByOrderDate(): Observable<any[]> {
@@ -104,9 +140,7 @@ export class FirestoreService {
 
   // Method to update multiple products
   async updateRecords(records: any[]): Promise<void> {
-    debugger;
     const updates = records.map((record) => {
-      debugger;
       // Exclude only the 'id' field
       const { id, ...filteredRecord } = record;
 
@@ -159,14 +193,19 @@ export class FirestoreService {
   }
 
   getRecordByorderNo(orderNo: string): Observable<any> {
-    return this.firestore.collection(this.collectionName, ref => ref.where('orderNo', '==', orderNo))
+    return this.firestore
+      .collection(this.collectionName, (ref) =>
+        ref.where("orderNo", "==", orderNo)
+      )
       .snapshotChanges()
       .pipe(
-        map(actions => actions.map(a => {
-          const data = a.payload.doc.data() as any; // Get document data
-          const id = a.payload.doc.id; // Get document ID
-          return { id, ...data }; // Combine document ID with data
-        }))
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as any; // Get document data
+            const id = a.payload.doc.id; // Get document ID
+            return { id, ...data }; // Combine document ID with data
+          })
+        )
       );
   }
 

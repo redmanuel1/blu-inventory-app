@@ -1,6 +1,6 @@
 export interface Transaction {
   id?: string;
-  confirmedDate: string;
+  confirmedDate?: string;
   orderNo: string;
   status: string;
   type: string;
@@ -8,6 +8,7 @@ export interface Transaction {
   comments?: TransactionComment[];
   statusUpdates?: StatusUpdates[];
   dateCompleted?: string
+  idNo: string
 }
 
 export interface TransactionDocument {

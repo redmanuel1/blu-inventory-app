@@ -7,7 +7,7 @@ import { OrderPickupComponent } from 'src/app/pages/custodian/order-pickup/order
 
 export const CustodianLayoutRoutes: Routes = [
   { path: 'orders',      component: TransactionsComponent },
-  { path: 'transactions',   component: UserProfileComponent },
+// { path: 'transactions',   component: UserProfileComponent },
   { path: 'products',   component: ProductsComponent },
   { path: 'orders/:transactionId/order-pickup', component: OrderPickupComponent},
   { path: 'user-profile',      component: UserProfileComponent },

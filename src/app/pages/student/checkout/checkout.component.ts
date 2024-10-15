@@ -118,10 +118,10 @@ constructor(
   // Separate function to create the transaction data object
   private createTransactionObject(confirmedDate: string, orderNo: string): Transaction {
     return {
-      confirmedDate: confirmedDate,
       orderNo: orderNo,
       status: "Pending Payment",
-      type: "order"
+      type: "order",
+      idNo: this.authService.getUserIdNo()
     };
   }
   

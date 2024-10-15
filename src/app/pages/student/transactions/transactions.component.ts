@@ -41,6 +41,14 @@ export class TransactionsComponent implements OnInit, AfterViewInit {
     //     this.spinner.hide();
     //   });
     // });
+    if(this.authService.getUserRole() === 'student'){
+      this.getOrdersbyIdNo(this.authService.getUserIdNo())
+    }else{
+      this.getAllorders()
+    }
+  }
+
+  getAllorders(){
     this.firestoreService.getRecords().subscribe({
       next: (data) => {
         this.transactionArr = data;
@@ -62,6 +70,31 @@ export class TransactionsComponent implements OnInit, AfterViewInit {
       },
     });
   }
+
+  getOrdersbyIdNo(idNo: string){
+    this.firestoreService.getRecordByidNo(idNo).subscribe({
+      next: (data) => {
+        this.transactionArr = data;
+        this.firestoreService.collectionName = "Orders";
+        this.firestoreService.getRecordsSortedByOrderDate().subscribe({
+          next: (data) => {
+            this.orderArr = data;
+            this.spinner.hide();
+          },
+          error: (error) => {
+            this.toastService.showToast("An error occured", "error");
+            this.spinner.hide();
+          },
+        });
+      },
+      error: (error) => {
+        this.toastService.showToast("An error occured", "error");
+        this.spinner.hide();
+      },
+    });
+  }
+  
+
   isOrderHasTransaction(orderNo: string): boolean {
     this.getTransactionByOrderNo(orderNo);
     return this.currentTransaction !== undefined ? true : false;
@@ -80,9 +113,12 @@ export class TransactionsComponent implements OnInit, AfterViewInit {
   getTransactionIdByOrderNo(): string {
     if(this.authService.getUserRole()==='accountant'){
       return `${this.currentTransaction.id}/order-confirmation`
+    }else if(this.authService.getUserRole() ==='custodian'){
+      return `${this.currentTransaction.id}/order-pickup`;
     }
+      
     return `${this.currentTransaction.id}/order-details`;
-  }
+    }
   setState() {
     return { student: this.currentTransaction };
   }

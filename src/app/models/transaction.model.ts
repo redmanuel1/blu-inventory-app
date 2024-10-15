@@ -1,11 +1,14 @@
 export interface Transaction {
   id?: string;
-  confirmedDate: string;
+  confirmedDate?: string;
   orderNo: string;
   status: string;
   type: string;
   documents?: TransactionDocument[];
   comments?: TransactionComment[];
+  statusUpdates?: StatusUpdates[];
+  dateCompleted?: string
+  idNo: string
 }
 
 export interface TransactionDocument {
@@ -16,5 +19,11 @@ export interface TransactionDocument {
 export interface TransactionComment{
   comment: string;
   commentDate: string;
+  user: string;
+}
+
+export interface StatusUpdates{
+  status: string;
+  dateUpdated: string;
   user: string;
 }

@@ -53,7 +53,9 @@
                   <tr>
                     @for (col of dataColumns; track $index) {
                       <td>
-                        @if (col.type == ColumnType.image) {
+                        @if (!col.insert) {
+                          &nbsp;
+                        } @else if (col.type == ColumnType.image) {
                           <!-- <input class="btn btn-{{theme}} btn-sm w-100" type="file" (change)="onImageChange($event)" /> -->
                           <label class="btn btn-{{theme}} btn-sm w-100">
                             <i class="ni ni-upload"></i> Upload Image <!-- Replace with the appropriate Nucleo icon class -->
@@ -63,13 +65,15 @@
                             <img [src]="newRow.imgPreviewURL || newRow.imgURL" 
                             alt="Image" 
                             *ngIf="newRow.imgPreviewURL || newRow.imgURL" 
-                            style="max-width: 100px; max-height: 100px;" />
+                            class="img-thumbnail-md" />
                           </div>
                         } @else if (col.type == ColumnType.checkbox) {
                           <label class="custom-toggle">
                             <input type="checkbox" [(ngModel)]="newRow[col.field]" name="{{ col.field }}">
                             <span class="custom-toggle-slider rounded-circle"></span>
                           </label>
+                        } @else if (col.type == ColumnType.dropdown) {
+                          <app-dropdown [placeholder]="col.field" [tableRef]="col.tableRef" [fieldRef]="col.fieldRef"></app-dropdown>
                         } @else {
                           <div class="form-group">
                             <input class="form-control"
@@ -96,7 +100,8 @@
                     @for (col of dataColumns; track $index) {
                       <td>
                         <!-- Check if the row is in edit mode -->
-                        @if (item.isEditing) {  
+                        @if (item.isEditing && col.editable) {  
+                          <!-- Edit Record -->
                           @if (col.type == ColumnType.image) {
                             <label class="btn btn-{{theme}} btn-sm w-100">
                               <i class="ni ni-upload"></i> Upload Image <!-- Replace with the appropriate Nucleo icon class -->
@@ -109,7 +114,6 @@
                                   *ngIf="item.imgPreviewURL || item.imgURL" 
                                   style="max-width: 100px; max-height: 100px;" />
                             </div>
-                            
                           } @else if (col.type == ColumnType.checkbox) {
                             <label class="custom-toggle">
                               <input type="checkbox" [(ngModel)]="item[col.field]" name="{{ col.field }}">
@@ -121,15 +125,11 @@
                         <!-- Display the existing value -->
                         } @else {
                           @if (col.type == ColumnType.image) {
-                            <div class="avatar-group">
-                              <a href="javascript:void(0)" class="avatar avatar-lg" data-toggle="tooltip" data-original-title="Ryan Tompson">
-                                <img alt="product-img placeholder" [src]="item.imgURL || 'assets/img/logo/b_logo.png'" class="rounded-circle">
-                              </a>
-                            </div>
+                                <img alt="product-img placeholder" [src]="item.imgURL || 'assets/img/logo/b_logo.png'" class="img-thumbnail-sm">
                           } @else if (col.type == ColumnType.number){
-                            <div class="text-right">{{ item[col.field] }} </div>
+                            <div class="text-right">{{ item[col.field] | number }} </div>
                           } @else if (col.type == ColumnType.date){
-                            {{ item[col.field] | date: 'MM/dd/YYYY hh:mm a' }}
+                            {{ item[col.field] ? (item[col.field] | date: 'MM/dd/YYYY hh:mm a') : '' }}
                           } @else {
                             {{ item[col.field] }} 
                           }

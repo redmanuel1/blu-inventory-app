@@ -1,0 +1,15 @@
+<div class="form-group">
+    <div class="input-group">
+        <input type="text" class="form-control"
+               [(ngModel)]="searchTerm"
+               [placeholder]="placeholder"
+               (input)="filterData()"
+               (focus)="showDropdown = true">
+        <div *ngIf="showDropdown && filteredData.length > 0" class="dropdown-menu show">
+            <div *ngFor="let record of filteredData" class="dropdown-item" 
+                 (click)="selectData(record)">
+                {{ record }}
+            </div>
+        </div>
+    </div>
+</div>

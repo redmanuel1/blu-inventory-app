@@ -31,6 +31,7 @@ export class TableComponent {
   @Input() dataColumns: TableColumn[];
   @Input() data: any[];
 
+  @Output() dataChange = new EventEmitter<any[]>();
   @Output() saveRecords = new EventEmitter<any[]>();
   @Output() deleteRecord = new EventEmitter<any>();
   @Output() imageSelected = new EventEmitter<{

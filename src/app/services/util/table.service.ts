@@ -10,7 +10,7 @@ export class TableService {
 
   // Method to create a TableColumn object for each field
   createTableColumn(fieldName: string, fieldConfig): TableColumn {
-    const config = fieldConfig[fieldName] || { type: ColumnType.string };  // Default to string type if not found
+    const config = fieldConfig.find(column => column.field === fieldName) || { type: ColumnType.string };  // Default to string type if not found
 
     return {
       field: fieldName,
@@ -18,7 +18,11 @@ export class TableService {
       type: config.type,                         // Column type from fieldConfig
       hidden: config.hidden ?? false,            // Hidden from fieldConfig, default to false
       editable: config.editable ?? false,        // Editable from fieldConfig, default to false
-      required: config.required ?? false         // Required, from fieldConfid, default to false
+      insert: config.insert ?? true,           // Insert from fieldConfig, default to true
+      required: config.required ?? false,        // Required, from fieldConfig, default to false
+      defaultValue: config.defaultValue ?? null, // DefaultValue, from fieldConfig, default to null
+      tableRef: config.tableRef ?? null,         // tableRef, from fieldConfig, default to null - used for ColumnType.dropdown
+      fieldRef: config.fieldRef ?? null          // fieldRef, from fieldConfig, default to null - used for ColumnType.dropdown (field that would be used in tableRef)
     };
   }
 

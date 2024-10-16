@@ -7,7 +7,7 @@ export enum ColumnType {
   date = 'date',
   range = 'range',
   checkbox = 'checkbox',
-  dropDown = 'dropdown',
+  dropdown = 'dropdown',
   image = 'image'
 }
 
@@ -17,5 +17,9 @@ export interface TableColumn {
   type?: ColumnType;
   hidden?: boolean;
   editable?: boolean; 
+  insert?: boolean;
   required?: boolean;
+  defaultValue?: any;
+  tableRef?: string;
+  fieldRef?: string;
 }

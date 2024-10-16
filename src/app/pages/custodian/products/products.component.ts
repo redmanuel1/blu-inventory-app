@@ -19,13 +19,13 @@ export class ProductsComponent {
   selectedFiles: { record: any; file: File; imgPreviewURL: string }[] = [];
 
   // Single fieldConfig map to hold all dynamic properties for each field
-  fieldConfig: Record<string, { type: ColumnType; hidden?: boolean; editable?: boolean; required?: boolean }> = {
-    imgURL: { type: ColumnType.image, hidden: false, editable: false },
-    code: { type: ColumnType.text, hidden: false, required: true, editable: true },
-    name: { type: ColumnType.text, hidden: false, required: true, editable: true },
-    isSet: { type: ColumnType.checkbox, hidden: true, editable: false },
-    price: { type: ColumnType.number, hidden: false, required: true, editable: true }
-  };
+  fieldConfig: TableColumn[] = [
+    { field: "imgURL", type: ColumnType.image, hidden: false, editable: true },
+    { field: "code", type: ColumnType.text, hidden: false, required: true, editable: false },
+    { field: "name", type: ColumnType.text, hidden: false, required: true, editable: true },
+    { field: "isSet", type: ColumnType.checkbox, hidden: true, editable: true },
+    { field: "price", type: ColumnType.number, hidden: false, required: true, editable: true }
+  ];
 
   constructor(private recordService: FirestoreService, private tableService: TableService, private storage: AngularFireStorage) {
     recordService.collectionName = "Products"

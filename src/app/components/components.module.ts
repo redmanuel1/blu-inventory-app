@@ -12,6 +12,7 @@ import { ShoppingcartItemComponent } from './cards/shoppingcart-item/shoppingcar
 import { FormsModule } from '@angular/forms';
 import { PromptDialogComponent } from './modal/prompt-dialog/prompt-dialog.component';
 import { ToastComponent } from './modal/toast/toast.component';
+import { DropdownComponent } from './dropdown/dropdown.component';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { ToastComponent } from './modal/toast/toast.component';
     TableComponent,
     ShoppingcartItemComponent,
     PromptDialogComponent,
-    ToastComponent
+    ToastComponent,
+    DropdownComponent
   ],
   exports: [
     FooterComponent,
@@ -40,7 +42,8 @@ import { ToastComponent } from './modal/toast/toast.component';
     TableComponent,
     ShoppingcartItemComponent,
     PromptDialogComponent,
-    ToastComponent
+    ToastComponent,
+    DropdownComponent
   ]
 })
 export class ComponentsModule { }

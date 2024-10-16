@@ -21,14 +21,14 @@ export class CheckoutComponent implements OnInit{
   dataColumns: TableColumn[] = []
   orderPlaced: boolean = false;
 
-  fieldConfig: Record<string, { type: ColumnType; hidden?: boolean; editable?: boolean; required?: boolean }> = {
-    imgURL: { type: ColumnType.image, hidden: false, editable: false },
-    name: { type: ColumnType.text, hidden: false, required: true, editable: false },
-    size: { type: ColumnType.text, hidden: false, required: true, editable: false },
-    price: { type: ColumnType.checkbox, hidden: true, editable: false },
-    quantity: { type: ColumnType.number, hidden: false, required: true, editable: false },
-    totalPrice: { type: ColumnType.number, hidden: false, required: true, editable: false }
-  };
+  fieldConfig: TableColumn[] = [
+    { field: "imgURL", type: ColumnType.image, hidden: false, editable: false },
+    { field: "name", type: ColumnType.text, hidden: false, required: true, editable: false },
+    { field: "size", type: ColumnType.text, hidden: false, required: true, editable: false },
+    { field: "price", type: ColumnType.checkbox, hidden: true, editable: false },
+    { field: "quantity", type: ColumnType.number, hidden: false, required: true, editable: false },
+    { field: "totalPrice", type: ColumnType.number, hidden: false, required: true, editable: false }
+  ];
 
   htmlDescription: string = "";
   @ViewChild(PromptDialogComponent) promptDialog!: PromptDialogComponent;

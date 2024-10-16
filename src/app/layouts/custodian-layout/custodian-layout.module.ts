@@ -10,13 +10,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ProductsComponent } from 'src/app/pages/custodian/products/products.component';
 import { InventoryComponent } from 'src/app/pages/custodian/inventory/inventory.component';
+import { OrderPickupComponent } from 'src/app/pages/custodian/order-pickup/order-pickup.component';
 
 
 
 @NgModule({
   declarations: [
     ProductsComponent,
-    InventoryComponent
+    InventoryComponent,
+    OrderPickupComponent
   ],
   imports: [
     CommonModule,

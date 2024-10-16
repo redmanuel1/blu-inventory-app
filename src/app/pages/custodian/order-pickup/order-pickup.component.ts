@@ -1,21 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Order, OrderProduct } from 'src/app/models/order.model';
-import { Transaction, TransactionComment } from 'src/app/models/transaction.model';
-import { FirestoreService } from 'src/app/services/firestore.service';
-import { switchMap } from 'rxjs/operators';
-import { formatDate } from '@angular/common';
+import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth.service';
+import { ActivatedRoute } from '@angular/router';
+import { switchMap } from 'rxjs';
 import { ToastComponent } from 'src/app/components/modal/toast/toast.component';
 import { ToastService } from 'src/app/components/modal/toast/toast.service';
+import { Order } from 'src/app/models/order.model';
+import { Transaction, TransactionComment } from 'src/app/models/transaction.model';
+import { AuthService } from 'src/app/services/auth.service';
+import { FirestoreService } from 'src/app/services/firestore.service';
 
 @Component({
-  selector: 'app-order-confirmation',
-  templateUrl: './order-confirmation.component.html',
-  styleUrls: ['./order-confirmation.component.scss']
+  selector: 'app-order-pickup',
+  templateUrl: './order-pickup.component.html',
+  styleUrl: './order-pickup.component.scss'
 })
-export class OrderConfirmationComponent implements OnInit {
+export class OrderPickupComponent {
   transactionId: string | null = null;
   orderedProducts: Order | null = null;
   transaction: Transaction | null = null;
@@ -81,16 +80,6 @@ export class OrderConfirmationComponent implements OnInit {
     }
   }
 
-  // parseUploadDateAsDate(dateString: string): string {
-  //   const date = new Date(dateString);
-  //   if (isNaN(date.getTime())) {
-  //     return 'Invalid Date';
-  //   }
-  //   const format = 'MMMM d, y, h:mm a';
-  //   const locale = 'en-US';
-  //   const timezone = 'UTC';
-  //   return formatDate(date, format, locale, timezone);
-  // }
 
   addComment(form: NgForm) {
     // Check if the form is valid
@@ -176,18 +165,18 @@ export class OrderConfirmationComponent implements OnInit {
   
 
 // Method for confirming the transaction
-confirmPayment(): void {
+confirmPickUp(): void {
   if (this.transaction && this.transactionId) {
     // Update the transaction status
     const updatedTransaction = {
       id: this.transactionId,
-      status: 'Ready for Pick up',
-      confirmedDate: new Date().toISOString()
+      status: 'Completed',
+      dateCompleted: new Date().toISOString()
     };
     
     // Create a new status update
     const statusUpdate = {
-      status: 'Ready for Pick up',
+      status: 'Completed',
       dateUpdated: new Date().toISOString(),
       user: this.userLoggedInName,
     };
@@ -210,8 +199,8 @@ confirmPayment(): void {
     this.firestoreService.updateRecords([updatedTransaction])
       .then(() => {
         
-        this.toastService.showToast("Payment confirmed. Item is now ready for pick up", 'success');
-        this.transaction.status = 'Ready for Pick up'; 
+        this.toastService.showToast("Item picked up. Transaction is now complete.", 'success');
+        this.transaction.status = 'Completed'; 
       })
       .catch((error) => {
         console.error('Error updating transaction status:', error);

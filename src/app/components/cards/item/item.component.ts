@@ -26,6 +26,8 @@ export class ItemComponent implements OnInit, AfterViewInit {
   quantity = 1;
   selectedItem: CartItem[] = [];
   @ViewChild(ToastComponent) toastComponent!: ToastComponent;
+  isArray: boolean = false;
+  currentImageIndex = 0;
 
   constructor(
     private inventoryService: InventoryService,
@@ -146,6 +148,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
   
   selectVariant(variant: Variant) {
     this.selectedVariant = variant;
+    this.isArray = Array.isArray(this.selectedVariant?.imgURL);
     console.log("selectedVariant", this.selectedVariant)
     if(!this.selectedSetSize){
       this.maxQuantity = variant.quantity;
@@ -182,7 +185,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
         price: this.selectedVariant.price,
         quantity:  this.quantity,
         totalPrice: this.selectedVariant.price * this.quantity,
-        imgURL: this.product.imageUrl || '',
+        imgURL: Array.isArray(this.selectedVariant.imgURL) ? this.selectedVariant.imgURL[0] : this.selectedVariant.imgURL || '',
         size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
         name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name,
         productName: this.product.name
@@ -217,7 +220,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
             price: this.selectedVariant.price,
             quantity:  this.quantity,
             totalPrice: this.selectedVariant.price * this.quantity,
-            imgURL: this.product.imageUrl || '',
+            imgURL: Array.isArray(this.selectedVariant.imgURL) ? this.selectedVariant.imgURL[0] : this.selectedVariant.imgURL || '',
             size: this.selectedSetSize ? this.selectedSetSize.size : '' ,
             name: this.selectedVariant.name === "Set" ? "Set - " + this.product.name : this.selectedVariant.name,
             productName: this.product.name
@@ -230,6 +233,31 @@ export class ItemComponent implements OnInit, AfterViewInit {
         this.toastService.showToast("Selected product is not available at the moment", 'error');
       }
   }  
+
+
+  isImageArray(): boolean {
+    return Array.isArray(this.selectedVariant?.imgURL);
+  }
+
+  get imageCount(): number {
+    return this.selectedVariant?.imgURL?.length || 0;
+  }
+
+  nextImage(): void {
+    if (this.currentImageIndex < this.imageCount - 1) {
+      this.currentImageIndex++;
+    } else {
+      this.currentImageIndex = 0;  // Loop back to the first image
+    }
+  }
+
+  previousImage(): void {
+    if (this.currentImageIndex > 0) {
+      this.currentImageIndex--;
+    } else {
+      this.currentImageIndex = this.imageCount - 1;  // Loop to the last image
+    }
+  }
   
 }
 

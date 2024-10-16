@@ -1,0 +1,49 @@
+name: Deploy Angular App to Hostinger 
+
+on:
+  push:
+    branches:
+      - production  # Change this if your default branch is different
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.11.0'  # Specify your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Angular app
+        run: npm run build -- --configuration production
+      
+      - name: List contents of dist folder
+        run: ls -l ./dist
+
+      - name: Install sshpass
+        run: |
+          echo "Installing sshpass"
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y sshpass
+          
+      - name: Add Host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 65002 154.41.240.193 >> ~/.ssh/known_hosts
+
+      - name: Deploy to Hostinger
+        env:
+          HOSTINGER_USERNAME: ${{ secrets.HOSTINGER_USERNAME }}  # Use your Hostinger username
+          HOSTINGER_PASSWORD: ${{ secrets.HOSTINGER_PASSWORD }}  # Use your Hostinger password
+          HOSTINGER_IP: 154.41.240.193  # Use your Hostinger IP address
+          HOSTINGER_PORT: 65002  # Use your specified SSH port
+        run: |
+          echo "Deploying to Hostinger"
+          sshpass -p "$HOSTINGER_PASSWORD" scp -v -P "$HOSTINGER_PORT" -r ./dist/* "$HOSTINGER_USERNAME@$HOSTINGER_IP:/home/u642177545/domains/blusupplies.online/public_html/"

@@ -92,6 +92,7 @@ constructor(
   // Separate function to map ordered products from cart
   private mapOrderedProducts(): OrderProduct[] {
     return this.checkOut.map(item => ({
+      imgURL: item.imgURL,
       productCode: item.productCode,
       quantity: item.quantity,
       price: item.price,
@@ -117,10 +118,10 @@ constructor(
   // Separate function to create the transaction data object
   private createTransactionObject(confirmedDate: string, orderNo: string): Transaction {
     return {
-      confirmedDate: confirmedDate,
       orderNo: orderNo,
       status: "Pending Payment",
-      type: "order"
+      type: "order",
+      idNo: this.authService.getUserIdNo()
     };
   }
   

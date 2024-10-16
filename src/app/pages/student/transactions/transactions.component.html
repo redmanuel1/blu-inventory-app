@@ -7,6 +7,9 @@
 </nav> -->
 <ngx-spinner size="large" type="ball-scale-multiple" [fullScreen]="true">
 </ngx-spinner>
+@if(orderArr.length == 0 && transactionArr.length == 0){
+  <div>No available transactions and orders</div>
+}
 @if(orderArr.length > 0 && transactionArr.length > 0){
 
 <div class="container-fluid mt--6">
@@ -36,8 +39,22 @@
             "
             [class.confirmed-status]="
               getTransactionStatusByOrderNo().toLowerCase() ==
-              'payment confirmed'
+              'ready for pick up'
             "
+            [class.awaiting-confirmation-status]="
+              getTransactionStatusByOrderNo().toLowerCase() ==
+              'awaiting confirmation'
+            "
+
+            [class.invalid-payment-status]="
+              getTransactionStatusByOrderNo().toLowerCase() ==
+              'invalid payment'
+            "
+            [class.completed-status]="
+              getTransactionStatusByOrderNo().toLowerCase() ==
+              'completed'
+            "
+           
           >
             {{ getTransactionStatusByOrderNo() }}
           </div>

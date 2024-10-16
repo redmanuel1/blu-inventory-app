@@ -13,13 +13,13 @@ export class NavigationService {
   redirectBasedOnRole(role: string | null) {
     switch (role) {
       case 'admin':
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/admin/manage-users']);
         break;
       case 'student':
         this.router.navigate(['/student/products']);
         break;
       case 'custodian':
-        this.router.navigate(['/custodian/dashboard']);
+        this.router.navigate(['/custodian/orders']);
         break;
       case 'accountant':
           this.router.navigate(['/accountant/transactions']);

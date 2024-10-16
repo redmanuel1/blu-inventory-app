@@ -66,7 +66,6 @@ export class FileUploadService {
   }
 
   deleteFiles(filePaths: string[]): Observable<any[]> {
-    debugger;
     const deleteObservables: Observable<any>[] = [];
 
     filePaths.forEach((filePath) => {

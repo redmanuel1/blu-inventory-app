@@ -75,7 +75,12 @@ export class RegisterComponent implements OnInit {
   }
 
   validateForm(): boolean {
-    if (!Object.values(this.user).every((field) => field.trim() !== "")) {
+    if (
+      !Object.values(this.user).every((field) => {
+        field = field.toString();
+        field.trim() !== "";
+      })
+    ) {
       this.errorMessage = "Please fill in all fields";
       this.toastr.error(this.errorMessage);
       return false;
@@ -96,6 +101,8 @@ export class RegisterComponent implements OnInit {
     this.spinnerService.show();
     if (this.validateForm() && form.valid) {
       this.register();
+    } else {
+      this.spinnerService.hide();
     }
   }
 

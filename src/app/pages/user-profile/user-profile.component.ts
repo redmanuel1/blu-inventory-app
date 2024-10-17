@@ -13,6 +13,7 @@ import { FirestoreService } from "src/app/services/firestore.service";
 export class UserProfileComponent implements OnInit {
   user: User;
   isChangePassword: boolean = false;
+  password: string = "";
   confirmPassword: string = "";
   errorMessage: string = "";
   constructor(
@@ -64,17 +65,20 @@ export class UserProfileComponent implements OnInit {
 
   onChangePassword() {
     this.isChangePassword = !this.isChangePassword;
-    this.user.password = "";
+    this.password = "";
     this.confirmPassword = "";
   }
 
   onSubmit(form: NgForm) {
     console.log("submitted");
-    if (this.user.password !== this.confirmPassword && this.isChangePassword) {
+    if (this.password !== this.confirmPassword && this.isChangePassword) {
       this.errorMessage = "Passwords do not match";
       this.toastr.error(this.errorMessage);
     } else {
       if (form.valid) {
+        if (this.isChangePassword) {
+          this.user.password = this.password;
+        }
         this.saveProfile();
       }
     }

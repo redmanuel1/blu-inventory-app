@@ -69,7 +69,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   onSubmit(form: NgForm) {
-    debugger;
     console.log("submitted");
     if (this.user.password !== this.confirmPassword && this.isChangePassword) {
       this.errorMessage = "Passwords do not match";

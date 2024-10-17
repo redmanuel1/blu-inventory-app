@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { NgxSpinnerService } from "ngx-spinner";
 import { ToastComponent } from "src/app/components/modal/toast/toast.component";
 import { ToastService } from "src/app/components/modal/toast/toast.service";
 import { FirestoreService } from "src/app/services/firestore.service";
@@ -16,21 +17,26 @@ export class ManageUsersComponent implements OnInit, AfterViewInit {
 
   constructor(
     private firestoreService: FirestoreService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private spinnerService: NgxSpinnerService
   ) {
     firestoreService.collectionName = "Users";
   }
 
   ngOnInit(): void {
-    this.firestoreService.getRecords().subscribe(
-      (dbUsers) => {
+    this.spinnerService.show();
+    this.firestoreService.getRecords().subscribe({
+      next: (dbUsers) => {
         this.users = dbUsers; // Assuming dbUsers is an array
         console.log(this.users);
+        this.spinnerService.hide();
       },
-      (error) => {
+      error: (error) => {
+        this.toastService.showToast(`Error fetching users: ${error}`, "error");
         console.error("Error fetching users: ", error); // Handle error
-      }
-    );
+        this.spinnerService.hide();
+      },
+    });
   }
 
   ngAfterViewInit() {
@@ -50,12 +56,19 @@ export class ManageUsersComponent implements OnInit, AfterViewInit {
   }
 
   async saveAllUsers(): Promise<void> {
-    try {
-      console.log(this.users);
-      await this.firestoreService.updateRecords(this.users); // Pass the users array
-      this.toastService.showToast("Users successfully updated", "success");
-    } catch (error) {
-      this.toastService.showToast("Update failed", "error");
-    }
+    this.spinnerService.show();
+    setTimeout(async () => {
+      await this.firestoreService
+        .updateRecords(this.users)
+        .then((result) => {
+          console.log(this.users);
+          this.toastService.showToast("Users successfully updated", "success");
+          this.spinnerService.hide();
+        }) // Pass the users array
+        .catch((error) => {
+          this.toastService.showToast("Update failed", "error");
+          this.spinnerService.hide();
+        });
+    }, 100);
   }
 }

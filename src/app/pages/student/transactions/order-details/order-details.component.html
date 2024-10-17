@@ -1,13 +1,5 @@
-<!-- <nav aria-label="breadcrumb" role="navigation">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item" aria-current="page">
-      <a [routerLink]="['../../']">Transaction</a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">
-      <a href="javascript:;">Order Details</a>
-    </li>
-  </ol>
-</nav> -->
+<app-toast></app-toast>
+<app-prompt-dialog></app-prompt-dialog>
 <ngx-spinner size="large" type="ball-scale-multiple" [fullScreen]="true">
 </ngx-spinner>
 <div class="order-details-main-header sticky-top mt--6">
@@ -29,10 +21,18 @@
         <div class="col">
           <div
             class="row ml-1 status"
-            [class.pending-status]="transaction.status.toLowerCase() === 'pending payment'"
-            [class.invalid-payment-status]="transaction.status.toLowerCase() === 'invalid payment'"
-            [class.awaiting-confirmation-status]="transaction.status.toLowerCase() === 'awaiting confirmation'"
-            [class.confirmed-status]="transaction.status.toLowerCase() === 'ready for pick up'"
+            [class.pending-status]="
+              transaction.status.toLowerCase() === 'pending payment'
+            "
+            [class.invalid-payment-status]="
+              transaction.status.toLowerCase() === 'invalid payment'
+            "
+            [class.awaiting-confirmation-status]="
+              transaction.status.toLowerCase() === 'awaiting confirmation'
+            "
+            [class.confirmed-status]="
+              transaction.status.toLowerCase() === 'ready for pick up'
+            "
           >
             {{ transaction.status }}
           </div>
@@ -101,7 +101,7 @@
         class="row order-progress-contents d-flex align-items-center flex-column"
       >
         @if(isOpen[1]&&index===1) { @if(hasDocument){
-        <div class="row mt-2">
+        <div class="row mt-2 w-100">
           <div class="col">
             <div class="row mb-3 justify-content-center">
               <div class="update-file-input">
@@ -119,7 +119,11 @@
             <div class="row justify-content-center p-4">
               @if(uploadURLs.length > 0) { @for(uploadUrl of uploadURLs; track
               uploadUrl) {
-              <img [src]="uploadUrl" class="img-thumbnail m-2" />
+              <div class="col">
+                <div (click)="onClickOpenModal(uploadUrl)">
+                  <img [src]="uploadUrl" class="img-fluid img-thumbnail" />
+                </div>
+              </div>
               } }
             </div>
           </div>
@@ -150,45 +154,61 @@
         </div>
         } }
       </div>
-       <!-- third -->
-       <div
-       class="row order-progress-contents d-flex align-items-center flex-column">
-       @if(isOpen[2]&&index===2) {
-        @if(transaction.comments?.length>0){
-          <div class="container mt-1">
-              <h4>Comments</h4>
-              
-              @for(comment of transaction.comments.slice().reverse(); track comment.user){
-                  <div class="row ml-2 mb-3">
-                  <div class="card col col-auto bg-gradient-lighter p-3">
-                      <div>
-                          <span class="text-primary font-weight-900">{{ comment.user }} </span> 
-                          <span style="font-size: x-small; font-style: italic;" class="ml-1" >{{ comment.commentDate | date: 'MMMM d, y, h:mm a' }}</span>
-                      </div>
-                      <div class="mt-1">
-                          <span class="text-dark" style="font-size: small;">{{comment.comment}}</span>
-                      </div>
-                  </div>
+      <!-- third -->
+      <div
+        class="row order-progress-contents d-flex align-items-center flex-column"
+      >
+        @if(isOpen[2]&&index===2) { @if(transaction.comments?.length>0){
+        <div class="container mt-1">
+          <h4>Comments</h4>
+
+          @for(comment of transaction.comments.slice().reverse(); track
+          comment.user){
+          <div class="row ml-2 mb-3">
+            <div class="card col col-auto bg-gradient-lighter p-3">
+              <div>
+                <span class="text-primary font-weight-900"
+                  >{{ comment.user }}
+                </span>
+                <span
+                  style="font-size: x-small; font-style: italic"
+                  class="ml-1"
+                  >{{ comment.commentDate | date : "MMMM d, y, h:mm a" }}</span
+                >
               </div>
-              }
+              <div class="mt-1">
+                <span class="text-dark" style="font-size: small">{{
+                  comment.comment
+                }}</span>
+              </div>
+            </div>
           </div>
-       }
-      }
+          }
+        </div>
+        } }
       </div>
 
       <!-- fourth -->
       <div
-      class="row order-progress-contents d-flex align-items-left flex-column">
-      @if(isOpen[3]&&index===3 && transaction.confirmedDate) {
-        <div class="text-left p-3">Please proceed to the custodian's office. Your order is now ready for pick up.</div>
-      }
+        class="row order-progress-contents d-flex align-items-left flex-column"
+      >
+        @if(isOpen[3]&&index===3 && transaction.confirmedDate) {
+        <div class="text-left p-3">
+          Please proceed to the custodian's office. Your order is now ready for
+          pick up.
+        </div>
+        }
       </div>
-       <!-- fifth -->
+      <!-- fifth -->
       <div
-      class="row order-progress-contents d-flex align-items-left flex-column">
-      @if(isOpen[4]&&index===4 && transaction.dateCompleted) {
-        <div class="text-left p-3">Transaction complete. Your order has been picked up last {{transaction.dateCompleted | date: 'MMMM d, y, h:mm a'}}</div>
-      }
+        class="row order-progress-contents d-flex align-items-left flex-column"
+      >
+        @if(isOpen[4]&&index===4 && transaction.dateCompleted) {
+        <div class="text-left p-3">
+          Transaction complete. Your order has been picked up last
+          {{ transaction.dateCompleted | date : "MMMM d, y, h:mm a" }}
+        </div>
+        }
       </div>
     </div>
   </div>

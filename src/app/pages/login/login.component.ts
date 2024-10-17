@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { NgxSpinnerService } from "ngx-spinner";
 import { AuthService } from "src/app/services/auth.service";
 import { NavigationService } from "src/app/services/navigation.service";
 
@@ -16,12 +17,14 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private spinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit() {}
 
   async login() {
+    this.spinnerService.show();
     try {
       // Call the login method and wait for it to complete
       const message = await this.authService.login(this.idNo, this.password);
@@ -34,9 +37,11 @@ export class LoginComponent implements OnInit {
       } else {
         this.errorMessage = message;
       }
+      this.spinnerService.hide();
     } catch (error) {
       console.error("Login error:", error);
       this.errorMessage = "An error occurred during login";
+      this.spinnerService.hide();
     }
   }
 

@@ -15,6 +15,7 @@ import { TablesComponent } from "../../pages/tables/tables.component";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { ComponentsModule } from "src/app/components/components.module";
 import { ManageUsersComponent } from "src/app/pages/manage-users/manage-users.component";
+import { NgxSpinnerModule } from "ngx-spinner";
 // import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { ManageUsersComponent } from "src/app/pages/manage-users/manage-users.co
     NgbModule,
     ClipboardModule,
     ComponentsModule,
+    NgxSpinnerModule.forRoot(),
   ],
   declarations: [
     DashboardComponent,

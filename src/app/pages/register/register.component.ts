@@ -6,6 +6,7 @@ import { User } from "src/app/models/user.model";
 import { Router } from "@angular/router";
 import { ToastComponent } from "src/app/components/modal/toast/toast.component";
 import { ToastService } from "src/app/components/modal/toast/toast.service";
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: "app-register",
@@ -34,7 +35,8 @@ export class RegisterComponent implements OnInit {
     private firestoreService: FirestoreService,
     private toastr: ToastrService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private spinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit() {
@@ -61,17 +63,24 @@ export class RegisterComponent implements OnInit {
         this.toastService.showToast("User registered successfully", "success");
         console.log("User registered successfully");
         this.resetForm(); // Clear form
+        this.spinnerService.hide();
         this.router.navigate(["/auth/login"]);
       })
       .catch((error) => {
         console.error("Error registering user:", error);
         this.errorMessage = "Registration failed";
         this.toastService.showToast("Registration failed", "error");
+        this.spinnerService.hide();
       });
   }
 
   validateForm(): boolean {
-    if (!Object.values(this.user).every((field) => field.trim() !== "")) {
+    if (
+      !Object.values(this.user).every((field) => {
+        field = field.toString();
+        field.trim() !== "";
+      })
+    ) {
       this.errorMessage = "Please fill in all fields";
       this.toastr.error(this.errorMessage);
       return false;
@@ -89,8 +98,11 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(form: NgForm) {
+    this.spinnerService.show();
     if (this.validateForm() && form.valid) {
       this.register();
+    } else {
+      this.spinnerService.hide();
     }
   }
 

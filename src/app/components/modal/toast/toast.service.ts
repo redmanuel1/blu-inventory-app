@@ -18,7 +18,6 @@ export class ToastService {
     type: "success" | "error" | "info",
     duration: number = 3000
   ): void {
-    debugger;
     if (this.toastComponent) {
       this.toastComponent.display(message, type, duration);
     }

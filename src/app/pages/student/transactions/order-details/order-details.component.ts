@@ -15,6 +15,7 @@ import { ToastComponent } from "src/app/components/modal/toast/toast.component";
 import { NgxSpinnerService } from "ngx-spinner";
 import { User } from "src/app/models/user.model";
 import { NotificationService } from "src/app/services/notification.service";
+import { PromptDialogComponent } from "src/app/components/modal/prompt-dialog/prompt-dialog.component";
 
 @Component({
   selector: "app-order-details",
@@ -45,6 +46,7 @@ export class OrderDetailsComponent implements OnInit {
   //selected index
   selectedIndex: number = null;
   @ViewChild(ToastComponent) toastComponent!: ToastComponent;
+  @ViewChild(PromptDialogComponent) promptDialog!: PromptDialogComponent;
 
   ngOnInit(): void {
     this.spinner.show();
@@ -211,6 +213,13 @@ export class OrderDetailsComponent implements OnInit {
       this.toastService.showToast("Only image files are allowed!", "error");
       this.spinner.hide();
     }
+  }
+
+  onClickOpenModal(uploadUrls: string) {
+    this.promptDialog.title = "Image Preview";
+    this.promptDialog.message = `<img src="${uploadUrls}" class="img-fluid" />`;
+    this.promptDialog.cancelButtonLabel = "Close";
+    this.promptDialog.open();
   }
 
   onDeleteImages() {

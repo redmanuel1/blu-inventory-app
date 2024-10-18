@@ -12,7 +12,7 @@ import { UserProfileComponent } from "src/app/pages/user-profile/user-profile.co
 export const StudentLayoutRoutes: Routes = [
   { path: "products", component: ProductsComponent },
   { path: "products/:code", component: ItemComponent },
-  { path: "dashboard", component: DashboardComponent },
+  // { path: "dashboard", component: DashboardComponent },
   { path: "user-profile", component: UserProfileComponent },
   { path: "transactions", component: TransactionsComponent },
   {

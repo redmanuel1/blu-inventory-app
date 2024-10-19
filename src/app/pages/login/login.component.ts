@@ -24,25 +24,25 @@ export class LoginComponent implements OnInit {
   ngOnInit() {}
 
   async login() {
-    // this.spinnerService.show();
-    // try {
-    //   // Call the login method and wait for it to complete
-    //   const message = await this.authService.login(this.idNo, this.password);
-    //   if (message.toLowerCase() === "success") {
-    //     // Retrieve the role after successful login
-    //     const role = this.authService.getUserRole();
-    //     console.log("User role:", role);
-    //     // Redirect based on role
-    //     this.navigationService.redirectBasedOnRole(role);
-    //   } else {
-    //     this.errorMessage = message;
-    //   }
-    //   this.spinnerService.hide();
-    // } catch (error) {
-    //   console.error("Login error:", error);
-    //   this.errorMessage = "An error occurred during login";
-    //   this.spinnerService.hide();
-    // }
+    this.spinnerService.show();
+    try {
+      // Call the login method and wait for it to complete
+      const message = await this.authService.login(this.idNo, this.password);
+      if (message.toLowerCase() === "success") {
+        // Retrieve the role after successful login
+        const role = this.authService.getUserRole();
+        console.log("User role:", role);
+        // Redirect based on role
+        this.navigationService.redirectBasedOnRole(role);
+      } else {
+        this.errorMessage = message;
+      }
+      this.spinnerService.hide();
+    } catch (error) {
+      console.error("Login error:", error);
+      this.errorMessage = "An error occurred during login";
+      this.spinnerService.hide();
+    }
   }
 
   private redirectBasedOnRole(role: string | null) {

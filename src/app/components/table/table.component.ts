@@ -36,8 +36,8 @@ export class TableComponent {
   @Output() deleteRecord = new EventEmitter<any>();
   @Output() imageSelected = new EventEmitter<{
     record: any;
-    file: File;
-    imgPreviewURL: string;
+    files: File[];
+    imgPreviewURLs: string;
   }>();
 
   ColumnType = ColumnType;
@@ -115,15 +115,28 @@ export class TableComponent {
     }
   }
 
-  onImageChange(event: any, record: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const imgPreviewURL = URL.createObjectURL(file);
-      // Update the record with the new preview URL
-      record.imgPreviewURL = imgPreviewURL;
-      // Emit the selected file along with its preview URL if needed
-      this.imageSelected.emit({ record, file, imgPreviewURL });
+  onImageChange(event: any, newRow: any): void {
+    const files = event.target.files;
+  
+    if (files && files.length > 0) {
+      // Initialize or clear the imgPreviewURLs array for this newRow
+      newRow.imgPreviewURLs = newRow.imgPreviewURLs || [];
+  
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const imgPreviewURL = URL.createObjectURL(file);
+  
+        // Push each file's preview URL to the array
+        newRow.imgPreviewURLs.push(imgPreviewURL);
+      }
+  
+      // Emit if needed
+      this.imageSelected.emit({ record: newRow, files: Array.from(files), imgPreviewURLs: newRow.imgPreviewURLs });
     }
+  }
+
+  isArrayAndNotEmpty(item: any): boolean {
+    return Array.isArray(item?.imgURL) && item.imgURL.length > 0;
   }
 
   onBottomActionButtonClick(): void {

@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { PromptDialogComponent } from './modal/prompt-dialog/prompt-dialog.component';
 import { ToastComponent } from './modal/toast/toast.component';
 import { DropdownComponent } from './dropdown/dropdown.component';
+import { ImageCarouselComponent } from './image-carousel/image-carousel.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import { DropdownComponent } from './dropdown/dropdown.component';
     ShoppingcartItemComponent,
     PromptDialogComponent,
     ToastComponent,
-    DropdownComponent
+    DropdownComponent,
+    ImageCarouselComponent 
   ],
   exports: [
     FooterComponent,

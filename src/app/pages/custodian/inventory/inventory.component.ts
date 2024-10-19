@@ -10,16 +10,18 @@ import { TableService } from 'src/app/services/util/table.service';
   styleUrl: './inventory.component.scss'
 })
 export class InventoryComponent {
-  sortOrder: string[] = ["code", "name", "size", "productCode", "price", "isSet", "quantity", "dateUpdated"]
+  sortOrder: string[] = ["imgURL", "productCode",  "code", "name", "size", "price", "isSet", "quantity", "dateUpdated"]
   dataColumns: TableColumn[] = []
   inventory: Inventory[];
   selectedFiles: { record: any; file: File; imgPreviewURL: string }[] = [];
 
   fieldConfig: TableColumn[] = [
+    { field: "imgURL", type: ColumnType.image, hidden: false, required: true, editable: false },
+    { field: "productCode", type: ColumnType.dropdown, hidden: false, required: true, editable: false, tableRef: "Products", fieldRef: "code"},
     { field: "code", type: ColumnType.text, hidden: false, required: true, editable: false },
     { field: "name", type: ColumnType.text, hidden: false, required: true, editable: true },
     { field: "size", type: ColumnType.text, hidden: false, required: false, editable: false },
-    { field: "productCode", type: ColumnType.dropdown, hidden: false, required: true, editable: false, tableRef: "Products", fieldRef: "code"},
+   
     { field: "price", type: ColumnType.number, hidden: false, required: true, editable: true },
     { field: "isSet", type: ColumnType.checkbox, hidden: true, editable: false },
     { field: "dateUpdated", type: ColumnType.date, hidden: false, required: true, editable: false , insert: false },
@@ -64,6 +66,7 @@ export class InventoryComponent {
         // Check if sizes exist and are not empty
         if (variant.sizes && variant.sizes.length > 0) {
           return variant.sizes.map(sizeInfo => ({
+            imgURL: variant.imgURL,
             code: variant.code,
             name: variant.name,
             price: variant.price,
@@ -76,6 +79,7 @@ export class InventoryComponent {
         } else {
           // If sizes are not available, return a default object
           return [{
+            imgURL: variant.imgURL,
             code: variant.code,
             name: variant.name,
             price: variant.price,

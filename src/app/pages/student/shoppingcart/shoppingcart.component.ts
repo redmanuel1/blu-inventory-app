@@ -44,6 +44,7 @@ export class ShoppingcartComponent implements OnInit {
         next: (items: CartItem[]) => {
           this.shoppingCartItems = items;
           this.getQuantitiesForCartItems();
+          this.spinnerService.hide();
         },
         error: (error) => {
           this.spinnerService.hide();

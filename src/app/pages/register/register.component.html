@@ -11,7 +11,14 @@
     </div>
   </div>
   <div class="separator separator-bottom separator-skew zindex-100">
-    <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      x="0"
+      y="0"
+      viewBox="0 0 2560 100"
+      preserveAspectRatio="none"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
     </svg>
   </div>
@@ -41,81 +48,204 @@
           </div>
           <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
             <div class="form-group">
-              <div class="input-group input-group-alternative mb-3"  
-              [ngClass]="{'border border-danger': registerForm.submitted && idNo.invalid}">
+              <div
+                class="input-group input-group-alternative mb-3"
+                [ngClass]="{
+                  'border border-danger': registerForm.submitted && idNo.invalid
+                }"
+              >
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                  <span class="input-group-text"
+                    ><i class="ni ni-hat-3"></i
+                  ></span>
                 </div>
-                <input class="form-control" placeholder="ID Number" type="text" name="idNo" [(ngModel)]="user.idNo" required #idNo="ngModel">
+                <input
+                  class="form-control"
+                  placeholder="ID Number"
+                  type="text"
+                  name="idNo"
+                  [(ngModel)]="user.idNo"
+                  required
+                  #idNo="ngModel"
+                />
               </div>
             </div>
             <div class="form-group">
-              <div class="input-group input-group-alternative mb-3"
-              [ngClass]="{'border border-danger': registerForm.submitted && firstName.invalid}">
+              <div
+                class="input-group input-group-alternative mb-3"
+                [ngClass]="{
+                  'border border-danger':
+                    registerForm.submitted && firstName.invalid
+                }"
+              >
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
+                  <span class="input-group-text"
+                    ><i class="ni ni-circle-08"></i
+                  ></span>
                 </div>
-                <input class="form-control" placeholder="First Name" type="text" name="firstName" [(ngModel)]="user.firstName" required #firstName="ngModel">
+                <input
+                  class="form-control"
+                  placeholder="First Name"
+                  type="text"
+                  name="firstName"
+                  [(ngModel)]="user.firstName"
+                  required
+                  #firstName="ngModel"
+                />
               </div>
             </div>
             <div class="form-group">
-              <div class="input-group input-group-alternative mb-3"
-              [ngClass]="{'border border-danger': registerForm.submitted && lastName.invalid}">
+              <div
+                class="input-group input-group-alternative mb-3"
+                [ngClass]="{
+                  'border border-danger':
+                    registerForm.submitted && lastName.invalid
+                }"
+              >
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
+                  <span class="input-group-text"
+                    ><i class="ni ni-circle-08"></i
+                  ></span>
                 </div>
-                <input class="form-control" placeholder="Last Name" type="text" name="lastName" [(ngModel)]="user.lastName" required #lastName="ngModel">
+                <input
+                  class="form-control"
+                  placeholder="Last Name"
+                  type="text"
+                  name="lastName"
+                  [(ngModel)]="user.lastName"
+                  required
+                  #lastName="ngModel"
+                />
               </div>
             </div>
             <div class="form-group">
-              <div class="input-group input-group-alternative mb-3"
-              [ngClass]="{'border border-danger': registerForm.submitted && email.invalid}">
+              <div
+                class="input-group input-group-alternative mb-3"
+                [ngClass]="{
+                  'border border-danger':
+                    registerForm.submitted && email.invalid
+                }"
+              >
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                  <span class="input-group-text"
+                    ><i class="ni ni-email-83"></i
+                  ></span>
                 </div>
-                <input class="form-control " placeholder="Email" type="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" [(ngModel)]="user.email" required #email="ngModel">
+                <input
+                  class="form-control"
+                  placeholder="Email"
+                  type="email"
+                  name="email"
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                  [(ngModel)]="user.email"
+                  required
+                  #email="ngModel"
+                />
               </div>
-              <div *ngIf="registerForm.submitted && email.invalid" class="text-danger">
-                <small *ngIf="email.errors?.pattern">Please enter a valid email address (sample&#64;email.com).</small>
+              <div
+                *ngIf="registerForm.submitted && email.invalid"
+                class="text-danger"
+              >
+                <small *ngIf="email.errors?.pattern"
+                  >Please enter a valid email address
+                  (sample&#64;email.com).</small
+                >
               </div>
             </div>
             <div class="form-group">
-              <div class="input-group input-group-alternative mb-3"
-                   [ngClass]="{'border border-danger': registerForm.submitted && phone.invalid}">
+              <div
+                class="input-group input-group-alternative mb-3"
+                [ngClass]="{
+                  'border border-danger':
+                    registerForm.submitted && phone.invalid
+                }"
+              >
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
+                  <span class="input-group-text"
+                    ><i class="ni ni-mobile-button"></i
+                  ></span>
                 </div>
-                <input class="form-control" placeholder="Phone Number" type="tel" name="phone" 
-                       [(ngModel)]="user.phone" required 
-                       pattern="^(?:\+639|09)\d{9}$" #phone="ngModel">
+                <input
+                  class="form-control"
+                  placeholder="Phone Number"
+                  type="tel"
+                  name="phone"
+                  [(ngModel)]="user.phone"
+                  required
+                  pattern="^(?:\+639|09)\d{9}$"
+                  #phone="ngModel"
+                />
               </div>
-              <div *ngIf="registerForm.submitted && phone.invalid" class="text-danger">
-                <small *ngIf="phone.errors?.pattern">Please enter a valid phone number (e.g. +639123456789 or 09123456789).</small>
+              <div
+                *ngIf="registerForm.submitted && phone.invalid"
+                class="text-danger"
+              >
+                <small *ngIf="phone.errors?.pattern"
+                  >Please enter a valid phone number (e.g. +639123456789 or
+                  09123456789).</small
+                >
               </div>
             </div>
-            
+
             <div class="form-group">
-              <div class="input-group input-group-alternative"
-              [ngClass]="{'border border-danger': registerForm.submitted && password.invalid}">
+              <div
+                class="input-group input-group-alternative"
+                [ngClass]="{
+                  'border border-danger':
+                    registerForm.submitted && password.invalid
+                }"
+              >
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                  <span class="input-group-text"
+                    ><i class="ni ni-lock-circle-open"></i
+                  ></span>
                 </div>
-                <input class="form-control" placeholder="Password" type="password" name="password" [(ngModel)]="user.password" required #password="ngModel">
+                <input
+                  class="form-control"
+                  placeholder="Password"
+                  type="password"
+                  name="password"
+                  [(ngModel)]="user.password"
+                  required
+                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                  #password="ngModel"
+                />
+              </div>
+              <div
+                *ngIf="registerForm.submitted && password.invalid"
+                class="text-danger"
+              >
+                <small *ngIf="password.errors?.pattern"
+                  >Password must contain at least 8 characters long with at
+                  least one uppercase letter, one lowercase letter, one number
+                  and one special character</small
+                >
               </div>
             </div>
             <div class="form-group">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                  <span class="input-group-text"
+                    ><i class="ni ni-lock-circle-open"></i
+                  ></span>
                 </div>
-                <input class="form-control" placeholder="Confirm Password" type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+                <input
+                  class="form-control"
+                  placeholder="Confirm Password"
+                  type="password"
+                  name="confirmPassword"
+                  [(ngModel)]="confirmPassword"
+                  required
+                />
               </div>
             </div>
             <!-- <div *ngIf="passwordMismatch" class="text-danger text-center mb-4">
               <small>Passwords do not match</small>
             </div> -->
             <div class="text-center">
-              <button type="submit" class="btn btn-default mt-4 w-100">Create account</button>
+              <button type="submit" class="btn btn-default mt-4 w-100">
+                Create account
+              </button>
             </div>
           </form>
         </div>

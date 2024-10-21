@@ -27,8 +27,8 @@ import { OrderPickupComponent } from 'src/app/pages/custodian/order-pickup/order
     FormsModule,
     HttpClientModule,
     NgbModule,
-    ClipboardModule
-  ]
+    ClipboardModule,
+    NgxSpinnerModule.forRoot(),
+  ],
 })
-
-export class CustodianLayoutModule { }
+export class CustodianLayoutModule {}

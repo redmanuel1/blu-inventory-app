@@ -1,19 +1,18 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { FooterComponent } from './footer/footer.component';
-import { RouterModule } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ItemComponent } from './cards/item/item.component';
-import { TableComponent } from './table/table.component';
-import { DisplayProductComponent } from './cards/display-product/display-product.component';
-import { ShoppingcartItemComponent } from './cards/shoppingcart-item/shoppingcart-item.component';
-import { FormsModule } from '@angular/forms';
-import { PromptDialogComponent } from './modal/prompt-dialog/prompt-dialog.component';
-import { ToastComponent } from './modal/toast/toast.component';
-import { DropdownComponent } from './dropdown/dropdown.component';
-import { ImageCarouselComponent } from './image-carousel/image-carousel.component';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { SidebarComponent } from "./sidebar/sidebar.component";
+import { NavbarComponent } from "./navbar/navbar.component";
+import { FooterComponent } from "./footer/footer.component";
+import { RouterModule } from "@angular/router";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { ItemComponent } from "./cards/item/item.component";
+import { TableComponent } from "./table/table.component";
+import { DisplayProductComponent } from "./cards/display-product/display-product.component";
+import { ShoppingcartItemComponent } from "./cards/shoppingcart-item/shoppingcart-item.component";
+import { FormsModule } from "@angular/forms";
+import { PromptDialogComponent } from "./modal/prompt-dialog/prompt-dialog.component";
+import { ToastComponent } from "./modal/toast/toast.component";
+import { NgxSpinnerComponent } from "ngx-spinner";
 
 @NgModule({
   imports: [
@@ -21,6 +20,7 @@ import { ImageCarouselComponent } from './image-carousel/image-carousel.componen
     RouterModule,
     NgbModule,
     FormsModule,
+    NgxSpinnerComponent,
   ],
   declarations: [
     FooterComponent,
@@ -33,7 +33,7 @@ import { ImageCarouselComponent } from './image-carousel/image-carousel.componen
     PromptDialogComponent,
     ToastComponent,
     DropdownComponent,
-    ImageCarouselComponent 
+    ImageCarouselComponent ,
   ],
   exports: [
     FooterComponent,
@@ -45,7 +45,7 @@ import { ImageCarouselComponent } from './image-carousel/image-carousel.componen
     ShoppingcartItemComponent,
     PromptDialogComponent,
     ToastComponent,
-    DropdownComponent
-  ]
+    DropdownComponent,
+  ],
 })
-export class ComponentsModule { }
+export class ComponentsModule {}

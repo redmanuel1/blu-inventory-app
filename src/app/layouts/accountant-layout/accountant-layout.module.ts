@@ -1,20 +1,18 @@
-import { AccountantLayoutRoutes } from './accountant-layout.routing';
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AccountantLayoutRoutes } from "./accountant-layout.routing";
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
-import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ClipboardModule } from 'ngx-clipboard';
-import { ComponentsModule } from 'src/app/components/components.module';
-import { OrderConfirmationComponent } from 'src/app/pages/accountant/order-confirmation/order-confirmation.component';
-
+import { RouterModule } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { ClipboardModule } from "ngx-clipboard";
+import { ComponentsModule } from "src/app/components/components.module";
+import { OrderConfirmationComponent } from "src/app/pages/accountant/order-confirmation/order-confirmation.component";
+import { NgxSpinnerModule } from "ngx-spinner";
 
 @NgModule({
-  declarations: [
-    OrderConfirmationComponent
-  ],
+  declarations: [OrderConfirmationComponent],
   imports: [
     CommonModule,
     ComponentsModule,
@@ -22,7 +20,8 @@ import { OrderConfirmationComponent } from 'src/app/pages/accountant/order-confi
     FormsModule,
     HttpClientModule,
     NgbModule,
-    ClipboardModule
-  ]
+    ClipboardModule,
+    NgxSpinnerModule.forRoot(),
+  ],
 })
-export class AccountantLayoutModule { }
+export class AccountantLayoutModule {}

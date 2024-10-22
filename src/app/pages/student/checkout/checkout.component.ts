@@ -13,6 +13,7 @@ import {
 import { PromptDialogComponent } from "src/app/components/modal/prompt-dialog/prompt-dialog.component";
 import { Router } from "@angular/router";
 import { NgxSpinnerService } from "ngx-spinner";
+import { formatNumber } from "@angular/common";
 
 @Component({
   selector: "app-checkout",
@@ -32,42 +33,34 @@ export class CheckoutComponent implements OnInit {
   dataColumns: TableColumn[] = [];
   orderPlaced: boolean = false;
 
-  fieldConfig: Record<
-    string,
-    {
-      type: ColumnType;
-      hidden?: boolean;
-      editable?: boolean;
-      required?: boolean;
-    }
-  > = {
-    imgURL: { type: ColumnType.image, hidden: false, editable: false },
-    name: {
+  fieldConfig: TableColumn[] = [
+    { field: "imgURL", type: ColumnType.image, hidden: false, editable: false },
+    { field: "name",
       type: ColumnType.text,
       hidden: false,
       required: true,
       editable: false,
     },
-    size: {
+    { field: "size",
       type: ColumnType.text,
       hidden: false,
       required: true,
       editable: false,
     },
-    price: { type: ColumnType.checkbox, hidden: true, editable: false },
-    quantity: {
+    { field: "price", type: ColumnType.number, hidden: true, editable: false },
+    { field: "quantity",
       type: ColumnType.number,
       hidden: false,
       required: true,
       editable: false,
     },
-    totalPrice: {
+    { field: "totalPrice",
       type: ColumnType.number,
       hidden: false,
       required: true,
       editable: false,
     },
-  };
+  ];
 
   htmlDescription: string = "";
   @ViewChild(PromptDialogComponent) promptDialog!: PromptDialogComponent;
@@ -97,7 +90,7 @@ export class CheckoutComponent implements OnInit {
       this.tableService.createTableColumn(fieldName, this.fieldConfig)
     );
     this.htmlDescription = `<h3 class="mr-3">Total Items: <span class="text-info">${this.getTotalItems()}</span></h3>
-                  <h3 class="mr-3">Price: <span class="text-info">&#8369; ${this.getTotalPrice()}</span></h3>`;
+                  <h3 class="mr-3">Price: <span class="text-info">&#8369; ${this.getTotalPrice() }</span></h3>`;
     this.spinnerService.hide();
   }
 
@@ -110,8 +103,9 @@ export class CheckoutComponent implements OnInit {
     return this.checkOut.reduce((acc, item) => acc + item.quantity, 0);
   }
 
-  getTotalPrice(): number {
-    return this.checkOut.reduce((acc, item) => acc + item.totalPrice, 0);
+  getTotalPrice(): any {
+    const totalPrice =  this.checkOut.reduce((acc, item) => acc + item.totalPrice, 0);
+    return formatNumber(totalPrice, 'en-PH', '1.0-0');
   }
 
   onPlaceOrder(): void {

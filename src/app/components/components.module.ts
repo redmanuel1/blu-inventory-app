@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { PromptDialogComponent } from "./modal/prompt-dialog/prompt-dialog.component";
 import { ToastComponent } from "./modal/toast/toast.component";
 import { NgxSpinnerComponent } from "ngx-spinner";
+import { NotificationComponent } from "./modal/notification/notification.component";
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { NgxSpinnerComponent } from "ngx-spinner";
     ShoppingcartItemComponent,
     PromptDialogComponent,
     ToastComponent,
+    NotificationComponent,
   ],
   exports: [
     FooterComponent,
@@ -43,6 +45,7 @@ import { NgxSpinnerComponent } from "ngx-spinner";
     ShoppingcartItemComponent,
     PromptDialogComponent,
     ToastComponent,
+    NotificationComponent,
   ],
 })
 export class ComponentsModule {}

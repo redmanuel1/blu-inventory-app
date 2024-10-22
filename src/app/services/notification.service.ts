@@ -24,10 +24,8 @@ export class NotificationService {
     transactionId: string,
     orderId: string = null
   ): Promise<void> {
-    debugger;
     let notification = this.getNotificationByType(type, transactionId, orderId);
     for (let user of usersToNotifyArr) {
-      debugger;
       if (user.notifications) {
         let hasOldNotification = false;
         // update the old notification if it is unread
@@ -77,7 +75,7 @@ export class NotificationService {
           message: `${userFullName} has uploaded their payment details. Kindly review it`,
           read: false,
           timestamp: new Date(Date.now()).toISOString(),
-          redirectTo: `${this.baseUrl}/accountant/transactions/${transactionId}/order-confirmation`,
+          redirectTo: `/accountant/transactions/${transactionId}/order-confirmation`,
         };
         break;
       default:

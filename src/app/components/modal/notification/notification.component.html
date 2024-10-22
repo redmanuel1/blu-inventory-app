@@ -1,12 +1,24 @@
-@for(notificaiton of currentUser.notifications; track notificaiton; let
-index=$index;) {
-<div (click)="markAsRead(index)">
-  <div class="notification" [class.unread]="notification.status === 'unread'">
-    <h4>{{ notification.title }}</h4>
-    <p>{{ notification.message }}</p>
-    <span>{{ notification.timestamp | date }}</span>
+@for(notificationObj of notificationsArr; track notificationObj; let last =
+$last;) {
+<a class="dropdown-item">
+  <div (click)="markAsRead(notificationObj.index)">
+    <div
+      class="notification"
+      [class.unread]="notificationObj.notification.read == false"
+    >
+      <h4>{{ notificationObj.notification.title }}</h4>
+      <p>{{ notificationObj.notification.message }}</p>
+      <span>{{ notificationObj.notification.timestamp | date }}</span>
+    </div>
   </div>
-</div>
+</a>
+@if(!last){
+<div class="dropdown-divider"></div>
+} } @if(notificationsArr.length == 0) {
+<a class="dropdown-item">
+  <div>You have no new notification</div>
+</a>
+
 }
 <!-- <div *ngFor="let notification of users.notification  | async" (click)="markAsRead(notification.id)">
   <div class="notification" [class.unread]="notification.status === 'unread'">

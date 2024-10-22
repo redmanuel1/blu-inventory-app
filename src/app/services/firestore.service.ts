@@ -140,6 +140,7 @@ export class FirestoreService {
 
   // Method to update multiple products
   async updateRecords(records: any[]): Promise<void> {
+    debugger;
     const updates = records.map((record) => {
       // Exclude only the 'id' field
       const { id, ...filteredRecord } = record;

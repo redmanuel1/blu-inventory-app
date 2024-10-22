@@ -19,6 +19,7 @@ export class TableComponent {
   //add and row action buttons
   @Input() useBasicTable: boolean = true;
   @Input() theme: string = "primary"; // css purpose only
+  @Input() disableDelete: boolean = false;
 
   // bottom action button
   @Input() showBottomActionButton: boolean = false;

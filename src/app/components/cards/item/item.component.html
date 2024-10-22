@@ -26,7 +26,7 @@
               class="carousel-item image-container justify-content-center"
               [class.active]="i === currentImageIndex"
             >
-              <img class="card-image-fluid bg-lighter d-block w-100" [src]="img" alt="Slide {{ i + 1 }}" />
+              <img class="card-image-fluid bg-light d-block w-100" [src]="img" alt="Slide {{ i + 1 }}" />
             </div>
           </div>
 
@@ -50,7 +50,7 @@
       <div class="image-container justify-content-center" *ngIf="!isImageArray()">
         <img
           [src]="selectedVariant?.imgURL || 'assets/img/logo/b_logo.png'"
-          class="card-image-fluid bg-lighter d-block w-100"
+          class="card-image-fluid bg-light d-block w-100"
           alt="Product image"
         />
       </div>

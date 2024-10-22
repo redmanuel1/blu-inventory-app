@@ -12,7 +12,7 @@ import { FirestoreService } from 'src/app/services/firestore.service';
   styleUrls: ['./inventory.component.scss'] // Fixed typo here from `styleUrl` to `styleUrls`
 })
 export class InventoryComponent implements OnInit {
-  sortOrder: string[] = ["imgURL", "productCode", "code", "name", "size", "price", "isSet", "quantity", "dateUpdated", "lowStockQty"];
+  sortOrder: string[] = ["imgURL", "productCode", "code", "name", "size", "price", "quantity", "dateUpdated"];
   dataColumns: TableColumn[] = [];
   inventory: Inventory[] = [];
   selectedFiles: { record: any; files: File[]; imgPreviewURLs: string[] }[] = [];
@@ -24,10 +24,10 @@ export class InventoryComponent implements OnInit {
     { field: "name", type: ColumnType.text, hidden: false, required: true, editable: true,  css: { width: '250px'  }},
     { field: "size", type: ColumnType.text, hidden: false, required: false, editable: true, css: { width: '100px' }  },
     { field: "price", type: ColumnType.number, hidden: false, required: true, editable: true,  css: { width: '100px' }},
-    { field: "isSet", type: ColumnType.checkbox, hidden: true, required: false, editable: false },
+    // { field: "isSet", type: ColumnType.checkbox, hidden: true, required: false, editable: false },
     { field: "dateUpdated", type: ColumnType.date, hidden: false, required: false, editable: false, insert: false },
-    { field: "quantity", type: ColumnType.number, hidden: false, required: true, editable: true,  css: { width: '100px' } },
-    { field: "lowStockQty", type: ColumnType.number, hidden: false, required: false, editable: true,  css: { width: '100px' }}
+    { field: "quantity", type: ColumnType.number, hidden: false, required: true, editable: true,  css: { width: '100px' } }
+    // { field: "lowStockQty", type: ColumnType.number, hidden: false, required: false, editable: true,  css: { width: '100px' }}
   ];
 
   constructor(
@@ -54,7 +54,10 @@ export class InventoryComponent implements OnInit {
     const uploadPromises = formattedData.map(record => {
       const selectedFiles = this.selectedFiles
         .filter(file => file.record.productCode === record.productCode)
-        .flatMap(file => file.files);
+        .flatMap(file => file.files.map(fileItem => ({
+          file: fileItem,
+          code: file.record.code
+        })));
 
       if (selectedFiles && selectedFiles.length) {
         return this.uploadImages(selectedFiles, formattedData);
@@ -109,42 +112,47 @@ export class InventoryComponent implements OnInit {
     this.selectedFiles.push(event);
   }
 
-  async uploadImages(files: File[], records: any[]): Promise<void> {
+  async uploadImages(fileObjects: { file: File; code: string }[], records: any[]): Promise<void> {
     const uploadTasks = records.map(record => {
-        // Create an array of upload tasks for each variant in the current record
-        const variantUploadTasks = record.variants.map(variant => {
-            return files.map(file => {
-                return new Promise<void>((resolve, reject) => {
-                    const filePath = `inventory/${record.productCode}/${variant.code}/${file.name}`; // Using productCode and variant code in path
-                    const task = this.storage.upload(filePath, file);
-
-                    task.snapshotChanges().pipe(
-                        finalize(() => {
-                            this.storage.ref(filePath).getDownloadURL().subscribe(url => {
-                                // Initialize imgURL if it doesn't exist
-                                variant.imgURL = variant.imgURL || [];
-                                variant.imgURL.push(url); // Push the new URL to the variant's imgURL
-                                resolve();
-                            }, reject);
-                        })
-                    ).subscribe();
-                });
-            });
-        }).flat(); // Flatten to create a single array of promises for all file uploads for all variants
-
-        // Wait for all uploads for the current record's variants to complete
-        return Promise.all(variantUploadTasks).then(() => {
-            console.log(`All images uploaded for product code: ${record.productCode}`);
+      // For each record, upload the files related to that record
+      const recordUploadTasks = fileObjects.map(fileObj => {
+        return new Promise<void>((resolve, reject) => {
+          // Check if the current fileObj's code matches with the variant's code in the record
+          const variant = record.variants.find((v: any) => v.code === fileObj.code);
+  
+          if (variant) {
+            const filePath = `inventory/${record.productCode}/${fileObj.file.name}`;
+            const task = this.storage.upload(filePath, fileObj.file);
+  
+            task.snapshotChanges().pipe(
+              finalize(() => {
+                this.storage.ref(filePath).getDownloadURL().subscribe(url => {
+                  // If the variant is found, push the image URL to the imgURL array
+                  variant.imgURL = variant.imgURL || [];
+                  variant.imgURL.push(url); // Push the new URL to the variant's imgURL array
+                  resolve();
+                }, reject);
+              })
+            ).subscribe();
+          } else {
+            resolve(); // Resolve even if no variant matches to avoid hanging
+          }
         });
+      });
+  
+      return Promise.all(recordUploadTasks).then(() => {
+        console.log(`All images uploaded for product code: ${record.productCode}`);
+      });
     });
-
-    // Wait for all upload tasks for all records to complete
+  
     return Promise.all(uploadTasks).then(() => {
-        console.log('All images uploaded for all records');
+      console.log('All images uploaded for all records');
     }).catch(error => {
-        console.error('Error uploading one or more images:', error);
+      console.error('Error uploading one or more images:', error);
     });
-}
+  }
+  
+
 
 
   formatInventoryData(products: any[]): any[] {
@@ -157,11 +165,11 @@ export class InventoryComponent implements OnInit {
             name: variant.name,
             price: variant.price,
             productCode: product.productCode,
-            isSet: product.isSet,
+            // isSet: product.isSet,
             dateUpdated: product?.dateUpdated ? new Date(product.dateUpdated?.seconds * 1000) : "",
             size: sizeInfo?.size,
-            quantity: sizeInfo?.quantity,
-            lowStockQty: sizeInfo?.lowStockQty ?? 0
+            quantity: sizeInfo?.quantity
+            // lowStockQty: sizeInfo?.lowStockQty ?? 0
           }));
         } else {
           return [{
@@ -170,14 +178,19 @@ export class InventoryComponent implements OnInit {
             name: variant.name,
             price: variant.price,
             productCode: product.productCode,
-            isSet: product.isSet,
+            // isSet: product.isSet,
             dateUpdated: product?.dateUpdated ? new Date(product.dateUpdated?.seconds * 1000) : "",
-            quantity: variant.quantity,
-            lowStockQty: variant.lowStockQty ?? 0,
+            quantity: variant.quantity
+            // lowStockQty: variant.lowStockQty ?? 0,
           }];
         }
       })
-    );
+    ).sort((a, b) => {
+      // Sort by dateUpdated, ensuring that products with undefined dates come last
+      const dateA = a.dateUpdated || 0;
+      const dateB = b.dateUpdated || 0;
+      return dateB - dateA; // Sort in descending order
+    });
   }
 
   savingFormatInventoryData(inventory: any[]) {
@@ -185,12 +198,12 @@ export class InventoryComponent implements OnInit {
     const productMap = new Map<string, any>();
   
     inventory.forEach(item => {
-      const { productCode, code, imgPreviewURLs, name, price, size, quantity, lowStockQty } = item;
+      const { productCode, code, imgPreviewURLs, name, price, size, quantity } = item;
   
       // Create a product entry if it doesn't exist
       if (!productMap.has(productCode)) {
         productMap.set(productCode, {
-          isSet: true,  // Set this value based on your logic
+          // isSet: true,  // Set this value based on your logic
           productCode: productCode,
           dateUpdated: new Date(),
           variants: []
@@ -215,11 +228,15 @@ export class InventoryComponent implements OnInit {
         product.variants.push(variant);
       }
   
-      // Add the size and quantity to the variant sizes
-      variant.sizes.push({
-        size: size,
-        quantity: Number(quantity)  // Convert quantity to number
-      });
+      if (size) {
+        variant.sizes.push({
+          size: size,
+          quantity: Number(quantity)  // Convert quantity to number
+        });
+      } else {
+        // If no size, add quantity directly to the variant without the size
+        variant.quantity = Number(quantity);  // Add quantity directly to variant
+      }
     });
   
     // Convert the map back to an array

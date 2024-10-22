@@ -137,8 +137,8 @@
                                   <img alt="product-img placeholder"  [src]="item.imgURL || 'assets/img/logo/b_logo.png'" class="img-thumbnail-md">
                                 </ng-template>
                                 
-                              } @else if (col.type == ColumnType.number){
-                            <div class="text-right">{{ item[col.field] | number }} </div>
+                          } @else if (col.type == ColumnType.number){
+                            <div [ngClass]="{'text-danger': item[col.field] < 0}" class="text-right">{{ item[col.field] | number }} </div>
                           } @else if (col.type == ColumnType.date){
                             {{ item[col.field] ? (item[col.field] | date: 'MM/dd/YYYY hh:mm a') : '' }}
                           } @else {
@@ -157,7 +157,9 @@
                             @if (!item.isEditing) {
                               <a class="dropdown-item" (click)="editRow(item)">Edit</a>
                             }
-                            <a class="dropdown-item" (click)="removeRow(item)">Delete</a>
+                            @if(!disableDelete){
+                              <a class="dropdown-item" (click)="removeRow(item)">Delete</a>
+                            }
                           </div>
                         </div>
                       </td>

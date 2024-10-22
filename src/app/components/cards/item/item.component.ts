@@ -122,7 +122,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
         (variant) => variant.sizes && variant.sizes.length > 0
       );
 
-      if (this.inventory.isSet && hasSizes) {
+      if (this.product.isSet && hasSizes && this.inventory.variants.length >1) {
         this.createSizesForSet();
         this.variants.push({
           code: "SET",
@@ -130,7 +130,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
           price: this.product.price,
           sizes: this.sizesForSet,
         } as Variant);
-      } else if (this.inventory.isSet && !hasSizes) {
+      } else if (this.product.isSet && !hasSizes && this.inventory.variants.length >1) {
         const minQuantity = Math.min(
           ...this.variants.map((variant) => variant.quantity || Infinity)
         );
@@ -146,7 +146,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
   }
 
   createSizesForSet() {
-    if (this.inventory.isSet && this.inventory.variants) {
+    if (this.product.isSet && this.inventory.variants && this.inventory.variants.length >1) {
       const sizeMap: { [sizeName: string]: number } = {};
 
       this.inventory.variants.forEach((variant) => {

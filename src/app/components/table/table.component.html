@@ -37,7 +37,7 @@
                     @if (col.type == ColumnType.image) {
                       <th scope="col">&nbsp;</th>
                     } @else {
-                      <th scope="col"> {{ col.Header || col.field }}</th>
+                      <th scope="col" [style.width]="col.css?.width + ' !important'"> {{ col.Header || col.field }}</th>
                     }
                   }
                   @if (!useBasicTable) {
@@ -74,10 +74,11 @@
                             <span class="custom-toggle-slider rounded-circle"></span>
                           </label>
                         } @else if (col.type == ColumnType.dropdown) {
-                          <app-dropdown [placeholder]="col.field" [tableRef]="col.tableRef" [fieldRef]="col.fieldRef"></app-dropdown>
+                          <app-dropdown [placeholder]="col.field" [tableRef]="col.tableRef" [fieldRef]="col.fieldRef"  (selectionChange)="onDropdownChange(newRow, col.field, $event)"></app-dropdown>
                         } @else {
                           <div class="form-group">
                             <input class="form-control"
+                              [style.width]="col.css?.width + ' !important'"
                               [type]="col.type" 
                               [(ngModel)]="newRow[col.field]" 
                               name="{{ col.field }}" 
@@ -129,11 +130,11 @@
                           @if (col.type == ColumnType.image) {
                                 <!-- <img alt="product-img placeholder" [src]="item.imgURL || 'assets/img/logo/b_logo.png'" class="img-thumbnail-sm"> -->
                                 <ng-container *ngIf="isArrayAndNotEmpty(item.imgURL); else singleImage">
-                                  <app-image-carousel [images]="item.imgURL"></app-image-carousel>
+                                  <app-image-carousel  [images]="item.imgURL"></app-image-carousel>
                                 </ng-container>
                                 
                                 <ng-template #singleImage>
-                                  <img alt="product-img placeholder" [src]="item.imgURL || 'assets/img/logo/b_logo.png'" class="img-thumbnail-sm">
+                                  <img alt="product-img placeholder"  [src]="item.imgURL || 'assets/img/logo/b_logo.png'" class="img-thumbnail-md">
                                 </ng-template>
                                 
                               } @else if (col.type == ColumnType.number){

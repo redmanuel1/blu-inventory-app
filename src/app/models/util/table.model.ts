@@ -22,4 +22,5 @@ export interface TableColumn {
   defaultValue?: any;
   tableRef?: string;
   fieldRef?: string;
+  css?: any
 }

@@ -22,7 +22,8 @@ export class TableService {
       required: config.required ?? false,        // Required, from fieldConfig, default to false
       defaultValue: config.defaultValue ?? null, // DefaultValue, from fieldConfig, default to null
       tableRef: config.tableRef ?? null,         // tableRef, from fieldConfig, default to null - used for ColumnType.dropdown
-      fieldRef: config.fieldRef ?? null          // fieldRef, from fieldConfig, default to null - used for ColumnType.dropdown (field that would be used in tableRef)
+      fieldRef: config.fieldRef ?? null,          // fieldRef, from fieldConfig, default to null - used for ColumnType.dropdown (field that would be used in tableRef)
+      css: config.css ?? {}
     };
   }
 

@@ -1,4 +1,4 @@
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { FirestoreService } from 'src/app/services/firestore.service';
 
 @Component({
@@ -11,6 +11,7 @@ export class DropdownComponent {
   @Input() tableRef = ""
   @Input() fieldRef = "" // is required if tableRef is defined
   @Input() dataArr = [];
+  @Output() selectionChange = new EventEmitter<string | null>();
 
   searchTerm: string = '';
   selectedData: string | null = null;
@@ -50,6 +51,7 @@ export class DropdownComponent {
     this.selectedData = record;
     this.searchTerm = record; // Update searchTerm with selected data
     this.showDropdown = false; // Hide dropdown after selection
+    this.selectionChange.emit(this.selectedData);
   }
 
    // Listen for clicks outside the component

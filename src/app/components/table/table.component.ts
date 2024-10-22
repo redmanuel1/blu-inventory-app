@@ -99,6 +99,7 @@ export class TableComponent {
       ...this.newRecords,
       ...this.data.filter((item) => item.isEditing),
     ];
+    console.log(recordsToSave)
 
     // Validate records before saving
     const allValid = recordsToSave.every((record) =>
@@ -136,10 +137,14 @@ export class TableComponent {
   }
 
   isArrayAndNotEmpty(item: any): boolean {
-    return Array.isArray(item?.imgURL) && item.imgURL.length > 0;
+    return Array.isArray(item);
   }
 
   onBottomActionButtonClick(): void {
     this.bottomActionButtonClick.emit(); // Emit the event
+  }
+
+  onDropdownChange(newRow: any, field: string, selectedValue: any): void {
+    newRow[field] = selectedValue; // Update the newRow with the selected value
   }
 }

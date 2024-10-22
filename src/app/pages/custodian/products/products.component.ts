@@ -13,12 +13,11 @@ import { FirestoreService } from 'src/app/services/firestore.service';
 })
 export class ProductsComponent {
 
-  sortOrder: string[] = ["imgURL", "code", "name", "isSet", "price"]
-  dataColumns: TableColumn[] = []
+  sortOrder: string[] = ["imgURL", "code", "name", "isSet", "price"];
+  dataColumns: TableColumn[] = [];
   products: Product[];
-  selectedFiles: { record: any; file: File; imgPreviewURL: string }[] = [];
+  selectedFiles: { record: any; files: File[]; imgPreviewURLs: string[] }[] = [];
 
-  // Single fieldConfig map to hold all dynamic properties for each field
   fieldConfig: TableColumn[] = [
     { field: "imgURL", type: ColumnType.image, hidden: false, editable: true },
     { field: "code", type: ColumnType.text, hidden: false, required: true, editable: false },
@@ -27,45 +26,48 @@ export class ProductsComponent {
     { field: "price", type: ColumnType.number, hidden: false, required: true, editable: true }
   ];
 
-  constructor(private recordService: FirestoreService, private tableService: TableService, private storage: AngularFireStorage) {
-    recordService.collectionName = "Products"
+  constructor(
+    private recordService: FirestoreService,
+    private tableService: TableService,
+    private storage: AngularFireStorage
+  ) {
+    recordService.collectionName = "Products";
   }
 
   ngOnInit() {
     this.recordService.getRecords().subscribe(data => {
       this.products = data;
-      // this.dataColumns = this.tableService.sortDataSet(this.sortOrder, this.tableService.generateDataColumns(this.products));
-
       this.dataColumns = this.sortOrder.map(fieldName => this.tableService.createTableColumn(fieldName, this.fieldConfig));
-
       console.log(data);
       console.log(this.dataColumns);
     });
-
   }
 
   saveProducts(records: any[]) {
     const uploadPromises = records.map(record => {
-      if (this.selectedFiles.some(file => file.record === record)) {
-        const selectedFile = this.selectedFiles.find(file => file.record === record);
-        return this.uploadImage(selectedFile.file, record);
+      const selectedFiles = this.selectedFiles
+      .filter(file => file.record.code === record.code)
+      .flatMap(file => file.files);
+
+      if (selectedFiles) {
+        return this.uploadImages(selectedFiles, record);
       }
       return Promise.resolve(); // No upload needed
     });
-  
+
     Promise.all(uploadPromises).then(() => {
       const { updates, newRecords } = records.reduce((acc, record) => {
-        const { isEditing, imgPreviewURL, ...filteredRecord } = record; // Exclude specific fields
-      
+        const { isEditing, imgPreviewURLs, ...filteredRecord } = record; // Remove imgPreviewURLs before saving
+
         if (isEditing) {
-          acc.updates.push(filteredRecord); // Add to updates if isEditing is true
+          acc.updates.push(filteredRecord);
         } else {
-          acc.newRecords.push(filteredRecord); // Add to newRecords if isEditing is false
+          acc.newRecords.push(filteredRecord);
         }
-      
-        return acc; // Return the accumulator
-      }, { updates: [], newRecords: [] }); // Initialize the accumulator
-  
+
+        return acc;
+      }, { updates: [], newRecords: [] });
+
       if (updates.length) {
         this.recordService.updateRecords(updates).then(() => {
           console.log('Updated products saved!');
@@ -73,7 +75,7 @@ export class ProductsComponent {
           console.error('Error updating products:', error);
         });
       }
-  
+
       if (newRecords.length) {
         this.recordService.addRecords(newRecords).then(() => {
           console.log('New products saved!');
@@ -87,7 +89,6 @@ export class ProductsComponent {
   }
 
   deleteProduct(record: any) {
-    // Call your service to delete the record from Firestore
     this.recordService.deleteRecord(record.id).then(() => {
       console.log('Product deleted!');
     }).catch(error => {
@@ -95,26 +96,40 @@ export class ProductsComponent {
     });
   }
 
-  
-  handleImageSelection(event: { record: any; file: File; imgPreviewURL: string }) {
+  handleImageSelection(event: { record: any; files: File[]; imgPreviewURLs: string[] }) {
     this.selectedFiles.push(event);
   }
 
-  // Method to handle image upload
-  uploadImage(file: File, record: any): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const filePath = `products/${file.name}`; // Adjust the path as needed
-      const task = this.storage.upload(filePath, file);
-
-      task.snapshotChanges().pipe(
-        finalize(() => {
-          this.storage.ref(filePath).getDownloadURL().subscribe(url => {
-            record.imgURL = url; // Assuming imgURL is the field for the image
-            resolve(); // Resolve when done
-          }, reject); // Handle error in getting download URL
-        })
-      ).subscribe();
+  // Modified method to handle multiple image uploads
+  uploadImages(files: File[], record: any): Promise<void> {
+    // Ensure that imgURLs is initialized as an empty array if not already present
+    if (!record.imgURL) {
+      record.imgURL = [];
+    }
+  
+    const uploadTasks = files.map(file => {
+      return new Promise<void>((resolve, reject) => {
+        const filePath = `products/${file.name}`; // Adjust the path as needed
+        const task = this.storage.upload(filePath, file);
+  
+        task.snapshotChanges().pipe(
+          finalize(() => {
+            this.storage.ref(filePath).getDownloadURL().subscribe(url => {
+              // Append each URL to the imgURLs array (ensure it's not overwritten)
+              record.imgURL.push(url);
+              resolve(); // Resolve once the image URL is added
+            }, reject); // Handle error
+          })
+        ).subscribe();
+      });
+    });
+  
+    // Wait until all image uploads are finished
+    return Promise.all(uploadTasks).then(() => {
+      console.log('All images uploaded and URLs added to the record');
+    }).catch(error => {
+      console.error('Error uploading one or more images:', error);
     });
   }
-
+  
 }

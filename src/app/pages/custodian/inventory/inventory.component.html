@@ -3,4 +3,7 @@
     [useBasicTable] = false
     [dataColumns]="dataColumns"
     [(data)]="inventory"
+    (saveRecords)="saveInventory($event)" 
+    (deleteRecord)="deleteInventory($event)" 
+    (imageSelected)="handleImageSelection($event)"
 ></app-table>

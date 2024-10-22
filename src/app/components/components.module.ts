@@ -13,6 +13,8 @@ import { FormsModule } from "@angular/forms";
 import { PromptDialogComponent } from "./modal/prompt-dialog/prompt-dialog.component";
 import { ToastComponent } from "./modal/toast/toast.component";
 import { NgxSpinnerComponent } from "ngx-spinner";
+import { ImageCarouselComponent } from "./image-carousel/image-carousel.component";
+import { DropdownComponent } from "./dropdown/dropdown.component";
 
 @NgModule({
   imports: [

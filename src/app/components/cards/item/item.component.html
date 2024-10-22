@@ -1,7 +1,7 @@
 <app-toast></app-toast>
-<div *ngIf="product" class="card container mt--6">
+<div *ngIf="product" class="card mt--6 mt-md--6 m-1 m-md-5">
   <div class="row" style="padding: 20px">
-    <div class="col-md">
+    <div class="col col-md-3 col-lg-5">
       <!-- Carousel for array of images -->
       <div *ngIf="isImageArray()">
         <div
@@ -23,10 +23,10 @@
           <div class="carousel-inner">
             <div
               *ngFor="let img of selectedVariant?.imgURL; let i = index"
-              class="carousel-item"
+              class="carousel-item image-container justify-content-center"
               [class.active]="i === currentImageIndex"
             >
-              <img class="d-block w-100" [src]="img" alt="Slide {{ i + 1 }}" />
+              <img class="card-image-fluid bg-lighter d-block w-100" [src]="img" alt="Slide {{ i + 1 }}" />
             </div>
           </div>
 
@@ -47,10 +47,10 @@
       </div>
 
       <!-- Single image fallback -->
-      <div *ngIf="!isImageArray()">
+      <div class="image-container justify-content-center" *ngIf="!isImageArray()">
         <img
           [src]="selectedVariant?.imgURL || 'assets/img/logo/b_logo.png'"
-          class="d-block w-100"
+          class="card-image-fluid bg-lighter d-block w-100"
           alt="Product image"
         />
       </div>
@@ -58,7 +58,7 @@
 
     <div class="col-md container-fluid">
       <div class="row pt-2">
-        <h5 class="card-title">{{ product.name }}</h5>
+        <h6 class="card-title">{{ product.name }}</h6>
       </div>
 
       <div class="row d-flex flex-wrap mb-3">
@@ -74,7 +74,7 @@
 
       <div class="row d-flex flex-wrap mb-3">
         <h3 *ngIf="selectedVariant">
-          <span>&#8369;</span> {{ selectedVariant.price }}
+          <span>&#8369;</span> {{ selectedVariant.price | number }}
         </h3>
       </div>
 

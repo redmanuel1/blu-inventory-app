@@ -1,11 +1,14 @@
-<p *ngIf="!products.length">No products available.</p>
+<p class="text-center" *ngIf="!products.length">No products available.</p>
 
 <!-- Display the product list if no product is selected -->
-<div *ngIf="!selectedProduct && products.length" class="products-container mt--6 m-2">
-  <app-display-product 
-    *ngFor="let product of products" 
-    [product]="product" 
-    (click)="selectProduct(product)">
-  </app-display-product>
+<div *ngIf="!selectedProduct && products.length" class="mt--6 mt-md--6 m-1 m-md-5">
+  <div class="row justify-content-center">
+      <app-display-product 
+        class="card col-5 col-md-4 col-lg-2 m-1 shadow-lg--hover"
+        *ngFor="let product of products" 
+        [product]="product" 
+        (click)="selectProduct(product)">
+      </app-display-product>
+  </div>
 </div>
 

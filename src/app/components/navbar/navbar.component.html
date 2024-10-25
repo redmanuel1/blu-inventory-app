@@ -81,10 +81,12 @@
               <i class="ni ni-bell-55"></i>
               <!-- <img alt="Image placeholder" src="assets/img/theme/team-4-800x800.jpg"> -->
             </span>
+            @if(unreadCount > 0) {
             <span
               class="badge badge-primary badge-md badge-circle badge-floating mb-4"
               >{{ unreadCount }}</span
             >
+            }
           </div>
         </a>
         <div class="dropdown-menu-arrow dropdown-menu-right" ngbDropdownMenu>
@@ -93,7 +95,7 @@
           </div>
 
           <app-notification
-            (unReadCount)="handleUnreadCountChange($event)"
+            (unReadCountOutput)="handleUnreadCountChange($event)"
           ></app-notification>
           <!-- <i class="ni ni-single-02"></i>
             <span>My profile</span> -->

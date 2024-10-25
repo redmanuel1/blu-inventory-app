@@ -110,6 +110,17 @@ export class OrderDetailsComponent implements OnInit {
         }
       });
   }
+  private async addNotificationToAccountants(): Promise<void> {
+    await this.notificationService
+      .addNotification(
+        this.accountantUserArr,
+        "studentpayment",
+        this.transactionId
+      )
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   getProductDisplay(productCode: string): string {
     return this.productArr.filter((product) => product.code === productCode)[0]
       .name;
@@ -180,7 +191,7 @@ export class OrderDetailsComponent implements OnInit {
                 "success"
               );
               // uncomment when notification is to be added.
-              // this.addNotificationToAccountants();
+              this.addNotificationToAccountants();
               this.spinner.hide();
             })
             .catch((err) => {

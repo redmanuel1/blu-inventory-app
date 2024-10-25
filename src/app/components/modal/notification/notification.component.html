@@ -1,20 +1,17 @@
-@for(notificationObj of notificationsArr; track notificationObj; let last =
+@for(notificationObj of unReadNotificationArr; track notificationObj; let last =
 $last;) {
 <a class="dropdown-item">
-  <div (click)="markAsRead(notificationObj.index)">
-    <div
-      class="notification"
-      [class.unread]="notificationObj.notification.read == false"
-    >
-      <h4>{{ notificationObj.notification.title }}</h4>
-      <p>{{ notificationObj.notification.message }}</p>
-      <span>{{ notificationObj.notification.timestamp | date }}</span>
+  <div (click)="markAsRead(notificationObj.id)">
+    <div class="notification" [class.unread]="notificationObj.read == false">
+      <h4>{{ notificationObj.title }}</h4>
+      <p>{{ notificationObj.message }}</p>
+      <span>{{ notificationObj.timestamp | date }}</span>
     </div>
   </div>
 </a>
 @if(!last){
 <div class="dropdown-divider"></div>
-} } @if(notificationsArr.length == 0) {
+} } @if(unReadNotificationArr.length == 0) {
 <a class="dropdown-item">
   <div>You have no new notification</div>
 </a>

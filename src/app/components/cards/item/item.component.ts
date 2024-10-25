@@ -1,5 +1,5 @@
 import { ProductsService } from "src/app/services/products.service";
-import { Inventory, Variant, Size } from "./../../../models/inventory.model";
+import { Inventory, Variant, Size, GroupedInventoryVariant } from "./../../../models/inventory.model";
 import {
   AfterViewInit,
   Component,
@@ -25,7 +25,8 @@ import { NgxSpinnerService } from "ngx-spinner";
 })
 export class ItemComponent implements OnInit, AfterViewInit {
   product: Product;
-  inventory: Inventory;
+  inventory: Inventory[] = [];
+  groupedInventory: GroupedInventoryVariant[] = [];
   variants: Variant[] = [];
   sizesForSet: Size[] = [];
   selectedVariant: Variant | null = null;
@@ -36,6 +37,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
   @ViewChild(ToastComponent) toastComponent!: ToastComponent;
   isArray: boolean = false;
   currentImageIndex = 0;
+  imgURLsForSet: string[] = [];
 
   constructor(
     private inventoryService: InventoryService,
@@ -90,9 +92,11 @@ export class ItemComponent implements OnInit, AfterViewInit {
       next: (data) => {
         if (data) {
           this.inventory = data;
-          console.log(this.inventory);
+          
+          this.variants = this.groupInventoryByCode(this.inventory)
+          
           this.getInventoryItems();
-          console.log(this.inventory);
+          
           if (this.variants.length > 0) {
             this.selectVariant(this.variants[0]);
             if (
@@ -114,23 +118,24 @@ export class ItemComponent implements OnInit, AfterViewInit {
   }
 
   getInventoryItems() {
-    if (this.inventory.variants) {
-      this.variants = [...this.inventory.variants];
+    if (this.variants.length > 0) {
+      // this.variants = [...this.inventory.variants];
 
       // Check if any variant has sizes
       const hasSizes = this.variants.some(
         (variant) => variant.sizes && variant.sizes.length > 0
       );
 
-      if (this.product.isSet && hasSizes && this.inventory.variants.length >1) {
+      if (this.product.isSet && hasSizes && this.variants.length >1) {
         this.createSizesForSet();
         this.variants.push({
           code: "SET",
           name: "Set",
+          imgURL: this.imgURLsForSet,
           price: this.product.price,
           sizes: this.sizesForSet,
         } as Variant);
-      } else if (this.product.isSet && !hasSizes && this.inventory.variants.length >1) {
+      } else if (this.product.isSet && !hasSizes && this.variants.length >1) {
         const minQuantity = Math.min(
           ...this.variants.map((variant) => variant.quantity || Infinity)
         );
@@ -146,31 +151,63 @@ export class ItemComponent implements OnInit, AfterViewInit {
   }
 
   createSizesForSet() {
-    if (this.product.isSet && this.inventory.variants && this.inventory.variants.length >1) {
+    if (this.product.isSet && this.variants.length > 1) {
       const sizeMap: { [sizeName: string]: number } = {};
-
-      this.inventory.variants.forEach((variant) => {
+      const sizeCount: { [sizeName: string]: number } = {};
+      const imgURLSet: Set<string> = new Set(); // Using a Set to store unique imgURLs
+      const idMap: { [sizeName: string]: string[] } = {}; // New map to track IDs for each size
+  
+      // Iterate over each variant
+      this.variants.forEach((variant) => {
+        // Check if the variant has sizes
         variant.sizes?.forEach((size) => {
           const sizeName = size.size;
-          const quantity =
-            size.quantity === undefined || size.quantity === null
-              ? 0
-              : size.quantity;
-
+          const quantity = size.quantity || 0; // Default to 0 if quantity is undefined
+  
+          // Count the size occurrences
+          sizeCount[sizeName] = (sizeCount[sizeName] || 0) + 1;
+  
+          // Initialize or update the minimum quantity for the size
           if (sizeMap[sizeName] === undefined) {
             sizeMap[sizeName] = quantity;
           } else {
+            // Update to the minimum quantity across variants
             sizeMap[sizeName] = Math.min(sizeMap[sizeName], quantity);
           }
+  
+          // Add the ID to the idMap for this size
+          if (!idMap[sizeName]) {
+            idMap[sizeName] = [];
+          }
+          idMap[sizeName].push(...size.id); // Push all IDs from the current size
         });
+  
+        // Add imgURLs to the Set for uniqueness
+        if (variant.imgURL) {
+          variant.imgURL.forEach(img => imgURLSet.add(img)); // Assuming imgURL is an array
+        }
       });
-
-      this.sizesForSet = Object.keys(sizeMap).map((sizeName) => ({
-        size: sizeName,
-        quantity: sizeMap[sizeName],
-      })) as Size[];
+  
+      // Filter sizes that appear in all variants
+      const totalVariants = this.variants.length;
+      this.sizesForSet = Object.keys(sizeCount)
+        .filter(sizeName => sizeCount[sizeName] === totalVariants) // Only include sizes present in all variants
+        .map(sizeName => ({
+          size: sizeName,
+          id: Array.from(new Set(idMap[sizeName])), // Use Set to ensure unique IDs
+          quantity: sizeMap[sizeName],
+          imgURL: Array.from(imgURLSet).length > 0 ? Array.from(imgURLSet) : ['assets/img/logo/b_logo.png'], // Add imgURL here
+        })) as Size[];
+  
+      // Optional: You can store the imgURLsForSet property if you need to use it elsewhere
+      this.imgURLsForSet = Array.from(imgURLSet);
+      if (this.imgURLsForSet.length === 0) {
+        this.imgURLsForSet = ['assets/img/logo/b_logo.png']; // Set default image URL if no images available
+      }
     }
   }
+  
+  
 
   selectSetSize(size: any): void {
     this.selectedSetSize = size;
@@ -184,9 +221,10 @@ export class ItemComponent implements OnInit, AfterViewInit {
 
   selectVariant(variant: Variant) {
     this.selectedVariant = variant;
-    this.isArray = Array.isArray(this.selectedVariant?.imgURL);
-    console.log("selectedVariant", this.selectedVariant);
-    if (!this.selectedSetSize) {
+    this.currentImageIndex = 0;
+    // this.isArray = Array.isArray(this.selectedVariant?.imgURL);
+    // console.log("selectedVariant", this.selectedVariant);
+    if (variant.sizes.length == 0) {
       this.maxQuantity = variant.quantity;
       if (this.maxQuantity == 0) {
         this.quantity = 0;
@@ -222,15 +260,16 @@ export class ItemComponent implements OnInit, AfterViewInit {
         price: this.selectedVariant.price,
         quantity: this.quantity,
         totalPrice: this.selectedVariant.price * this.quantity,
-        imgURL: Array.isArray(this.selectedVariant.imgURL)
-          ? this.selectedVariant.imgURL[0]
-          : this.selectedVariant.imgURL || "",
+        imgURL:  Array.isArray(this.selectedVariant.imgURL) && this.selectedVariant.imgURL.length > 0
+        ? this.selectedVariant.imgURL // Ensure this is an array
+        : [],
         size: this.selectedSetSize ? this.selectedSetSize.size : "",
         name:
           this.selectedVariant.name === "Set"
             ? "Set - " + this.product.name
             : this.selectedVariant.name,
         productName: this.product.name,
+        inventoryID: this.selectedSetSize  ? this.selectedSetSize.id : [this.selectedVariant.id]
       };
 
       this.shoppingCartService.addToCart(cartItem);
@@ -263,9 +302,9 @@ export class ItemComponent implements OnInit, AfterViewInit {
         price: this.selectedVariant.price,
         quantity: this.quantity,
         totalPrice: this.selectedVariant.price * this.quantity,
-        imgURL: Array.isArray(this.selectedVariant.imgURL)
-          ? this.selectedVariant.imgURL[0]
-          : this.selectedVariant.imgURL || "",
+        imgURL: Array.isArray(this.selectedVariant.imgURL) && this.selectedVariant.imgURL.length > 0
+        ? this.selectedVariant.imgURL // Ensure this is an array
+        : [],
         size: this.selectedSetSize ? this.selectedSetSize.size : "",
         name:
           this.selectedVariant.name === "Set"
@@ -312,4 +351,37 @@ export class ItemComponent implements OnInit, AfterViewInit {
       this.currentImageIndex = this.imageCount - 1; // Loop to the last image
     }
   }
+
+
+  groupInventoryByCode(inventoryItems: Inventory[]): GroupedInventoryVariant[] {
+    const grouped = inventoryItems.reduce((acc, item) => {
+      const { code, name, price, productCode, imgURL = [], size, quantity, id } = item;
+      
+      if (!acc[code]) {
+        acc[code] = {
+          code,
+          name,
+          price,
+          productCode,
+          imgURL: imgURL || [],
+          quantity: 0, // Initialize quantity to 0
+          sizes: [], // Initialize sizes array
+          id
+        } as GroupedInventoryVariant;
+      }
+  
+      // Check if the item has a size
+      if (size) {
+        acc[code].sizes?.push({ size, quantity, id:[id]});
+      } else {
+        // If there are no sizes, add quantity to the grouped variant
+        acc[code].quantity += quantity; // Add quantity to the total quantity
+      }
+      
+      return acc;
+    }, {} as { [key: string]: GroupedInventoryVariant });
+  
+    return Object.values(grouped);
+  }
+  
 }

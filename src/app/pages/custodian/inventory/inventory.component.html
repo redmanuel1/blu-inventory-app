@@ -1,7 +1,9 @@
+<app-toast></app-toast>
 <app-table 
     title="Inventory"
     [disableDelete] = true
     [useBasicTable] = false
+    [enableSearch] = true
     [dataColumns]="dataColumns"
     [(data)]="inventory"
     (saveRecords)="saveInventory($event)" 

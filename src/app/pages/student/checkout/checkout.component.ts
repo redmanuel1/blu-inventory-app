@@ -194,15 +194,18 @@ export class CheckoutComponent implements OnInit {
       })
       .then(() => {
         console.log("All items removed from the cart successfully.");
+        
 
         this.firestoreService.collectionName = "Transactions";
         return this.firestoreService.addRecords([transactionData]);
+        
       })
       .then(() => {
         console.log("Transaction added successfully.");
 
         this.firestoreService.collectionName = "Orders";
         this.orderPlaced = true;
+        this.spinnerService.hide();
       })
       .catch((error) => {
         this.spinnerService.hide();

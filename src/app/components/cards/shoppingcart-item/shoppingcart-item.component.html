@@ -4,13 +4,13 @@
             <input  class="mr-2" type="checkbox" [(ngModel)]="cartItem.selected" (change)="onCheckboxChange()">
         </div>
         <div class="col p-2 ">
-            <img class="bg-lighter " [src]="cartItem.imgURL || 'assets/img/logo/b_logo.png'" alt="Product image" style="width: 100px; height: 100px;">
+            <img class="bg-lighter " [src]="cartItem.imgURL.length > 0 ? cartItem.imgURL[0] : 'assets/img/logo/b_logo.png'" alt="Product image" style="width: 100px; height: 100px;">
         </div>
         <div class="col-3 justify-content-center">
             <h3 class="text-darker ">{{cartItem.name}}</h3>
         </div>
         <div class="col">
-            <p class="text-lg-right"><span>&#8369;</span>{{cartItem.price}}</p>
+            <p class="text-lg-right"><span>&#8369;</span>{{cartItem.price | number}}</p>
         </div>
         <div class="col">
             <p class="">{{cartItem.size}}</p>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="col text-right">
-            <h3 class="text-info"><span>&#8369;</span>{{cartItem.totalPrice}}</h3>
+            <h3 class="text-info"><span>&#8369;</span>{{cartItem.totalPrice | number}}</h3>
         </div>
         <div class="col text-right">
             <i class="ni ni-fat-remove me-2 text-red" style="font-size: xx-large;" (click)="removeItem()"></i>

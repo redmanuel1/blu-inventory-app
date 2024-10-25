@@ -1,0 +1,19 @@
+.dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 200px; /* Adjust as needed */
+    overflow-y: auto; /* Scroll if needed */
+}
+
+.dropdown-item {
+    padding: 10px; /* Adjust for spacing */
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa; /* Highlight color */
+}

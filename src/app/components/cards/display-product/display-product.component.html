@@ -1,7 +1,7 @@
 
     <div class="product" (click)="onSelect()">
         <div class="image-container d-flex justify-content-center align-items-center pt-3">
-            <img class="card-image-fluid bg-lighter" [src]="product.imgURL || 'assets/img/logo/b_logo.png'" alt="Product image" >
+            <img class="card-image-fluid bg-lighter" [src]="(product.imgURL && product.imgURL.length > 0) ? product.imgURL : 'assets/img/logo/b_logo.png'" alt="Product image" >
         </div>
         <div class="flex-column d-flex p-2">
             <b class="card-title text-truncate text-sm">{{ product.name }}</b>

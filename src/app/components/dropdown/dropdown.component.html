@@ -1,0 +1,17 @@
+<div class="form-group w-100">
+    <div class="input-group ">
+        <input type="text" class="form-control"
+        [style.width] = "inputWidth"
+               [(ngModel)]="searchTerm"
+               [placeholder]="placeholder"
+               (input)="filterData()"
+               (focus)="showDropdown = true"
+               >
+        <div *ngIf="showDropdown && filteredData.length > 0" class="dropdown-menu show w-100">
+            <div *ngFor="let record of filteredData" class="dropdown-item w-100" 
+                 (click)="selectData(record)">
+                {{ record }}
+            </div>
+        </div>
+    </div>
+</div>

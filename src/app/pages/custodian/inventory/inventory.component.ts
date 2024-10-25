@@ -1,33 +1,37 @@
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColumnType, TableColumn } from 'src/app/models/util/table.model';
-import { Product } from 'src/app/models/product.model';
+import { Inventory } from 'src/app/models/inventory.model';
 import { TableService } from 'src/app/services/util/table.service';
 import { finalize } from 'rxjs';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastService } from 'src/app/components/modal/toast/toast.service';
 import { ToastComponent } from 'src/app/components/modal/toast/toast.component';
+import { ToastService } from 'src/app/components/modal/toast/toast.service';
 
 @Component({
-  selector: 'app-products',
-  templateUrl: './products.component.html',
-  styleUrl: './products.component.scss'
+  selector: 'app-inventory',
+  templateUrl: './inventory.component.html',
+  styleUrls: ['./inventory.component.scss'] // Fixed typo here from `styleUrl` to `styleUrls`
 })
-export class ProductsComponent {
-
-  sortOrder: string[] = ["imgURL", "code", "name", "isSet", "price"];
+export class InventoryComponent implements OnInit {
+  sortOrder: string[] = ["imgURL", "productCode", "code", "name", "size", "price", "quantity", "dateUpdated"];
   dataColumns: TableColumn[] = [];
-  products: Product[];
+  inventory: Inventory[] = [];
   selectedFiles: { record: any; files: File[]; imgPreviewURLs: string[] }[] = [];
   @ViewChild(ToastComponent) toastComponent!: ToastComponent;
 
   fieldConfig: TableColumn[] = [
-    { field: "imgURL", type: ColumnType.image, hidden: false, editable: true },
-    { field: "code", type: ColumnType.text, hidden: false, required: true, editable: false },
-    { field: "name", type: ColumnType.text, hidden: false, required: true, editable: true },
-    { field: "isSet", type: ColumnType.checkbox, hidden: true, editable: true },
-    { field: "price", type: ColumnType.number, hidden: false, required: true, editable: true }
+    { field: "imgURL", type: ColumnType.image, hidden: false, required: false, editable: false },
+    { field: "productCode", type: ColumnType.dropdown, hidden: false, required: true, editable: false, tableRef: "Products", fieldRef: "code",  css: { width: '150px'  }},
+    { field: "code", type: ColumnType.text, hidden: false, required: true, editable: false, css: { width: '100px' } },
+    { field: "name", type: ColumnType.text, hidden: false, required: true, editable: true,  css: { width: '250px'  }},
+    { field: "size", type: ColumnType.text, hidden: false, required: false, editable: true, css: { width: '100px' }  },
+    { field: "price", type: ColumnType.number, hidden: false, required: true, editable: true,  css: { width: '100px' }},
+    // { field: "isSet", type: ColumnType.checkbox, hidden: true, required: false, editable: false },
+    { field: "dateUpdated", type: ColumnType.date, hidden: false, required: false, editable: false, insert: false },
+    { field: "quantity", type: ColumnType.number, hidden: false, required: true, editable: true,  css: { width: '100px' } }
+    // { field: "lowStockQty", type: ColumnType.number, hidden: false, required: false, editable: true,  css: { width: '100px' }}
   ];
 
   constructor(
@@ -37,15 +41,15 @@ export class ProductsComponent {
     private spinner: NgxSpinnerService,
     private toastService: ToastService,
   ) {
-    recordService.collectionName = "Products";
+    recordService.collectionName = "Inventory";
   }
 
   ngOnInit() {
     this.spinner.show()
     this.recordService.getRecords().subscribe(data => {
-      this.products = data.sort((a, b) => a.name.localeCompare(b.name));
-      this.dataColumns = this.sortOrder.map(fieldName => this.tableService.createTableColumn(fieldName, this.fieldConfig));
-      this.spinner.hide();
+      this.inventory = data
+        this.dataColumns = this.sortOrder.map(fieldName => this.tableService.createTableColumn(fieldName, this.fieldConfig));
+        this.spinner.hide()
     });
   }
 
@@ -53,9 +57,8 @@ export class ProductsComponent {
     this.toastService.registerToast(this.toastComponent);
   }
 
-  saveProducts(records: any[]) {
+  saveInventory(records: any[]) {
     this.spinner.show();
-
     const uploadPromises = records.map(record => {
       const selectedFiles = this.selectedFiles
       .filter(file => file.record.code === record.code)
@@ -71,6 +74,8 @@ export class ProductsComponent {
       const { updates, newRecords } = records.reduce((acc, record) => {
         const { isEditing, imgPreviewURLs, ...filteredRecord } = record; // Remove imgPreviewURLs before saving
 
+        filteredRecord.dateUpdated =  new Date().toISOString(); // Set current timestamp if dateUpdated is missing
+        
         if (isEditing) {
           acc.updates.push(filteredRecord);
         } else {
@@ -81,6 +86,7 @@ export class ProductsComponent {
       }, { updates: [], newRecords: [] });
 
       if (updates.length) {
+        this.recordService.collectionName = "Inventory"
         this.recordService.updateRecords(updates).then(() => {
           this.hideSpinnerAddToast('Updated products saved!', "success");
         }).catch(error => {
@@ -89,24 +95,23 @@ export class ProductsComponent {
       }
 
       if (newRecords.length) {
+        this.recordService.collectionName = "Inventory"
         this.recordService.addRecords(newRecords).then(() => {
-          this.hideSpinnerAddToast('New products saved!' , "success");
+          this.hideSpinnerAddToast('New products saved!', "success");
         }).catch(error => {
-          this.hideSpinnerAddToast('Error adding products: ' + error , "error");
+          this.hideSpinnerAddToast('Error saving new products: ' + error,"error");
         });
       }
-      
-      
     }).catch(error => {
-      this.hideSpinnerAddToast('Error uploading images:' + error, "error");
+      this.hideSpinnerAddToast('Error uploading images: ' + error, "error");
     });
   }
 
-  deleteProduct(record: any) {
+  deleteInventory(record: any) {
     this.recordService.deleteRecord(record.id).then(() => {
-      this.toastService.showToast('Product deleted: ' + record.name , "success");
+      this.hideSpinnerAddToast('Inventory deleted : ' + record.name,"success");
     }).catch(error => {
-      this.toastService.showToast('Unable to delete ' + record.name + " : " + error, "success");
+      this.hideSpinnerAddToast('Error deleting product ' + record.name + " : " + error, "error");
     });
   }
 
@@ -150,5 +155,5 @@ export class ProductsComponent {
     this.spinner.hide();
     this.toastService.showToast(message, status);
   }
-  
+
 }

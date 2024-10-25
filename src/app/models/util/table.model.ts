@@ -7,9 +7,8 @@ export enum ColumnType {
   date = 'date',
   range = 'range',
   checkbox = 'checkbox',
-  dropDown = 'dropdown',
-  image = 'image', 
-  link = 'link'
+  dropdown = 'dropdown',
+  image = 'image'
 }
 
 export interface TableColumn {
@@ -18,5 +17,10 @@ export interface TableColumn {
   type?: ColumnType;
   hidden?: boolean;
   editable?: boolean; 
+  insert?: boolean;
   required?: boolean;
+  defaultValue?: any;
+  tableRef?: string;
+  fieldRef?: string;
+  css?: any
 }

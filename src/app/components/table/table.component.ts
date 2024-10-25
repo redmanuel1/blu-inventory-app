@@ -19,6 +19,9 @@ export class TableComponent {
   //add and row action buttons
   @Input() useBasicTable: boolean = true;
   @Input() theme: string = "primary"; // css purpose only
+  @Input() disableDelete: boolean = false;
+  @Input() enableSearch: boolean = false;
+  searchTerm: string = '';
 
   // bottom action button
   @Input() showBottomActionButton: boolean = false;
@@ -30,13 +33,15 @@ export class TableComponent {
   @Input() title: string = "Table Title";
   @Input() dataColumns: TableColumn[];
   @Input() data: any[];
+  filteredData: any[];
 
+  @Output() dataChange = new EventEmitter<any[]>();
   @Output() saveRecords = new EventEmitter<any[]>();
   @Output() deleteRecord = new EventEmitter<any>();
   @Output() imageSelected = new EventEmitter<{
     record: any;
-    file: File;
-    imgPreviewURL: string;
+    files: File[];
+    imgPreviewURLs: string;
   }>();
 
   ColumnType = ColumnType;
@@ -45,9 +50,11 @@ export class TableComponent {
   newRecords: any[] = []; // array to hold multiple new rows
 
   ngOnInit() {
-    console.log(this.data);
     this.sanitizedBottomActionDescription =
-      this.sanitizer.bypassSecurityTrustHtml(this.bottomActionHTML);
+    this.sanitizer.bypassSecurityTrustHtml(this.bottomActionHTML);
+    console.log("data", this.data)
+    this.filteredData = this.data
+    console.log("filteredData", this.filteredData)
   }
 
   // Method to validate records
@@ -98,6 +105,7 @@ export class TableComponent {
       ...this.newRecords,
       ...this.data.filter((item) => item.isEditing),
     ];
+    console.log(recordsToSave)
 
     // Validate records before saving
     const allValid = recordsToSave.every((record) =>
@@ -114,18 +122,58 @@ export class TableComponent {
     }
   }
 
-  onImageChange(event: any, record: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const imgPreviewURL = URL.createObjectURL(file);
-      // Update the record with the new preview URL
-      record.imgPreviewURL = imgPreviewURL;
-      // Emit the selected file along with its preview URL if needed
-      this.imageSelected.emit({ record, file, imgPreviewURL });
+  onImageChange(event: any, newRow: any): void {
+    const files = event.target.files;
+  
+    if (files && files.length > 0) {
+      // Initialize or clear the imgPreviewURLs array for this newRow
+      newRow.imgPreviewURLs = newRow.imgPreviewURLs || [];
+  
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const imgPreviewURL = URL.createObjectURL(file);
+  
+        // Push each file's preview URL to the array
+        newRow.imgPreviewURLs.push(imgPreviewURL);
+      }
+  
+      // Emit if needed
+      this.imageSelected.emit({ record: newRow, files: Array.from(files), imgPreviewURLs: newRow.imgPreviewURLs });
     }
+  }
+
+  isArrayAndNotEmpty(item: any): boolean {
+    return Array.isArray(item);
   }
 
   onBottomActionButtonClick(): void {
     this.bottomActionButtonClick.emit(); // Emit the event
+  }
+
+  onDropdownChange(newRow: any, field: string, selectedValue: any): void {
+    newRow[field] = selectedValue; // Update the newRow with the selected value
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && changes['data'].currentValue) {
+      this.filteredData = changes['data'].currentValue;
+      console.log("filteredData", this.filteredData);
+    }
+  }
+
+  onSearch(){
+    if (!this.searchTerm) {
+      this.filteredData = this.data; // Reset to original data if search term is empty
+      return;
+    }
+
+    const searchTermLower = this.searchTerm.toLowerCase();
+
+    // Filter the data based on the search term across all columns
+    this.filteredData = this.data.filter(item => {
+      return Object.values(item).some(value =>
+        value.toString().toLowerCase().includes(searchTermLower)
+      );
+    });
   }
 }

@@ -80,52 +80,26 @@ export class ShoppingcartComponent implements OnInit {
 
   getQuantitiesForCartItems(): void {
     this.shoppingCartItems.forEach((item) => {
-      if (item.variantCode === "SET") {
-        this.shoppingCartService
-          .getLowestQuantityForSet(item.productCode, item.size)
-          .subscribe({
-            next: (quantity) => {
-              item.maxQuantity = quantity;
-              this.spinnerService.hide();
-            },
-            error: (error) => {
-              this.spinnerService.hide();
-            },
-          });
-      } else if (item.size) {
-        this.shoppingCartService
-          .getInventoryQuantityByProductCodeAndVariantCodeAndSize(
-            item.productCode,
-            item.variantCode,
-            item.size
-          )
-          .subscribe({
-            next: (quantity) => {
-              item.maxQuantity = quantity;
-              this.spinnerService.hide();
-            },
-            error: (error) => {
-              this.spinnerService.hide();
-            },
-          });
-      } else {
-        this.shoppingCartService
-          .getInventoryQuantityByProductCodeAndVariantCode(
-            item.productCode,
-            item.variantCode
-          )
-          .subscribe({
-            next: (quantity) => {
-              item.maxQuantity = quantity;
-              this.spinnerService.hide();
-            },
-            error: (error) => {
-              this.spinnerService.hide();
-            },
-          });
-      }
+  
+      this.shoppingCartService.getInventoryItemByID(item.inventoryID).subscribe({
+        next: (inventoryItems) => {
+          if (inventoryItems.length > 0) {
+            const maxQuantity = inventoryItems.reduce((min, invItem) => {
+              return Math.min(min, invItem.quantity);
+            }, Infinity);
+            item.maxQuantity = maxQuantity !== Infinity ? maxQuantity : 0;
+          } else {
+            item.maxQuantity = 0; // No items found
+          }
+        },
+        error: (error) => {
+          console.error("Error fetching inventory items:", error);
+        },
+      });
     });
   }
+  
+  
 
   proceedToCheckout(): void {
     if (this.selectedItems.length > 0) {

@@ -14,6 +14,8 @@ import { PromptDialogComponent } from "./modal/prompt-dialog/prompt-dialog.compo
 import { ToastComponent } from "./modal/toast/toast.component";
 import { NgxSpinnerComponent } from "ngx-spinner";
 import { NotificationComponent } from "./modal/notification/notification.component";
+import { ImageCarouselComponent } from "./image-carousel/image-carousel.component";
+import { DropdownComponent } from "./dropdown/dropdown.component";
 
 @NgModule({
   imports: [
@@ -34,6 +36,8 @@ import { NotificationComponent } from "./modal/notification/notification.compone
     PromptDialogComponent,
     ToastComponent,
     NotificationComponent,
+    DropdownComponent,
+    ImageCarouselComponent,
   ],
   exports: [
     FooterComponent,
@@ -46,6 +50,7 @@ import { NotificationComponent } from "./modal/notification/notification.compone
     PromptDialogComponent,
     ToastComponent,
     NotificationComponent,
+    DropdownComponent,
   ],
 })
 export class ComponentsModule {}

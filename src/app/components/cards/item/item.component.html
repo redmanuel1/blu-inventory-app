@@ -3,26 +3,30 @@
   <div class="row" style="padding: 20px">
     <div class="col col-md-3 col-lg-5">
       <!-- Carousel for array of images -->
-      <div *ngIf="isImageArray()">
+      <div>
         <div
           id="carouselExampleIndicators"
           class="carousel slide"
           data-ride="carousel"
         >
-          <!-- Indicators -->
+          
           <ol class="carousel-indicators">
-            <li
-              *ngFor="let img of selectedVariant?.imgURL; let i = index"
-              [attr.data-target]="'#carouselExampleIndicators'"
-              [attr.data-slide-to]="i"
-              [class.active]="i === currentImageIndex"
-            ></li>
+            @if(selectedVariant?.imgURL.length == 0){
+              selectedVariant?.imgURL = ['assets/img/logo/b_logo.png']
+            }
+            @for ( img of selectedVariant.imgURL; track $index) {
+              <li
+                [attr.data-target]="'#carouselExampleIndicators'"
+                [attr.data-slide-to]="$index"
+                [class.active]="$index === currentImageIndex"
+              ></li>
+            }
           </ol>
 
-          <!-- Carousel items -->
+          
           <div class="carousel-inner">
             <div
-              *ngFor="let img of selectedVariant?.imgURL; let i = index"
+              *ngFor="let img of (selectedVariant?.imgURL.length > 0 ? selectedVariant.imgURL : ['assets/img/logo/b_logo.png']); let i = index"
               class="carousel-item image-container justify-content-center"
               [class.active]="i === currentImageIndex"
             >
@@ -30,7 +34,7 @@
             </div>
           </div>
 
-          <!-- Controls -->
+          
           <a
             class="carousel-control-prev"
             role="button"
@@ -45,15 +49,7 @@
           </a>
         </div>
       </div>
-
-      <!-- Single image fallback -->
-      <div class="image-container justify-content-center" *ngIf="!isImageArray()">
-        <img
-          [src]="selectedVariant?.imgURL || 'assets/img/logo/b_logo.png'"
-          class="card-image-fluid bg-light d-block w-100"
-          alt="Product image"
-        />
-      </div>
+    <!-- <app-image-carousel width="100%" height="auto" [images]="selectedVariant?.imgURL.length > 0 ? selectedVariant?.imgURL : ['assets/img/logo/b_logo.png']"></app-image-carousel> -->
     </div>
 
     <div class="col-md container-fluid">
@@ -79,7 +75,7 @@
       </div>
 
       <div class="d-flex justify-content-start mb-3 ml--3">
-        <ng-container *ngIf="selectedVariant">
+        <ng-container *ngIf="selectedVariant ">
           <span
             *ngFor="let size of selectedVariant.sizes"
             class="badge badge-pill badge-info mr-2"

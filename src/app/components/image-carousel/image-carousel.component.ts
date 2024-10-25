@@ -7,6 +7,8 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ImageCarouselComponent implements OnInit {
   @Input() images: string[] = [];
+  @Input() width='100px';
+  @Input() height ='100px';
   currentImageIndex: number = 0;
 
   ngOnInit() {

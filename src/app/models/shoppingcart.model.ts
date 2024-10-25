@@ -7,11 +7,13 @@ export interface CartItem {
     variantCode: string,
     price: number,
     totalPrice: number,
-    imgURL?: string, 
+    imgURL: any[], 
     size?: string,
     quantity: number,
     name: string,
     selected?: boolean,
     maxQuantity?: number,
-    productName? : string
+    productName? : string,
+    inventoryID?: string[];
+    lowestQuantity?: number;
   }

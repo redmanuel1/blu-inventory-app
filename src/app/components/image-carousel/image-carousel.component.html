@@ -4,7 +4,7 @@
       <div *ngFor="let img of images; let i = index" 
           class="carousel-item" 
           [class.active]="i === currentImageIndex">
-        <img class="d-block " style="width: 100px; height: 100px;" [src]="img" alt="Slide {{i + 1}}">
+        <img class="d-block " [style.width]="width" [style.height]="height" [src]="img" alt="Slide {{i + 1}}">
       </div>
     </div>
   

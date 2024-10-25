@@ -9,25 +9,22 @@ import { Inventory } from '../models/inventory.model';
 })
 export class InventoryService {
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(
+    private firestore: AngularFirestore) { }
 
   // Function to get a single inventory item by product code
-  getInventoryByProductCode(productCode: string): Observable<Inventory | undefined> {
-    return this.firestore.collection('Inventory', ref => ref.where('productCode', '==', productCode)).valueChanges().pipe(
-      map(inventories => {
-        if (inventories.length > 0) {
-          const inventory = inventories[0] as Inventory;
-          // Handle Timestamp conversion
-          return {
-            ...inventory
-          };
-        } else {
-          return undefined; // No such document
-        }
-      }),
+  getInventoryByProductCode(productCode: string): Observable<Inventory[]> {
+    return this.firestore.collection<Inventory>('Inventory', ref => ref.where('productCode', '==', productCode)).snapshotChanges().pipe(
+      map((actions) =>
+        actions.map((a) => {
+          const data = a.payload.doc.data() as Inventory; // Get document data
+          const id = a.payload.doc.id; // Get the document ID
+          return { id, ...data }; // Return the complete object with ID
+        })
+      ),
       catchError(err => {
         console.error('Error fetching inventory:', err);
-        return of(undefined); // Handle errors
+        return of([]); // Return an empty array in case of an error
       })
     );
   }

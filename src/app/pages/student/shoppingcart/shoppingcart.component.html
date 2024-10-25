@@ -1,6 +1,6 @@
 
 
-<div *ngIf="shoppingCartItems.length==0">No items found in shopping cart</div>
+<div *ngIf="shoppingCartItems.length==0" class="text-center p-5">No items found in shopping cart</div>
 <div *ngIf="shoppingCartItems.length>0" class="mt--6 p-3 mr-4 ml-4" style="min-height: 200px;">
     <app-shoppingcart-item *ngFor="let item of shoppingCartItems" 
        [cartItem]="item"  

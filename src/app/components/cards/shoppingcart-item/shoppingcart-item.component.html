@@ -4,7 +4,7 @@
             <input  class="mr-2" type="checkbox" [(ngModel)]="cartItem.selected" (change)="onCheckboxChange()">
         </div>
         <div class="col p-2 ">
-            <img class="bg-lighter " [src]="cartItem.imgURL || 'assets/img/logo/b_logo.png'" alt="Product image" style="width: 100px; height: 100px;">
+            <img class="bg-lighter " [src]="cartItem.imgURL.length > 0 ? cartItem.imgURL[0] : 'assets/img/logo/b_logo.png'" alt="Product image" style="width: 100px; height: 100px;">
         </div>
         <div class="col-3 justify-content-center">
             <h3 class="text-darker ">{{cartItem.name}}</h3>

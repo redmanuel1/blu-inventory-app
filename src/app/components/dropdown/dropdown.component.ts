@@ -7,6 +7,7 @@ import { FirestoreService } from 'src/app/services/firestore.service';
   styleUrl: './dropdown.component.scss'
 })
 export class DropdownComponent {
+  @Input() inputWidth = ""
   @Input() placeholder = "Search for ..."
   @Input() tableRef = ""
   @Input() fieldRef = "" // is required if tableRef is defined

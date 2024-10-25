@@ -1,10 +1,13 @@
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColumnType, TableColumn } from 'src/app/models/util/table.model';
 import { Product } from 'src/app/models/product.model';
 import { TableService } from 'src/app/services/util/table.service';
 import { finalize } from 'rxjs';
 import { FirestoreService } from 'src/app/services/firestore.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastService } from 'src/app/components/modal/toast/toast.service';
+import { ToastComponent } from 'src/app/components/modal/toast/toast.component';
 
 @Component({
   selector: 'app-products',
@@ -17,6 +20,7 @@ export class ProductsComponent {
   dataColumns: TableColumn[] = [];
   products: Product[];
   selectedFiles: { record: any; files: File[]; imgPreviewURLs: string[] }[] = [];
+  @ViewChild(ToastComponent) toastComponent!: ToastComponent;
 
   fieldConfig: TableColumn[] = [
     { field: "imgURL", type: ColumnType.image, hidden: false, editable: true },
@@ -29,21 +33,29 @@ export class ProductsComponent {
   constructor(
     private recordService: FirestoreService,
     private tableService: TableService,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private spinner: NgxSpinnerService,
+    private toastService: ToastService,
   ) {
     recordService.collectionName = "Products";
   }
 
   ngOnInit() {
+    this.spinner.show()
     this.recordService.getRecords().subscribe(data => {
-      this.products = data;
+      this.products = data.sort((a, b) => a.name.localeCompare(b.name));
       this.dataColumns = this.sortOrder.map(fieldName => this.tableService.createTableColumn(fieldName, this.fieldConfig));
-      console.log(data);
-      console.log(this.dataColumns);
+      this.spinner.hide();
     });
   }
 
+  ngAfterViewInit() {
+    this.toastService.registerToast(this.toastComponent);
+  }
+
   saveProducts(records: any[]) {
+    this.spinner.show();
+
     const uploadPromises = records.map(record => {
       const selectedFiles = this.selectedFiles
       .filter(file => file.record.code === record.code)
@@ -70,29 +82,31 @@ export class ProductsComponent {
 
       if (updates.length) {
         this.recordService.updateRecords(updates).then(() => {
-          console.log('Updated products saved!');
+          this.hideSpinnerAddToast('Updated products saved!', "success");
         }).catch(error => {
-          console.error('Error updating products:', error);
+          this.hideSpinnerAddToast('Error updating products: ' + error , "error");
         });
       }
 
       if (newRecords.length) {
         this.recordService.addRecords(newRecords).then(() => {
-          console.log('New products saved!');
+          this.hideSpinnerAddToast('New products saved!' , "success");
         }).catch(error => {
-          console.error('Error saving new products:', error);
+          this.hideSpinnerAddToast('Error adding products: ' + error , "error");
         });
       }
+      
+      
     }).catch(error => {
-      console.error('Error uploading images:', error);
+      this.hideSpinnerAddToast('Error uploading images:' + error, "error");
     });
   }
 
   deleteProduct(record: any) {
     this.recordService.deleteRecord(record.id).then(() => {
-      console.log('Product deleted!');
+      this.toastService.showToast('Product deleted: ' + record.name , "success");
     }).catch(error => {
-      console.error('Error deleting product:', error);
+      this.toastService.showToast('Unable to delete ' + record.name + " : " + error, "success");
     });
   }
 
@@ -130,6 +144,11 @@ export class ProductsComponent {
     }).catch(error => {
       console.error('Error uploading one or more images:', error);
     });
+  }
+
+  hideSpinnerAddToast(message, status) {
+    this.spinner.hide();
+    this.toastService.showToast(message, status);
   }
   
 }

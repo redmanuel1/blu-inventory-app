@@ -20,6 +20,8 @@ export class TableComponent {
   @Input() useBasicTable: boolean = true;
   @Input() theme: string = "primary"; // css purpose only
   @Input() disableDelete: boolean = false;
+  @Input() enableSearch: boolean = false;
+  searchTerm: string = '';
 
   // bottom action button
   @Input() showBottomActionButton: boolean = false;
@@ -31,6 +33,7 @@ export class TableComponent {
   @Input() title: string = "Table Title";
   @Input() dataColumns: TableColumn[];
   @Input() data: any[];
+  filteredData: any[];
 
   @Output() dataChange = new EventEmitter<any[]>();
   @Output() saveRecords = new EventEmitter<any[]>();
@@ -47,9 +50,11 @@ export class TableComponent {
   newRecords: any[] = []; // array to hold multiple new rows
 
   ngOnInit() {
-    console.log(this.data);
     this.sanitizedBottomActionDescription =
-      this.sanitizer.bypassSecurityTrustHtml(this.bottomActionHTML);
+    this.sanitizer.bypassSecurityTrustHtml(this.bottomActionHTML);
+    console.log("data", this.data)
+    this.filteredData = this.data
+    console.log("filteredData", this.filteredData)
   }
 
   // Method to validate records
@@ -147,5 +152,28 @@ export class TableComponent {
 
   onDropdownChange(newRow: any, field: string, selectedValue: any): void {
     newRow[field] = selectedValue; // Update the newRow with the selected value
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && changes['data'].currentValue) {
+      this.filteredData = changes['data'].currentValue;
+      console.log("filteredData", this.filteredData);
+    }
+  }
+
+  onSearch(){
+    if (!this.searchTerm) {
+      this.filteredData = this.data; // Reset to original data if search term is empty
+      return;
+    }
+
+    const searchTermLower = this.searchTerm.toLowerCase();
+
+    // Filter the data based on the search term across all columns
+    this.filteredData = this.data.filter(item => {
+      return Object.values(item).some(value =>
+        value.toString().toLowerCase().includes(searchTermLower)
+      );
+    });
   }
 }

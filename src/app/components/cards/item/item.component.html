@@ -1,5 +1,13 @@
 <app-toast></app-toast>
-<div *ngIf="product" class="card mt--6 mt-md--6 m-1 m-md-5">
+<div class="mt--9 mt-md--7">
+    <div routerLink="/products" class="col">
+      <div class="icon icon-shape bg-info text-white rounded-circle shadow ">
+        <i class="ni ni-bold-left"></i>
+      </div>
+    </div>
+</div>
+
+<div *ngIf="product" class="card ml-1 ml-md-6 mr-1 mr-md-5">
   <div class="row" style="padding: 20px">
     <div class="col col-md-3 col-lg-5">
       <!-- Carousel for array of images -->
@@ -11,10 +19,10 @@
         >
           
           <ol class="carousel-indicators">
-            @if(selectedVariant?.imgURL.length == 0){
+            <!-- @if(!selectedVariant?.imgURL || selectedVariant?.imgURL?.length == 0){
               selectedVariant?.imgURL = ['assets/img/logo/b_logo.png']
-            }
-            @for ( img of selectedVariant.imgURL; track $index) {
+            } -->
+            @for ( img of selectedVariant?.imgURL; track $index) {
               <li
                 [attr.data-target]="'#carouselExampleIndicators'"
                 [attr.data-slide-to]="$index"
@@ -26,7 +34,7 @@
           
           <div class="carousel-inner">
             <div
-              *ngFor="let img of (selectedVariant?.imgURL.length > 0 ? selectedVariant.imgURL : ['assets/img/logo/b_logo.png']); let i = index"
+              *ngFor="let img of (selectedVariant?.imgURL?.length > 0 ? selectedVariant.imgURL : ['assets/img/logo/b_logo.png']); let i = index"
               class="carousel-item image-container justify-content-center"
               [class.active]="i === currentImageIndex"
             >
@@ -80,7 +88,7 @@
             *ngFor="let size of selectedVariant.sizes"
             class="badge badge-pill badge-info mr-2"
             [ngClass]="{
-              'out-of-stock': size.quantity === 0,
+              'out-of-stock': size.quantity == 0,
               active: selectedSetSize === size
             }"
             (click)="selectSetSize(size)"
@@ -91,11 +99,11 @@
       </div>
 
       <div class="row mb-2" *ngIf="selectedVariant && selectedSetSize">
-        <h3 *ngIf="selectedSetSize.quantity === 0" class="text-danger">
+        <h3 *ngIf="selectedSetSize.quantity == 0" class="text-danger">
           Out of stock
         </h3>
         <h3 *ngIf="selectedSetSize.quantity > 0" class="text-dark">
-          Available: {{ selectedSetSize.quantity }}
+          Available: {{ selectedSetSize.quantity | number}}
         </h3>
       </div>
 
@@ -129,7 +137,7 @@
           Out of stock
         </h3>
         <h3 *ngIf="selectedVariant.quantity > 0" class="text-dark">
-          Available: {{ selectedVariant.quantity }}
+          Available: {{ selectedVariant.quantity | number}}
         </h3>
       </div>
 
@@ -157,7 +165,11 @@
           +
         </button>
       </div>
-
+      @if (inventory.length == 0){
+        <div class="row pt-2">
+          <span class="text-warning">Item is unavailable</span>
+        </div>
+      } @else {
       <div class="row mt-5">
         <button
           class="btn btn-info"
@@ -174,6 +186,7 @@
           Check Out
         </button>
       </div>
+    }
     </div>
   </div>
 </div>

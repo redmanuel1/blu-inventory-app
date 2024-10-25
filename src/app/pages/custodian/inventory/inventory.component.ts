@@ -47,9 +47,9 @@ export class InventoryComponent implements OnInit {
   ngOnInit() {
     this.spinner.show()
     this.recordService.getRecords().subscribe(data => {
-      this.inventory = data
-        this.dataColumns = this.sortOrder.map(fieldName => this.tableService.createTableColumn(fieldName, this.fieldConfig));
-        this.spinner.hide()
+      this.inventory = data.sort((a, b) => new Date(b.dateUpdated).getTime() - new Date(a.dateUpdated).getTime());
+      this.dataColumns = this.sortOrder.map(fieldName => this.tableService.createTableColumn(fieldName, this.fieldConfig));
+      this.spinner.hide()
     });
   }
 
@@ -83,23 +83,23 @@ export class InventoryComponent implements OnInit {
         }
 
         return acc;
-      }, { updates: [], newRecords: [] });
+      }, { updates: [] as Inventory[], newRecords: [] as Inventory[] });
 
       if (updates.length) {
         this.recordService.collectionName = "Inventory"
         this.recordService.updateRecords(updates).then(() => {
-          this.hideSpinnerAddToast('Updated products saved!', "success");
+          this.hideSpinnerAddToast('Updated inventory saved!', "success");
         }).catch(error => {
-          this.hideSpinnerAddToast('Error updating products: ' + error , "error");
+          this.hideSpinnerAddToast('Error updating inventory: ' + error , "error");
         });
       }
 
       if (newRecords.length) {
         this.recordService.collectionName = "Inventory"
         this.recordService.addRecords(newRecords).then(() => {
-          this.hideSpinnerAddToast('New products saved!', "success");
+          this.hideSpinnerAddToast('New inventory saved!', "success");
         }).catch(error => {
-          this.hideSpinnerAddToast('Error saving new products: ' + error,"error");
+          this.hideSpinnerAddToast('Error saving new inventory: ' + error,"error");
         });
       }
     }).catch(error => {

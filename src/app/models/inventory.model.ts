@@ -14,7 +14,7 @@ export interface Inventory {
 
 export interface GroupedInventoryVariant extends Omit<Inventory, 'size' | 'quantity'> {
   quantity?: number; 
-  sizes?: { size: string; quantity: number; id: string[] }[]; // Use string[] for ids
+  sizes?: Size[] // Use string[] for ids
 }
 
 export interface Variant {
@@ -22,7 +22,7 @@ export interface Variant {
   name: string;
   price?: number;
   quantity?: number;
-  sizes?: { size: string; quantity: number; id: string[] }[]; // Updated to include ids as string[]
+  sizes?: Size[]; // Updated to include ids as string[]
   imgURL?: string[];
   id: string
 }

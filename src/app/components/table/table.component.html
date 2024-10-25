@@ -115,6 +115,11 @@
                 }
 
                 <!-- Showing Records -->
+                 @if (filteredData?.length == 0){
+                  <tr>
+                    <td [attr.colspan]="dataColumns?.length" class="text-center align-middle">No records found.</td>
+                  </tr>
+                 }
                 @for (item of filteredData; track $index) {
                   <tr>
                     @for (col of dataColumns; track $index) {

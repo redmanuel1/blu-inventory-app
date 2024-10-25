@@ -2,6 +2,7 @@
 <app-table 
     title="Products"
     [useBasicTable] = false
+    [enableSearch] = true
     [dataColumns]="dataColumns"
     [data]="products"
     (saveRecords)="saveProducts($event)" 

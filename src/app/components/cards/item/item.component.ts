@@ -125,13 +125,13 @@ export class ItemComponent implements OnInit, AfterViewInit {
       const hasSizes = this.variants.some(
         (variant) => variant.sizes && variant.sizes.length > 0
       );
-
+      this.createSizesForSet();
       if (this.product.isSet && hasSizes && this.variants.length >1) {
-        this.createSizesForSet();
+        
         this.variants.push({
           code: "SET",
           name: "Set",
-          imgURL: this.imgURLsForSet,
+          imgURL: this.imgURLsForSet ?? [],
           price: this.product.price,
           sizes: this.sizesForSet,
         } as Variant);
@@ -143,6 +143,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
         this.variants.push({
           code: "SET",
           name: "Set",
+          imgURL: this.imgURLsForSet ?? [],
           price: this.product.price,
           quantity: minQuantity === Infinity ? 0 : minQuantity,
         } as Variant);
@@ -224,7 +225,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
     this.currentImageIndex = 0;
     // this.isArray = Array.isArray(this.selectedVariant?.imgURL);
     // console.log("selectedVariant", this.selectedVariant);
-    if (variant.sizes.length == 0) {
+    if (!variant.sizes || variant.sizes?.length == 0) {
       this.maxQuantity = variant.quantity;
       if (this.maxQuantity == 0) {
         this.quantity = 0;
@@ -354,6 +355,7 @@ export class ItemComponent implements OnInit, AfterViewInit {
 
 
   groupInventoryByCode(inventoryItems: Inventory[]): GroupedInventoryVariant[] {
+    const sizeOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; 
     const grouped = inventoryItems.reduce((acc, item) => {
       const { code, name, price, productCode, imgURL = [], size, quantity, id } = item;
       
@@ -381,7 +383,13 @@ export class ItemComponent implements OnInit, AfterViewInit {
       return acc;
     }, {} as { [key: string]: GroupedInventoryVariant });
   
-    return Object.values(grouped);
+    return Object.values(grouped).map(group => {
+      // Sort the sizes using the defined size order
+      group.sizes.sort((a, b) => {
+          return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
+      });
+      return group;
+  });
   }
   
 }

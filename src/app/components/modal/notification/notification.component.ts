@@ -74,6 +74,7 @@ export class NotificationComponent implements OnInit {
     });
   }
   async markAsRead(id: string): Promise<void> {
+    debugger;
     let notification = this.unReadNotificationArr.filter(
       (notification) => notification.id == id
     )[0];

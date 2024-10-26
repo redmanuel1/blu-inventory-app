@@ -93,17 +93,11 @@
           <div class="dropdown-header noti-title">
             <h6 class="text-overflow m-0">Notifications</h6>
           </div>
-
-          <app-notification
-            (unReadCountOutput)="handleUnreadCountChange($event)"
-          ></app-notification>
-          <!-- <i class="ni ni-single-02"></i>
-            <span>My profile</span> -->
-          <!-- <div class="dropdown-divider"></div>
-          <a href="#!" (click)="logout()" class="dropdown-item">
-            <i class="ni ni-user-run"></i>
-            <span>Logout</span>
-          </a> -->
+          <div class="dropdown-menu-notification-list">
+            <app-notification
+              (unReadCountOutput)="handleUnreadCountChange($event)"
+            ></app-notification>
+          </div>
         </div>
       </li>
     </ul>

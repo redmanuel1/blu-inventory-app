@@ -163,13 +163,13 @@ export class FirestoreService {
     return batch.commit(); // Save all in one go
   }
 
-  addRecords(products: any[]): Promise<void> {
+  addRecords(records: any[]): Promise<void> {
     const batch = this.firestore.firestore.batch();
 
-    products.forEach((product) => {
+    records.forEach((item) => {
       const id = this.firestore.createId();
       const docRef = this.firestore.collection(this.collectionName).doc(id).ref;
-      batch.set(docRef, product);
+      batch.set(docRef, item);
     });
 
     return batch.commit(); // Save all in one go

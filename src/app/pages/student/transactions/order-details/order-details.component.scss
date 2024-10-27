@@ -118,3 +118,14 @@ img:hover {
 .order-progress-header:hover {
   cursor: pointer;
 }
+
+.order-progress-contents.first-content {
+  &.row {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .row {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+}

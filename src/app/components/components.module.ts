@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { PromptDialogComponent } from "./modal/prompt-dialog/prompt-dialog.component";
 import { ToastComponent } from "./modal/toast/toast.component";
 import { NgxSpinnerComponent } from "ngx-spinner";
+import { NotificationComponent } from "./modal/notification/notification.component";
 import { ImageCarouselComponent } from "./image-carousel/image-carousel.component";
 import { DropdownComponent } from "./dropdown/dropdown.component";
 
@@ -34,8 +35,9 @@ import { DropdownComponent } from "./dropdown/dropdown.component";
     ShoppingcartItemComponent,
     PromptDialogComponent,
     ToastComponent,
+    NotificationComponent,
     DropdownComponent,
-    ImageCarouselComponent ,
+    ImageCarouselComponent,
   ],
   exports: [
     FooterComponent,
@@ -47,6 +49,7 @@ import { DropdownComponent } from "./dropdown/dropdown.component";
     ShoppingcartItemComponent,
     PromptDialogComponent,
     ToastComponent,
+    NotificationComponent,
     DropdownComponent,
   ],
 })

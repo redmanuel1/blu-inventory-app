@@ -1,22 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 .pending-status {
-    color: #FF490F;
+  color: #ff490f;
 }
 
 .confirmed-status {
-    color: #01B44F;
+  color: #01b44f;
 }
 
 .awaiting-confirmation-status {
-    color: #FF490F;
+  color: #ff490f;
 }
 
 .invalid-payment-status {
-    color: #f5365c;
+  color: #f5365c;
 }
 
-.completed-status{
-    color: #11cdef;
+.completed-status {
+  color: #11cdef;
 }
 
+.sticky-top {
+  z-index: 0 !important;
+}
 
+// .card {
+//   z-index: -1 !important;
+// }

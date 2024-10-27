@@ -12,6 +12,7 @@ export class FirestoreService {
   constructor(private firestore: AngularFirestore) {}
 
   public collectionName;
+  public subCollectionName;
   // Method to get all products
   getRecords(): Observable<any[]> {
     // return this.firestore.collection<Product>('Products').valueChanges();
@@ -126,6 +127,42 @@ export class FirestoreService {
       .pipe(map((orders) => (orders.length > 0 ? orders[0] : null)));
   }
 
+  // Notifications
+  getSRecordByDocIdWithSubCollections(parentDocId: string): Observable<any[]> {
+    debugger;
+    // return this.firestore.collection<Product>('Products').valueChanges();
+    return this.firestore
+      .collection<any>(
+        `${this.collectionName}/${parentDocId}/${this.subCollectionName}`
+      )
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data();
+            const id = a.payload.doc.id; // Get the document ID
+            return { id, ...data }; // Return the complete object
+          })
+        )
+      );
+  }
+
+  addSubCollectionRecords(parentDocId: string, data: any[]): Promise<void> {
+    const batch = this.firestore.firestore.batch();
+
+    data.forEach((product) => {
+      const id = this.firestore.createId();
+      const docRef = this.firestore
+        .collection(
+          `${this.collectionName}/${parentDocId}/${this.subCollectionName}`
+        )
+        .doc(id).ref;
+      batch.set(docRef, product);
+    });
+
+    return batch.commit(); // Save all in one go
+  }
+
   addRecords(records: any[]): Promise<void> {
     const batch = this.firestore.firestore.batch();
 
@@ -140,12 +177,34 @@ export class FirestoreService {
 
   // Method to update multiple products
   async updateRecords(records: any[]): Promise<void> {
+    debugger;
     const updates = records.map((record) => {
       // Exclude only the 'id' field
       const { id, ...filteredRecord } = record;
 
       // Logic to prepare your Firestore update operation
       const recRef = this.firestore.collection(this.collectionName).doc(id); // Use id to get the document reference
+      return recRef.update(filteredRecord); // Update the record without the excluded field
+    });
+
+    await Promise.all(updates);
+  }
+
+  async updateSubCollectionRecords(
+    parentDocId: string,
+    records: any[]
+  ): Promise<void> {
+    debugger;
+    const updates = records.map((record) => {
+      // Exclude only the 'id' field
+      const { id, ...filteredRecord } = record;
+
+      // Logic to prepare your Firestore update operation
+      const recRef = this.firestore
+        .collection(
+          `${this.collectionName}/${parentDocId}/${this.subCollectionName}`
+        )
+        .doc(id); // Use id to get the document reference
       return recRef.update(filteredRecord); // Update the record without the excluded field
     });
 

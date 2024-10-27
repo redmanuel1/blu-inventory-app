@@ -191,7 +191,7 @@ export class OrderDetailsComponent implements OnInit {
                 "success"
               );
               // uncomment when notification is to be added.
-              // this.addNotificationToAccountants();
+              this.addNotificationToAccountants();
               this.spinner.hide();
             })
             .catch((err) => {

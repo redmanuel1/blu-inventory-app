@@ -13,6 +13,8 @@ import { AuthService } from "src/app/services/auth.service";
 import { ToastComponent } from "src/app/components/modal/toast/toast.component";
 import { ToastService } from "src/app/components/modal/toast/toast.service";
 import { NgxSpinnerService } from "ngx-spinner";
+import { NotificationService } from "src/app/services/notification.service";
+import { User } from "src/app/models/user.model";
 
 @Component({
   selector: "app-order-confirmation",
@@ -26,6 +28,7 @@ export class OrderConfirmationComponent implements OnInit {
   userName: string = "";
   newComment: string = "";
   userLoggedInName = "";
+  private student: User | null = null;
   @ViewChild(ToastComponent) toastComponent!: ToastComponent;
 
   constructor(
@@ -33,7 +36,8 @@ export class OrderConfirmationComponent implements OnInit {
     private firestoreService: FirestoreService,
     private authService: AuthService,
     private toastService: ToastService,
-    private spinnerService: NgxSpinnerService
+    private spinnerService: NgxSpinnerService,
+    private notificationService: NotificationService
   ) {
     firestoreService.collectionName = "Transactions";
   }
@@ -92,6 +96,7 @@ export class OrderConfirmationComponent implements OnInit {
       this.firestoreService.getRecordByidNo(idNo).subscribe((userData) => {
         if (userData && userData.length > 0) {
           this.userName = `${userData[0].firstName} ${userData[0].lastName}`;
+          this.student = userData[0];
         }
       });
     }
@@ -184,14 +189,16 @@ export class OrderConfirmationComponent implements OnInit {
       this.firestoreService.collectionName = "Transactions";
 
       // Call the updateRecords method to update the transaction
+      debugger;
       this.firestoreService
         .updateRecords([updatedTransaction])
-        .then(() => {
+        .then(async () => {
           this.toastService.showToast(
             "Payment has been marked as invalid. Please add a comment for clarification.",
             "error"
           );
           this.transaction.status = "Invalid Payment";
+          await this.addNotification("accountantrejectpayment");
           this.spinnerService.hide();
         })
         .catch((error) => {
@@ -236,12 +243,14 @@ export class OrderConfirmationComponent implements OnInit {
       // Call the updateRecords method to update the transaction
       this.firestoreService
         .updateRecords([updatedTransaction])
-        .then(() => {
+        .then(async () => {
           this.toastService.showToast(
             "Payment confirmed. Item is now ready for pick up",
             "success"
           );
           this.transaction.status = "Ready for Pick up";
+          await this.addNotification("accountantacceptpaymentstudent");
+          await this.addNotification("accountantacceptpaymentcustodian");
           this.spinnerService.hide();
         })
         .catch((error) => {
@@ -252,6 +261,51 @@ export class OrderConfirmationComponent implements OnInit {
           console.error("Error updating transaction status:", error);
           this.spinnerService.hide();
         });
+    }
+  }
+
+  // Notification
+  async addNotification(
+    type:
+      | "accountantrejectpayment"
+      | "accountantacceptpaymentstudent"
+      | "accountantacceptpaymentcustodian"
+  ): Promise<void> {
+    switch (type) {
+      case "accountantrejectpayment":
+        // Notify the student that the payment has been rejected
+        await this.notificationService.addNotification(
+          [this.student],
+          type,
+          this.transactionId
+        );
+        break;
+      case "accountantacceptpaymentstudent":
+        // Notify the student that the payment has been accepted
+        await this.notificationService.addNotification(
+          [this.student],
+          type,
+          this.transactionId
+        );
+        break;
+      // Notify the custodians that the payment has been accepted
+      case "accountantacceptpaymentcustodian":
+        this.firestoreService.collectionName = "Users";
+        this.firestoreService
+          .getRecordsByField("role", "custodian")
+          .subscribe(async (result: User[]) => {
+            if (result) {
+              await this.notificationService.addNotification(
+                result,
+                "accountantacceptpaymentcustodian",
+                this.transactionId
+              );
+            }
+          });
+
+        break;
+      default:
+        break;
     }
   }
 }

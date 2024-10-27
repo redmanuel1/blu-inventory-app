@@ -23,8 +23,10 @@ export class AuthService {
         .subscribe({
           next: (snapshot) => {
             console.log("test");
+            debugger;
             if (!snapshot.empty) {
               const user = snapshot.docs[0].data() as User;
+              user.id = snapshot.docs[0].id;
               if (user.password === password && user.isActive) {
                 this.userSubject.next(user);
                 this.saveUserToLocalStorage(user);

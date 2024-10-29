@@ -6,7 +6,7 @@ export interface Inventory {
   code: string;
   name: string;
   quantity: number;
-  dateUpdated?: Timestamp;
+  dateUpdated?: string;
   price?: number;
   imgURL?: string[];
   size?: string;

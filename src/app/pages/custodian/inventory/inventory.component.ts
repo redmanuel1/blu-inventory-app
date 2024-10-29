@@ -8,6 +8,8 @@ import { FirestoreService } from 'src/app/services/firestore.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastComponent } from 'src/app/components/modal/toast/toast.component';
 import { ToastService } from 'src/app/components/modal/toast/toast.service';
+import { forEach } from 'lodash';
+import { WhereFilterOp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-inventory',
@@ -57,57 +59,101 @@ export class InventoryComponent implements OnInit {
     this.toastService.registerToast(this.toastComponent);
   }
 
-  saveInventory(records: any[]) {
+  async saveInventory(records: any[]) {
     this.spinner.show();
+    
     const uploadPromises = records.map(record => {
       const selectedFiles = this.selectedFiles
-      .filter(file => file.record.code === record.code)
-      .flatMap(file => file.files);
-
-      if (selectedFiles) {
+        .filter(file => file.record.code === record.code)
+        .flatMap(file => file.files);
+  
+      if (selectedFiles.length > 0) {
         return this.uploadImages(selectedFiles, record);
       }
       return Promise.resolve(); // No upload needed
     });
-
-    Promise.all(uploadPromises).then(() => {
+  
+    try {
+      await Promise.all(uploadPromises); // Wait for all uploads to finish
+  
       const { updates, newRecords } = records.reduce((acc, record) => {
         const { isEditing, imgPreviewURLs, ...filteredRecord } = record; // Remove imgPreviewURLs before saving
-
-        filteredRecord.dateUpdated =  new Date().toISOString(); // Set current timestamp if dateUpdated is missing
-        
+  
+        filteredRecord.price = Number(filteredRecord.price);
+        filteredRecord.quantity = Number(filteredRecord.quantity);
+        filteredRecord.dateUpdated = new Date().toISOString(); // Set current timestamp
+  
         if (isEditing) {
           acc.updates.push(filteredRecord);
         } else {
           acc.newRecords.push(filteredRecord);
         }
-
+  
         return acc;
       }, { updates: [] as Inventory[], newRecords: [] as Inventory[] });
 
+      this.recordService.collectionName = 'Inventory'
+      // Handle updates for existing records
       if (updates.length) {
-        this.recordService.collectionName = "Inventory"
-        this.recordService.updateRecords(updates).then(() => {
-          this.hideSpinnerAddToast('Updated inventory saved!', "success");
-        }).catch(error => {
-          this.hideSpinnerAddToast('Error updating inventory: ' + error , "error");
-        });
+        this.recordService.collectionName = "Inventory";
+        await this.recordService.updateRecords(updates);
+        this.hideSpinnerAddToast('Updated inventory saved!', "success");
       }
-
-      if (newRecords.length) {
-        this.recordService.collectionName = "Inventory"
-        this.recordService.addRecords(newRecords).then(() => {
-          this.hideSpinnerAddToast('New inventory saved!', "success");
-        }).catch(error => {
-          this.hideSpinnerAddToast('Error saving new inventory: ' + error,"error");
-        });
+  
+      // Handle new records and duplicates
+      const recordTobeAdded: Inventory[] = [];
+      const duplicateRecords: Inventory[] = [];
+     
+  
+      for (const record of newRecords) {
+        const conditions: { field: string; operator: WhereFilterOp; value: any }[] = [
+          { field: 'code', operator: '==', value: record.code },
+          { field: 'productCode', operator: '==', value: record.productCode },
+          { field: 'size', operator: '==', value: record.size }
+        ];
+  
+        // Check if a duplicate record exists
+        const duplicateExists = await this.recordService.getRecordByFields(conditions);
+  
+        if (duplicateExists.length === 0) {
+          // If no duplicate is found, add it to newRecords
+          recordTobeAdded.push(record);
+        } else {
+          // If a duplicate is found, retrieve the existing quantity
+          duplicateExists.forEach(doc => {
+            const existingData = doc.data as Inventory;
+            existingData.id = doc.id;
+            const updatedQuantity = (existingData.quantity || 0) + (record.quantity || 0);
+  
+            // Prepare duplicate record for updating
+            duplicateRecords.push({
+              ...existingData,
+              quantity: updatedQuantity, // Use updated quantity
+            });
+          });
+        }
       }
-    }).catch(error => {
-      this.hideSpinnerAddToast('Error uploading images: ' + error, "error");
-    });
+  
+      // Add new records to Firestore
+      if (recordTobeAdded.length) {
+        await this.recordService.addRecords(recordTobeAdded);
+        this.hideSpinnerAddToast('New inventory saved!', "success");
+      }
+  
+      // Update duplicate records if any
+      if (duplicateRecords.length) {
+        await this.recordService.updateRecords(duplicateRecords);
+        this.hideSpinnerAddToast('Duplicate inventory updated!', "success");
+      }
+  
+    } catch (error) {
+      this.hideSpinnerAddToast('Error processing inventory: ' + error, "error");
+    }
   }
+  
 
   deleteInventory(record: any) {
+    this.recordService.collectionName = 'Inventory'
     this.recordService.deleteRecord(record.id).then(() => {
       this.hideSpinnerAddToast('Inventory deleted : ' + record.name,"success");
     }).catch(error => {
@@ -150,6 +196,7 @@ export class InventoryComponent implements OnInit {
       console.error('Error uploading one or more images:', error);
     });
   }
+  
 
   hideSpinnerAddToast(message, status) {
     this.spinner.hide();

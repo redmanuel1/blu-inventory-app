@@ -41,9 +41,13 @@ export class UserProfileComponent implements OnInit {
       this.firestoreService
         .updateRecords([this.user])
         .then(() => {
+          localStorage.setItem("user", JSON.stringify(this.user));
           this.toastr.success("User profile updated");
           console.log("User profile updated");
           this.confirmPassword = "";
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
         })
         .catch((error) => {
           console.error("Error updating user:", error);

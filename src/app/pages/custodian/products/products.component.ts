@@ -70,7 +70,8 @@ export class ProductsComponent {
     Promise.all(uploadPromises).then(() => {
       const { updates, newRecords } = records.reduce((acc, record) => {
         const { isEditing, imgPreviewURLs, ...filteredRecord } = record; // Remove imgPreviewURLs before saving
-
+        filteredRecord.price = Number(filteredRecord.price); // parse price to number
+        filteredRecord.dateUpdated = new Date().toISOString();
         if (isEditing) {
           acc.updates.push(filteredRecord);
         } else {

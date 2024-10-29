@@ -28,6 +28,7 @@ export class OrderConfirmationComponent implements OnInit {
   userName: string = "";
   newComment: string = "";
   userLoggedInName = "";
+  hasAddedComment: boolean = false;
   private student: User | null = null;
   @ViewChild(ToastComponent) toastComponent!: ToastComponent;
 
@@ -143,6 +144,7 @@ export class OrderConfirmationComponent implements OnInit {
         .then(() => {
           this.spinnerService.hide();
           console.log("Transaction updated successfully.");
+          this.hasAddedComment = true;
         })
         .catch((error) => {
           this.spinnerService.hide();
@@ -159,52 +161,58 @@ export class OrderConfirmationComponent implements OnInit {
 
   // Method for declining the transaction
   declinePayment(): void {
-    this.spinnerService.show();
-    if (this.transaction && this.transactionId) {
-      // Update the transaction status
-      const updatedTransaction = {
-        id: this.transactionId,
-        status: "Invalid Payment",
-      };
-
-      // Create a new status update
-      const statusUpdate = {
-        status: "Invalid Payment",
-        dateUpdated: new Date().toISOString(),
-        user: this.userLoggedInName,
-      };
-
-      // Check if the statusUpdates array exists, if not, initialize it
-      if (!this.transaction.statusUpdates) {
-        this.transaction.statusUpdates = [];
+    
+    if(!this.hasAddedComment){
+      this.toastService.showToast("Please add a comment on why the student's payment was declined and inform them the next steps ", "error");
+    }else{
+      this.spinnerService.show();
+      if (this.transaction && this.transactionId) {
+        // Update the transaction status
+        const updatedTransaction = {
+          id: this.transactionId,
+          status: "Invalid Payment",
+          confirmedDate: null
+        };
+  
+        // Create a new status update
+        const statusUpdate = {
+          status: "Invalid Payment",
+          dateUpdated: new Date().toISOString(),
+          user: this.userLoggedInName,
+        };
+  
+        // Check if the statusUpdates array exists, if not, initialize it
+        if (!this.transaction.statusUpdates) {
+          this.transaction.statusUpdates = [];
+        }
+  
+        // Add the new status update
+        this.transaction.statusUpdates.push(statusUpdate);
+  
+        // Set the updatedTransaction to include the status updates
+        updatedTransaction["statusUpdates"] = this.transaction.statusUpdates;
+  
+        // Update the Firestore collection name
+        this.firestoreService.collectionName = "Transactions";
+  
+        // Call the updateRecords method to update the transaction
+        debugger;
+        this.firestoreService
+          .updateRecords([updatedTransaction])
+          .then(async () => {
+            this.toastService.showToast(
+              "Payment has been marked as invalid. Please add a comment for clarification.",
+              "error"
+            );
+            this.transaction.status = "Invalid Payment";
+            await this.addNotification("accountantrejectpayment");
+            this.spinnerService.hide();
+          })
+          .catch((error) => {
+            console.error("Error updating transaction status:", error);
+            this.spinnerService.hide();
+          });
       }
-
-      // Add the new status update
-      this.transaction.statusUpdates.push(statusUpdate);
-
-      // Set the updatedTransaction to include the status updates
-      updatedTransaction["statusUpdates"] = this.transaction.statusUpdates;
-
-      // Update the Firestore collection name
-      this.firestoreService.collectionName = "Transactions";
-
-      // Call the updateRecords method to update the transaction
-      debugger;
-      this.firestoreService
-        .updateRecords([updatedTransaction])
-        .then(async () => {
-          this.toastService.showToast(
-            "Payment has been marked as invalid. Please add a comment for clarification.",
-            "error"
-          );
-          this.transaction.status = "Invalid Payment";
-          await this.addNotification("accountantrejectpayment");
-          this.spinnerService.hide();
-        })
-        .catch((error) => {
-          console.error("Error updating transaction status:", error);
-          this.spinnerService.hide();
-        });
     }
   }
 

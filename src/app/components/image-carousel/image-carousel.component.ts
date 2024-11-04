@@ -20,18 +20,22 @@ export class ImageCarouselComponent implements OnInit {
   }
 
   nextImage(): void {
-    if (this.currentImageIndex < this.imageCount - 1) {
-      this.currentImageIndex++;
-    } else {
-      this.currentImageIndex = 0; // Loop back to the first image
+    if(this.imageCount>0){
+      if (this.currentImageIndex < this.imageCount - 1) {
+        this.currentImageIndex++;
+      } else {
+        this.currentImageIndex = 0; // Loop back to the first image
+      }
     }
   }
 
   previousImage(): void {
-    if (this.currentImageIndex > 0) {
-      this.currentImageIndex--;
-    } else {
-      this.currentImageIndex = this.imageCount - 1; // Loop to the last image
+    if(this.imageCount>0){
+      if (this.currentImageIndex > 0) {
+        this.currentImageIndex--;
+      } else {
+        this.currentImageIndex = this.imageCount - 1; // Loop to the last image
+      }
     }
   }
 }

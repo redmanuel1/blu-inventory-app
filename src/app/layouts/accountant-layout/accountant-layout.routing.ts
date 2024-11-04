@@ -12,7 +12,7 @@ import { OrderConfirmationComponent } from "src/app/pages/accountant/order-confi
 export const AccountantLayoutRoutes: Routes = [
   { path: "products", component: ProductsComponent },
   { path: "products/:code", component: ItemComponent },
-  { path: "dashboard", component: DashboardComponent },
+  // { path: "dashboard", component: DashboardComponent },
   { path: "user-profile", component: UserProfileComponent },
   { path: "transactions", component: TransactionsComponent },
   {

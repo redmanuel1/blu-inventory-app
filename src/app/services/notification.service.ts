@@ -29,7 +29,6 @@ export class NotificationService {
     orderId: string = null
   ): Promise<void> {
     let notification = this.getNotificationByType(type, transactionId, orderId);
-    debugger;
     for (let user of usersToNotifyArr) {
       this.firestore.collectionName = "Users";
       this.firestore.subCollectionName = "Notifications";

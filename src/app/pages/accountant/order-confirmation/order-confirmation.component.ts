@@ -15,6 +15,9 @@ import { ToastService } from "src/app/components/modal/toast/toast.service";
 import { NgxSpinnerService } from "ngx-spinner";
 import { NotificationService } from "src/app/services/notification.service";
 import { User } from "src/app/models/user.model";
+import { WhereFilterOp } from "firebase/firestore";
+import { InventoryTransaction } from "src/app/models/inventory-transaction.model";
+import { Inventory } from "src/app/models/inventory.model";
 
 @Component({
   selector: "app-order-confirmation",
@@ -161,42 +164,43 @@ export class OrderConfirmationComponent implements OnInit {
 
   // Method for declining the transaction
   declinePayment(): void {
-    
-    if(!this.hasAddedComment){
-      this.toastService.showToast("Please add a comment on why the student's payment was declined and inform them the next steps ", "error");
-    }else{
+    if (!this.hasAddedComment) {
+      this.toastService.showToast(
+        "Please add a comment on why the student's payment was declined and inform them the next steps ",
+        "error"
+      );
+    } else {
       this.spinnerService.show();
       if (this.transaction && this.transactionId) {
         // Update the transaction status
         const updatedTransaction = {
           id: this.transactionId,
           status: "Invalid Payment",
-          confirmedDate: null
+          confirmedDate: null,
         };
-  
+
         // Create a new status update
         const statusUpdate = {
           status: "Invalid Payment",
           dateUpdated: new Date().toISOString(),
           user: this.userLoggedInName,
         };
-  
+
         // Check if the statusUpdates array exists, if not, initialize it
         if (!this.transaction.statusUpdates) {
           this.transaction.statusUpdates = [];
         }
-  
+
         // Add the new status update
         this.transaction.statusUpdates.push(statusUpdate);
-  
+
         // Set the updatedTransaction to include the status updates
         updatedTransaction["statusUpdates"] = this.transaction.statusUpdates;
-  
+
         // Update the Firestore collection name
         this.firestoreService.collectionName = "Transactions";
-  
+
         // Call the updateRecords method to update the transaction
-        debugger;
         this.firestoreService
           .updateRecords([updatedTransaction])
           .then(async () => {
@@ -217,9 +221,14 @@ export class OrderConfirmationComponent implements OnInit {
   }
 
   // Method for confirming the transaction
-  confirmPayment(): void {
+  async confirmPayment(): Promise<void> {
     this.spinnerService.show();
     if (this.transaction && this.transactionId) {
+      let isProductsOutOfStock: boolean = await this.processInventory();
+      if (isProductsOutOfStock) {
+        this.spinnerService.hide();
+        return;
+      }
       // Update the transaction status
       const updatedTransaction = {
         id: this.transactionId,
@@ -270,6 +279,73 @@ export class OrderConfirmationComponent implements OnInit {
           this.spinnerService.hide();
         });
     }
+  }
+
+  // InventoryTransaction
+  async processInventory(): Promise<boolean> {
+    let isOutOfStock = false;
+    // Formulate the condition needed to get the inventory
+    const conditions: { field: string; operator: WhereFilterOp; value: any }[] =
+      [];
+    const productFailedArr: OrderProduct[] = [];
+    const productFailedStringArr: string[] = [];
+    // Assemble the data
+    for (const product of this.orderedProducts.products) {
+      conditions.push({
+        field: "productCode",
+        operator: "==",
+        value: product.productCode,
+      });
+    }
+    // Get the data from the inventory table
+    this.firestoreService.collectionName = "Inventory";
+    const resultArr = await this.firestoreService.getRecordByFields(conditions);
+    const inventoryArr: Inventory[] = resultArr.map(({ id, data }) => ({
+      ...data,
+      id,
+    }));
+    const inventoryTransactionArr: InventoryTransaction[] = [];
+    for (const product of this.orderedProducts.products) {
+      const inventory: Inventory = inventoryArr.find(
+        (inventory: Inventory) => inventory.productCode == product.productCode
+      );
+
+      // If there are no more inventory for the product
+      if (inventory.quantity - product.quantity < 0) {
+        productFailedArr.push(product);
+        productFailedStringArr.push(`${product.productName}\n`);
+        isOutOfStock = true;
+        continue;
+      }
+      inventory.quantity -= product.quantity;
+      inventory.dateUpdated = new Date().toISOString();
+
+      const inventoryTransaction: InventoryTransaction = {
+        productCode: product.productCode,
+        amount: product.price * product.quantity,
+        inOrOut: "OUT",
+        quantity: -product.quantity,
+        receivedFromOrGivenTo: this.student.idNo,
+        transactionDate: new Date().toISOString(),
+        transactionId: this.transactionId,
+      };
+      inventoryTransactionArr.push(inventoryTransaction);
+    }
+    if (isOutOfStock) {
+      this.toastService.showToast(
+        `The following products are out of stock\n ${productFailedStringArr}`,
+        "error"
+      );
+    } else {
+      // add inventory transaction
+      this.firestoreService.collectionName = "InventoryTransaction";
+      await this.firestoreService.addRecords(inventoryTransactionArr);
+      // update inventory
+      this.firestoreService.collectionName = "Inventory";
+      await this.firestoreService.updateRecords(inventoryArr);
+    }
+
+    return isOutOfStock;
   }
 
   // Notification

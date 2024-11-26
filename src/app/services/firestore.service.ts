@@ -1,12 +1,14 @@
 // src/app/services/firestore.service.ts
 import { Injectable } from "@angular/core";
-import { AngularFirestore, AngularFirestoreCollection} from "@angular/fire/compat/firestore";
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+} from "@angular/fire/compat/firestore";
 import { map, Observable } from "rxjs";
 import { User } from "../models/user.model";
 import { WhereFilterOp, CollectionReference, Query } from "firebase/firestore";
-import firebase from 'firebase/compat/app'; // Import the core firebase app
-import 'firebase/compat/firestore';
-
+import firebase from "firebase/compat/app"; // Import the core firebase app
+import "firebase/compat/firestore";
 
 @Injectable({
   providedIn: "root",
@@ -55,38 +57,41 @@ export class FirestoreService {
   ): Promise<{ id: string; data: any }[]> {
     // Start with a reference to the collection
     const collectionRef = this.firestore.collection(this.collectionName).ref; // Get CollectionReference
-  
+
     // Start building a query using the collection reference
     let queryRef = collectionRef as firebase.firestore.Query; // Cast to Query
-  
+
     // Apply conditions to build the query
-    conditions.forEach(condition => {
-      queryRef = queryRef.where(condition.field, condition.operator, condition.value);
+    conditions.forEach((condition) => {
+      queryRef = queryRef.where(
+        condition.field,
+        condition.operator,
+        condition.value
+      );
     });
-  
+
     // Execute the query
-    return queryRef.get()
-      .then(snapshot => {
+    return queryRef
+      .get()
+      .then((snapshot) => {
         if (snapshot.empty) {
           console.warn("No matching documents found.");
           return []; // Return an empty array if no documents found
         }
-  
+
         // Map the snapshot to return an array of objects with id and data
-        const results = snapshot.docs.map(doc => ({
+        const results = snapshot.docs.map((doc) => ({
           id: doc.id, // Get the document ID
-          data: doc.data() // Get the document data
+          data: doc.data(), // Get the document data
         }));
-  
+
         return results; // Return the array of results
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching records:", error);
         return Promise.reject(error); // Reject the promise with the error
       });
   }
-  
-  
 
   getRecordsSortedByOrderDate(): Observable<any[]> {
     // return this.firestore.collection<Product>('Products').valueChanges();
@@ -152,7 +157,6 @@ export class FirestoreService {
 
   // Notifications
   getSRecordByDocIdWithSubCollections(parentDocId: string): Observable<any[]> {
-    debugger;
     // return this.firestore.collection<Product>('Products').valueChanges();
     return this.firestore
       .collection<any>(
@@ -200,7 +204,6 @@ export class FirestoreService {
 
   // Method to update multiple products
   async updateRecords(records: any[]): Promise<void> {
-    debugger;
     const updates = records.map((record) => {
       // Exclude only the 'id' field
       const { id, ...filteredRecord } = record;
@@ -217,7 +220,6 @@ export class FirestoreService {
     parentDocId: string,
     records: any[]
   ): Promise<void> {
-    debugger;
     const updates = records.map((record) => {
       // Exclude only the 'id' field
       const { id, ...filteredRecord } = record;
@@ -294,7 +296,4 @@ export class FirestoreService {
   getUserDocId(): string {
     return localStorage.getItem("userDocId");
   }
-
-
-  
 }

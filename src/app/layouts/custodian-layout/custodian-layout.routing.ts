@@ -5,6 +5,7 @@ import { UserProfileComponent } from "src/app/pages/user-profile/user-profile.co
 import { TransactionsComponent } from "src/app/pages/student/transactions/transactions.component";
 import { OrderPickupComponent } from "src/app/pages/custodian/order-pickup/order-pickup.component";
 import { InventoryComponent } from 'src/app/pages/custodian/inventory/inventory.component';
+import { InventorytransactionComponent } from "src/app/pages/custodian/inventorytransaction/inventorytransaction.component";
 
 export const CustodianLayoutRoutes: Routes = [
   { path: "orders", component: TransactionsComponent },
@@ -15,5 +16,7 @@ export const CustodianLayoutRoutes: Routes = [
     component: OrderPickupComponent,
   },
   { path: "user-profile", component: UserProfileComponent },
-  { path: 'inventory',   component: InventoryComponent },{ path: "**", redirectTo: "orders", pathMatch: "full" },
+  { path: 'inventory',   component: InventoryComponent },
+  { path: 'inventory-transactions',   component: InventorytransactionComponent },
+  { path: "**", redirectTo: "orders", pathMatch: "full" },
 ];

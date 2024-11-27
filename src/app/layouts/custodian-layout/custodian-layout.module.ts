@@ -12,6 +12,7 @@ import { ProductsComponent } from 'src/app/pages/custodian/products/products.com
 import { InventoryComponent } from 'src/app/pages/custodian/inventory/inventory.component';
 import { OrderPickupComponent } from 'src/app/pages/custodian/order-pickup/order-pickup.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { InventorytransactionComponent } from 'src/app/pages/custodian/inventorytransaction/inventorytransaction.component';
 
 
 
@@ -19,7 +20,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
   declarations: [
     ProductsComponent,
     InventoryComponent,
-    OrderPickupComponent
+    OrderPickupComponent,
+    InventorytransactionComponent
   ],
   imports: [
     CommonModule,

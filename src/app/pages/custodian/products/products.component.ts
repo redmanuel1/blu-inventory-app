@@ -118,9 +118,9 @@ export class ProductsComponent {
   // Modified method to handle multiple image uploads
   uploadImages(files: File[], record: any): Promise<void> {
     // Ensure that imgURLs is initialized as an empty array if not already present
-    if (!record.imgURL) {
-      record.imgURL = [];
-    }
+    
+    record.imgURL = [];
+    
   
     const uploadTasks = files.map(file => {
       return new Promise<void>((resolve, reject) => {

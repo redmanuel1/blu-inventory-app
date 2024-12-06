@@ -76,9 +76,8 @@ export class RegisterComponent implements OnInit {
 
   validateForm(): boolean {
     if (
-      !Object.values(this.user).every((field) => {
-        field = field.toString();
-        field.trim() !== "";
+      Object.values(this.user).some((field) => {
+        return field.toString().trim() === '';
       })
     ) {
       this.errorMessage = "Please fill in all fields";

@@ -194,8 +194,10 @@ export class InventoryComponent implements OnInit {
         }[] = [
           { field: "code", operator: "==", value: record.code },
           { field: "productCode", operator: "==", value: record.productCode },
-          { field: "size", operator: "==", value: record.size },
-        ];
+        ]
+        if (record.size !== undefined && record.size !== '') {
+          conditions.push({ field: "size", operator: "==", value: record.size });
+        }
 
         // Check if a duplicate record exists
         const duplicateExists = await this.recordService.getRecordByFields(
@@ -241,6 +243,7 @@ export class InventoryComponent implements OnInit {
         updates
       );
     } catch (error) {
+      console.log(error)
       this.hideSpinnerAddToast("Error processing inventory: " + error, "error");
     }
   }
@@ -298,7 +301,8 @@ export class InventoryComponent implements OnInit {
       const oldInventory = this.oldInventory.find(
         (oldInventory) => oldInventory.code == inventory.code
       );
-      const inventoryQty = inventory.quantity - oldInventory.quantity;
+      const oldInventoryQuantity = oldInventory ? oldInventory.quantity : 0;
+      const inventoryQty = inventory.quantity - oldInventoryQuantity;
       const inventoryTransaction: InventoryTransaction = {
         productCode: inventory.productCode,
         amount:
